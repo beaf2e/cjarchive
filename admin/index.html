@@ -546,7 +546,25 @@ function login() {
     const left = window.screenX + (window.outerWidth - w) / 2;
     const top = window.screenY + (window.outerHeight - h) / 2;
     const popup = window.open(url, 'cja_oauth', `width=${w},height=${h},left=${left},top=${top}`);
-    if (!popup) { toast('팝업이 차단되었어요. 허용해주세요.', 'error'); return; }
+    // 팝업 차단 감지 (몇 가지 패턴으로)
+    setTimeout(() => {
+        if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+            // 차단됨 → fallback 안내
+            const m = $('#modal');
+            m.innerHTML = `
+                <div class="modal">
+                    <h3>팝업이 차단되었어요</h3>
+                    <p>브라우저 주소창 오른쪽의 팝업 차단 아이콘을 눌러 허용한 뒤 다시 시도하거나, 아래 버튼으로 같은 창에서 진행하세요.</p>
+                    <div class="modal-actions">
+                        <button class="btn secondary" data-ok="0">취소</button>
+                        <a href="${url}" class="btn">같은 창에서 진행 →</a>
+                    </div>
+                </div>
+            `;
+            m.classList.add('show');
+            m.onclick = (e) => { if (e.target.dataset.ok === '0') m.classList.remove('show'); };
+        }
+    }, 400);
 }
 window.addEventListener('message', async (e) => {
     if (typeof e.data !== 'string') return;
