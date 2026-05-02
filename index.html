@@ -643,9 +643,15 @@
             display: flex; flex-wrap: wrap; justify-content: space-between;
             text-align: left; gap: 40px; padding-bottom: 50px;
         }
-        .footer-grid h4 {
-            color: var(--apple-black);
+        .footer-grid h4,
+        .footer-grid .footer-brand {
+            min-height: clamp(26px, 3vw, 32px);
             margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            color: var(--apple-black);
+        }
+        .footer-grid h4 {
             font-weight: 600;
             font-size: 0.95rem;
             letter-spacing: -0.01em;
@@ -654,8 +660,6 @@
             font-size: clamp(0.95rem, 2vw, 1.2rem);
             line-height: 1.2;
             letter-spacing: 0.02em;
-            color: var(--apple-black);
-            margin-bottom: 18px;
             word-spacing: 0.05em;
             text-transform: uppercase;
         }
@@ -772,7 +776,7 @@
         <div style="flex: 1; min-width: 180px;">
             <h4>Information</h4>
             <ul style="list-style: none;">
-                <li>Last Updated · 2026. 05. 02</li>
+                <li id="lastUpdated">Last Updated · ...</li>
                 <li>Data Source · 직접 촬영, 국가유산청</li>
                 <li>Technology · HTML5, GSAP, Cloudflare Pages</li>
             </ul>
@@ -1087,6 +1091,26 @@
     }
 
     loadPlaces();
+
+    /* ===== Last Updated 자동 갱신 (GitHub 최신 commit 날짜) ===== */
+    (async function updateLastUpdated() {
+        const el = document.getElementById('lastUpdated');
+        if (!el) return;
+        try {
+            const res = await fetch('https://api.github.com/repos/beaf2e/cjarchive/commits?per_page=1', { cache: 'no-cache' });
+            if (!res.ok) throw new Error('rate limit or network');
+            const commits = await res.json();
+            const dateStr = commits[0].commit.author.date;
+            const d = new Date(dateStr);
+            const yyyy = d.getFullYear();
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const dd = String(d.getDate()).padStart(2, '0');
+            el.textContent = `Last Updated · ${yyyy}. ${mm}. ${dd}`;
+        } catch (e) {
+            // API 실패 시 기본값
+            el.textContent = 'Last Updated · 2026. 05. 02';
+        }
+    })();
 </script>
 
 </body>
