@@ -736,7 +736,7 @@
 <section class="section" style="border-top: 1px solid var(--apple-divider); max-width: 1280px;">
     <div style="text-align: center; max-width: 720px; margin: 0 auto clamp(40px, 8vw, 70px);">
         <span class="section-eyebrow value-text">Heritage Stories</span>
-        <h2 class="value-text" style="font-size: clamp(1.5rem, 4vw, 2.4rem); font-weight: 700; letter-spacing: -0.03em; word-break: keep-all;">네 곳의 시간, 한 도시의 기억</h2>
+        <h2 class="value-text" id="heritageHeading" style="font-size: clamp(1.5rem, 4vw, 2.4rem); font-weight: 700; letter-spacing: -0.03em; word-break: keep-all;">네 곳의 시간, 한 도시의 기억</h2>
     </div>
     <div class="grid" id="placeGrid">
         <!-- 카드는 places.json에서 자동 생성됨 -->
@@ -1002,9 +1002,24 @@
         ul.innerHTML = items.map(it => `<li onclick="${it.action}">${esc(it.label)}</li>`).join('');
     }
 
+    const KOR_COUNT = ['','한','두','세','네','다섯','여섯','일곱','여덟','아홉','열','열한','열두','열세','열네','열다섯'];
+    function korCount(n) {
+        if (n <= 0) return '';
+        if (n < KOR_COUNT.length) return KOR_COUNT[n];
+        return String(n);
+    }
+    function renderHeritageHeading() {
+        const h = document.getElementById('heritageHeading');
+        if (!h) return;
+        const n = PLACES_LIST.length;
+        const word = korCount(n) || String(n);
+        h.textContent = `${word} 곳의 시간, 한 도시의 기억`;
+    }
+
     function renderCards() {
         const grid = document.getElementById('placeGrid');
         if (!grid) return;
+        renderHeritageHeading();
         grid.innerHTML = PLACES_LIST.map(p => `
             <div class="card" id="card-${esc(p.id)}" onclick="openPlace('${esc(p.id)}')">
                 <img src="${esc(p.img)}" alt="${esc(p.title)}">
