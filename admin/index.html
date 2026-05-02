@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cheongju Archive — 관리</title>
     <link rel="icon" type="image/png" href="../logo2.png">
+
+    <!-- 외부 도메인 사전 연결 (DNS·TLS 핸드셰이크 미리 시작) -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://api.github.com" crossorigin>
+    <link rel="dns-prefetch" href="https://github.com">
+
+    <!-- 메인 CMS 스크립트를 high-priority로 미리 로드 -->
+    <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/@sveltia/cms/dist/sveltia-cms.js">
+
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
     <style>
         :root {
@@ -101,7 +110,7 @@
         <p class="hint">편집기를 불러오는 중...</p>
         <p class="footer">cjarchive.pages.dev · admin</p>
     </div>
-    <!-- Sveltia CMS -->
-    <script type="module" src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js"></script>
+    <!-- Sveltia CMS (jsDelivr — 한국 엣지 PoP 사용) -->
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@sveltia/cms/dist/sveltia-cms.js"></script>
 </body>
 </html>
