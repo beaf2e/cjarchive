@@ -1,0 +1,117 @@
+backend:
+  name: github
+  repo: beaf2e/cjarchive
+  branch: main
+  # OAuth 인증을 위한 Cloudflare Worker URL (Phase 4b 마지막 단계에서 채워짐)
+  # base_url: https://<your-worker>.workers.dev
+
+# 미디어 파일은 리포 루트에 저장 (기존 cjhg1.jpg 등과 같은 위치)
+media_folder: ""
+public_folder: ""
+
+# UI 언어
+locale: ko
+
+site_url: https://cjarchive.pages.dev
+display_url: https://cjarchive.pages.dev
+logo_url: https://cjarchive.pages.dev/logo.png
+
+collections:
+  - name: data
+    label: 콘텐츠 관리
+    label_singular: 콘텐츠
+    delete: false
+    editor:
+      preview: false
+    files:
+      - name: places-data
+        file: places.json
+        label: "장소 & 타임라인"
+        format: json
+        fields:
+          - label: "장소 목록"
+            label_singular: "장소"
+            name: places
+            widget: list
+            summary: "{{fields.order}}. {{fields.title}}"
+            collapsed: true
+            fields:
+              - label: "ID (영문 소문자, 한 번 정하면 바꾸지 마세요)"
+                name: id
+                widget: string
+                hint: "예: cjhg, sdsd, cdg, cjst — 사진 파일명 prefix와도 일치하는 게 좋아요"
+                pattern: ['^[a-z0-9_-]+$', 'ID는 영문 소문자/숫자/하이픈/언더스코어만 허용']
+              - label: "정렬 순서 (1부터)"
+                name: order
+                widget: number
+                value_type: int
+                min: 1
+                default: 1
+              - label: "장소 이름"
+                name: title
+                widget: string
+              - label: "카드 위 작은 라벨 (영문 권장)"
+                name: cardEyebrow
+                widget: string
+                hint: "예: Faith · 1935 / National Treasure · 962"
+              - label: "카드 한 줄 태그라인"
+                name: cardTagline
+                widget: string
+                hint: "예: 한옥과 성공회의 만남"
+              - label: "메인 이미지 (카드 + 상세 페이지 히어로)"
+                name: img
+                widget: image
+                hint: "16:11 비율, 1920px 정도 권장"
+              - label: "히어로 영상 (선택, 25MB 이하)"
+                name: heroVideo
+                widget: file
+                required: false
+                hint: ".mp4 파일 — 있으면 상세 페이지 히어로로 자동재생"
+              - label: "상세 페이지 위 라벨"
+                name: detailEyebrow
+                widget: string
+                hint: "예: Heritage No.1 · 충청북도 유형문화재"
+              - label: "상세 페이지 부제 (개행 가능)"
+                name: tagline
+                widget: text
+              - label: "스펙 (4개 권장)"
+                label_singular: "스펙"
+                name: stats
+                widget: list
+                summary: "{{fields.label}}: {{fields.value}}"
+                fields:
+                  - { label: "항목명", name: label, widget: string, hint: "Built, Type, Designation 등" }
+                  - { label: "값", name: value, widget: string }
+              - label: "소개 섹션"
+                name: intro
+                widget: object
+                fields:
+                  - { label: "헤드라인", name: h, widget: string }
+                  - { label: "본문", name: p, widget: text }
+              - label: "본문 피처 섹션 (이미지 + 텍스트, 좌우 교차)"
+                label_singular: "피처"
+                name: features
+                widget: list
+                summary: "{{fields.eyebrow}}"
+                fields:
+                  - { label: "라벨 (작은 위 글자)", name: eyebrow, widget: string }
+                  - { label: "제목 (개행 가능)", name: h, widget: text }
+                  - { label: "본문", name: p, widget: text }
+                  - { label: "이미지", name: img, widget: image }
+                  - { label: "이미지를 왼쪽에 배치 (좌우 반전)", name: reverse, widget: boolean, default: false }
+              - label: "인용구 (페이지 마지막)"
+                name: quote
+                widget: object
+                fields:
+                  - { label: "본문", name: text, widget: text }
+                  - { label: "출처", name: cite, widget: string, default: "— Curator's note" }
+
+          - label: "타임라인 마커"
+            label_singular: "마커"
+            name: timeline
+            widget: list
+            summary: "{{fields.year}} · {{fields.place}}"
+            fields:
+              - { label: "연도 (또는 '조선 초' 같은 시대명)", name: year, widget: string }
+              - { label: "장소 이름", name: place, widget: string }
+              - { label: "한줄 설명 (개행 가능)", name: desc, widget: text }
