@@ -1033,6 +1033,9 @@ function renderEdit(main) {
                 <input class="input" data-bind="quote.cite" value="${escapeHTML(p.quote?.cite || "— Curator's note")}">
             </div>
         </div>
+
+        <div class="section-header">홈 화면 타임라인 마커</div>
+        <div class="card" id="tl-inline-card"></div>
     `;
 
     bindBindings(p);
@@ -1040,6 +1043,18 @@ function renderEdit(main) {
     renderImagePicker('#vid-picker', p.heroVideo, (newPath) => { p.heroVideo = newPath; markDirty(); }, 'video');
     renderStats(p);
     renderFeatures(p);
+    renderInlineTimeline(p);
+
+    // 장소 제목 바뀌면 매칭되는 타임라인 마커의 place 도 동기화
+    const titleInput = $('[data-bind="title"]');
+    if (titleInput) {
+        const oldTitle = p.title;
+        titleInput.addEventListener('input', () => {
+            const tl = state.timeline.find(t => t.place === oldTitle);
+            if (tl) tl.place = titleInput.value;
+            renderInlineTimeline(p); // 라벨 갱신
+        });
+    }
 
     $('#back-btn').onclick = async () => {
         if (await confirmIfDirty()) { state.view = 'list'; state.dirty = false; render(); }
@@ -1175,6 +1190,64 @@ function renderFeatures(p) {
         p.features.push({ eyebrow: '', h: '', p: '', img: '', reverse: false });
         markDirty();
         renderFeatures(p);
+    };
+}
+
+// ─── 인라인 타임라인 (각 장소 편집 페이지 안) ───
+function renderInlineTimeline(p) {
+    const c = $('#tl-inline-card');
+    if (!c) return;
+
+    let tl = state.timeline.find(t => t.place === p.title);
+
+    if (!tl) {
+        c.innerHTML = `
+            <p style="color:var(--gray); font-size:13px; margin-bottom:14px;">이 장소에 대응하는 타임라인 마커가 없어요.</p>
+            <button class="btn secondary small" id="add-tl-here">+ 타임라인 마커 추가</button>
+        `;
+        $('#add-tl-here').onclick = () => {
+            state.timeline.push({ year: '', place: p.title, desc: '' });
+            markDirty();
+            renderInlineTimeline(p);
+        };
+        return;
+    }
+
+    c.innerHTML = `
+        <div class="field-row-3">
+            <div class="field" style="margin:0;">
+                <label class="field-label">연도/시대</label>
+                <input class="input" id="tli-year" value="${escapeHTML(tl.year || '')}" placeholder="예: 962 / 조선 초">
+            </div>
+            <div class="field" style="margin:0;">
+                <label class="field-label">장소 (자동)</label>
+                <input class="input" value="${escapeHTML(tl.place || '')}" disabled style="opacity:0.6;">
+            </div>
+            <div class="field" style="margin:0;">
+                <label class="field-label">설명 (개행 가능)</label>
+                <textarea class="textarea" id="tli-desc" style="min-height:42px;">${escapeHTML(tl.desc || '')}</textarea>
+            </div>
+        </div>
+        <div style="margin-top:14px; display:flex; justify-content:flex-end;">
+            <button class="btn ghost small" id="del-tl-here" style="color:var(--red);">이 마커 삭제</button>
+        </div>
+        <div class="field-hint" style="margin-top:8px;">
+            홈 화면 하단 타임라인에 표시됩니다. 전체 마커 순서 변경은
+            <a href="#" id="open-tl-tab">타임라인 탭</a>에서.
+        </div>
+    `;
+    $('#tli-year').oninput = (e) => { tl.year = e.target.value; markDirty(); };
+    $('#tli-desc').oninput = (e) => { tl.desc = e.target.value; markDirty(); };
+    $('#del-tl-here').onclick = async () => {
+        const ok = await confirmDialog('타임라인 마커 삭제', '이 장소의 타임라인 마커를 지울까요? 장소 자체는 유지됩니다.', '삭제', true);
+        if (!ok) return;
+        state.timeline = state.timeline.filter(t => t.place !== p.title);
+        markDirty();
+        renderInlineTimeline(p);
+    };
+    $('#open-tl-tab').onclick = async (e) => {
+        e.preventDefault();
+        if (await confirmIfDirty()) { state.view = 'timeline'; state.dirty = false; render(); }
     };
 }
 
