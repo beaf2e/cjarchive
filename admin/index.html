@@ -15,12 +15,55 @@
 
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
     <style>
+        :root {
+            --apple-black: #211f20;
+            --apple-gray: #86868b;
+            --apple-light: #d2d2d7;
+            --apple-bg: #f5f5f7;
+            --apple-divider: #e5e5e7;
+            --apple-blue: #0066cc;
+        }
         html, body {
             margin: 0; padding: 0;
-            background: #1a1a1a; /* Sveltia 다크 테마와 매칭되는 배경 */
-            font-family: "Pretendard", -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--apple-bg);
+            color: var(--apple-black);
+            font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif !important;
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            letter-spacing: -0.01em;
         }
+        ::selection { background: var(--apple-black); color: #fff; }
+
+        /* Sveltia CMS UI 가능한 영역에 Apple-스러운 디테일 주입 */
+        :root, body {
+            /* Sveltia에서 일부 컴포넌트가 참조할 수 있는 CSS 변수 */
+            --primary-accent-color-light: #0066cc;
+            --primary-accent-color: #0066cc;
+            --tertiary-foreground-color: #86868b;
+        }
+        /* 전역 폰트와 모서리 톤 (가능한 한 모든 inputs/buttons에 적용) */
+        body * {
+            font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif !important;
+            letter-spacing: -0.01em;
+        }
+        /* 더 부드러운 모서리 */
+        button, input, textarea, select, dialog, [role="button"], [role="dialog"], .button, .modal {
+            border-radius: 10px !important;
+        }
+        /* 매끄러운 스크롤바 (macOS 스타일) */
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.18);
+            border-radius: 10px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+        }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.28); background-clip: padding-box; }
+        ::-webkit-scrollbar-track { background: transparent; }
+
+        /* 부드러운 페이지 진입 페이드 */
+        body { animation: fadeIn 0.4s ease-out both; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>

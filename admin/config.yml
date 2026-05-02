@@ -10,6 +10,10 @@ public_folder: ""
 
 locale: ko
 
+# Apple 톤 (밝은 테마 우선, 시스템 자동 변경 비활성)
+theme:
+  preferred: light
+
 site_url: https://cjarchive.pages.dev
 display_url: https://cjarchive.pages.dev
 logo_url: https://cjarchive.pages.dev/logo2.png
