@@ -873,18 +873,25 @@ function renderMain() {
 
 // ─── 장소 리스트 ───
 function renderList(main) {
+    const actionsHTML = `
+        <div class="actions">
+            ${state.dirty ? '<span class="dirty-indicator" style="font-size:12px;color:var(--gray);margin-right:8px;">변경사항 있음</span>' : ''}
+            <button class="btn secondary" id="new-place">+ 새 장소</button>
+            <button class="btn" id="save-list-btn" ${(!state.dirty || state.saving) ? 'disabled' : ''}>
+                ${state.saving ? '<span class="spinner"></span> 저장 중...' : '저장'}
+            </button>
+        </div>
+    `;
     if (state.places.length === 0) {
         main.innerHTML = `
-            <div class="page-header"><h1>장소</h1><div class="actions"><button class="btn" id="new-place">+ 새 장소</button></div></div>
+            <div class="page-header"><h1>장소</h1>${actionsHTML}</div>
             <div class="empty-state"><h2>아직 장소가 없어요</h2><p>첫 장소를 추가해보세요.</p></div>
         `;
     } else {
         main.innerHTML = `
             <div class="page-header">
                 <h1>장소 <span class="count">${state.places.length}</span></h1>
-                <div class="actions">
-                    <button class="btn" id="new-place">+ 새 장소</button>
-                </div>
+                ${actionsHTML}
             </div>
             <div class="places-grid">
                 ${state.places.map(p => `
@@ -910,6 +917,7 @@ function renderList(main) {
         state.view = 'edit';
         render();
     };
+    $('#save-list-btn').onclick = () => saveData('Update places list');
     $$('.place-card').forEach(c => c.onclick = () => {
         state.editingId = c.dataset.id;
         state.view = 'edit';
