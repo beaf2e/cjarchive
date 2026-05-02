@@ -660,8 +660,8 @@
             font-size: clamp(0.95rem, 2vw, 1.2rem);
             line-height: 1.2;
             letter-spacing: 0.04em;
-            word-spacing: 0.35em;
             text-transform: uppercase;
+            gap: 0.5em; /* flex gap → 단어 사이 간격 (display:flex 일 때 word-spacing 무시되므로 gap 사용) */
         }
         .footer-brand .b-heavy { font-weight: 900; }
         .footer-brand .b-reg   { font-weight: 400; }
