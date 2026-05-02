@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Cheongju Archive — Keynote</title>
+    <link rel="icon" type="image/png" href="logo2.png">
+    <link rel="apple-touch-icon" href="logo2.png">
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #000;
+            --fg: #fff;
+            --dim: rgba(255,255,255,0.5);
+            --accent: #2997ff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            width: 100%; height: 100%;
+            background: var(--bg); color: var(--fg);
+            overflow: hidden;
+            font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+            -webkit-font-smoothing: antialiased;
+            letter-spacing: -0.025em;
+        }
+        ::selection { background: #fff; color: #000; }
+
+        .deck {
+            position: relative;
+            width: 100vw; height: 100vh;
+        }
+        .slide {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 6vw 8vw;
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.6s;
+        }
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0s;
+        }
+        .slide.active .anim {
+            animation: rise 1s cubic-bezier(0.2, 0, 0.2, 1) both;
+        }
+        .slide.active .anim-2 { animation-delay: 0.18s; }
+        .slide.active .anim-3 { animation-delay: 0.36s; }
+        .slide.active .anim-4 { animation-delay: 0.54s; }
+        @keyframes rise {
+            from { opacity: 0; transform: translateY(28px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== TYPE ===== */
+        .eyebrow {
+            font-size: clamp(0.8rem, 1.2vw, 1rem);
+            font-weight: 600;
+            color: var(--accent);
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            margin-bottom: clamp(28px, 4vw, 48px);
+        }
+        h1 {
+            font-size: clamp(3rem, 9vw, 9rem);
+            font-weight: 700;
+            line-height: 0.98;
+            letter-spacing: -0.045em;
+            word-break: keep-all;
+        }
+        h1.giant {
+            font-size: clamp(4rem, 14vw, 14rem);
+            line-height: 0.9;
+        }
+        h2 {
+            font-size: clamp(2rem, 5vw, 4.5rem);
+            font-weight: 600;
+            line-height: 1.15;
+            letter-spacing: -0.035em;
+            word-break: keep-all;
+        }
+        p.lead {
+            font-size: clamp(1.1rem, 2vw, 1.7rem);
+            font-weight: 300;
+            color: var(--dim);
+            margin-top: clamp(24px, 3vw, 40px);
+            max-width: 18em;
+            line-height: 1.5;
+            word-break: keep-all;
+        }
+        p.tag {
+            font-size: clamp(0.9rem, 1.4vw, 1.15rem);
+            color: var(--dim);
+            letter-spacing: 0.04em;
+            margin-top: 24px;
+        }
+        .one-more {
+            font-style: italic;
+            font-weight: 400;
+            color: var(--dim);
+        }
+
+        /* ===== LIGHT SLIDE ===== */
+        .slide.light { background: #fff; color: #1d1d1f; }
+        .slide.light .eyebrow { color: #0066cc; }
+
+        /* ===== IMAGE SLIDE ===== */
+        .slide.image {
+            padding: 0;
+        }
+        .slide.image .bg-img {
+            position: absolute; inset: 0;
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.55);
+        }
+        .slide.image .bg-img.darken { filter: brightness(0.4); }
+        .slide.image .content {
+            position: relative; z-index: 2;
+            padding: 6vw 8vw;
+            text-align: left;
+            max-width: 1300px;
+            width: 100%;
+            margin: auto;
+            display: flex; flex-direction: column;
+            justify-content: flex-end;
+            min-height: 100vh;
+            padding-bottom: 12vh;
+        }
+        .slide.image h1 { font-size: clamp(3rem, 9vw, 8.5rem); margin-bottom: 18px; }
+        .slide.image .meta {
+            display: flex; gap: 32px; flex-wrap: wrap;
+            font-size: clamp(0.95rem, 1.4vw, 1.2rem);
+            color: rgba(255,255,255,0.85);
+            letter-spacing: 0.04em;
+            margin-top: 28px;
+        }
+        .slide.image .meta div span { display: block; font-size: 0.7em; color: rgba(255,255,255,0.55); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 6px; }
+
+        /* ===== STATS SLIDE ===== */
+        .stats-row {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: clamp(40px, 6vw, 100px);
+            margin-top: clamp(40px, 6vw, 80px);
+        }
+        .stats-row .stat .num {
+            font-size: clamp(3rem, 8vw, 7rem);
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            line-height: 1;
+        }
+        .stats-row .stat .lbl {
+            font-size: clamp(0.85rem, 1.2vw, 1.05rem);
+            color: var(--dim);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-top: 16px;
+        }
+
+        /* ===== CHROME ===== */
+        .chrome {
+            position: fixed; bottom: 24px; left: 0; right: 0;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 32px;
+            z-index: 100;
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            color: rgba(255,255,255,0.45);
+            text-transform: uppercase;
+            pointer-events: none;
+        }
+        .chrome.dark { color: rgba(0,0,0,0.4); }
+        .progress {
+            position: fixed; bottom: 0; left: 0; height: 2px;
+            background: var(--accent);
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 90;
+        }
+        .nav-hint {
+            position: fixed; right: 24px; top: 24px;
+            font-size: 10px; letter-spacing: 0.12em;
+            color: rgba(255,255,255,0.3);
+            text-transform: uppercase;
+            pointer-events: none;
+            z-index: 100;
+        }
+        .nav-hint.dark { color: rgba(0,0,0,0.35); }
+
+        /* hide scrollbars */
+        ::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+    <!-- 01 ===== TITLE ===== -->
+    <section class="slide">
+        <h1 class="anim">Cheongju<br>Archive.</h1>
+        <p class="tag anim anim-2">A digital heritage project · 2026</p>
+    </section>
+
+    <!-- 02 ===== HOOK ===== -->
+    <section class="slide">
+        <h2 class="anim">도시는 사라진다.</h2>
+    </section>
+
+    <!-- 03 ===== HOOK 2 ===== -->
+    <section class="slide">
+        <h2 class="anim">그러나 기록은,<br><span class="one-more">남는다.</span></h2>
+    </section>
+
+    <!-- 04 ===== INTRO ===== -->
+    <section class="slide">
+        <span class="eyebrow anim">Today</span>
+        <h1 class="anim anim-2">유산, 디지털로<br>다시 태어나다.</h1>
+        <p class="lead anim anim-3">청주의 가치를 기록하는 아카이브 프로젝트.</p>
+    </section>
+
+    <!-- 05 ===== BIG NUMBER ===== -->
+    <section class="slide">
+        <span class="eyebrow anim">In Numbers</span>
+        <h1 class="giant anim anim-2">04</h1>
+        <p class="lead anim anim-3">네 곳의 장소.<br>천 년의 시간.</p>
+    </section>
+
+    <!-- 06 ===== STATS BREAKDOWN ===== -->
+    <section class="slide">
+        <span class="eyebrow anim">Heritage in Numbers</span>
+        <div class="stats-row">
+            <div class="stat anim anim-2">
+                <div class="num">962</div>
+                <div class="lbl">가장 오래된 시간</div>
+            </div>
+            <div class="stat anim anim-3">
+                <div class="num">04</div>
+                <div class="lbl">기록한 장소</div>
+            </div>
+            <div class="stat anim anim-4">
+                <div class="num">1,063</div>
+                <div class="lbl">아카이브가 거슬러 오른 햇수</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 07 ===== PLACE 1: 철당간 ===== -->
+    <section class="slide image">
+        <div class="bg-img" style="background-image: url('cdg1.jpg');"></div>
+        <div class="content">
+            <span class="eyebrow anim">National Treasure 41</span>
+            <h1 class="anim anim-2">용두사지 철당간.</h1>
+            <p class="lead anim anim-3" style="color: rgba(255,255,255,0.85); max-width: 24em;">962년부터, 지금 이 거리에.</p>
+            <div class="meta anim anim-4">
+                <div><span>Built</span>962 (고려 광종 13년)</div>
+                <div><span>Height</span>13.1m · 철통 20개</div>
+                <div><span>Inscription</span>'준풍(峻豊)' 연호</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 08 ===== PLACE 2: 청주향교 ===== -->
+    <section class="slide image">
+        <div class="bg-img" style="background-image: url('cjhg1.jpg');"></div>
+        <div class="content">
+            <span class="eyebrow anim">Heritage No.39</span>
+            <h1 class="anim anim-2">청주향교.</h1>
+            <p class="lead anim anim-3" style="color: rgba(255,255,255,0.85); max-width: 24em;">조선 지방 교육의 마루를 걷다.</p>
+            <div class="meta anim anim-4">
+                <div><span>Type</span>지방 향교</div>
+                <div><span>Buildings</span>6동</div>
+                <div><span>Designated</span>1977.12 (유형문화재)</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 09 ===== PLACE 3: 옛 청주역 ===== -->
+    <section class="slide image">
+        <div class="bg-img" style="background-image: url('cjst1.jpg');"></div>
+        <div class="content">
+            <span class="eyebrow anim">Modernity</span>
+            <h1 class="anim anim-2">옛 청주역.</h1>
+            <p class="lead anim anim-3" style="color: rgba(255,255,255,0.85); max-width: 24em;">사라진 철길 위에 다시 세운 풍경.</p>
+            <div class="meta anim anim-4">
+                <div><span>Opened</span>1921.11.01</div>
+                <div><span>Relocated</span>1968 · 1980</div>
+                <div><span>Restored</span>2017.12 (역사공원)</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 10 ===== PLACE 4: 수동성당 ===== -->
+    <section class="slide image">
+        <div class="bg-img" style="background-image: url('sdsd1.jpg');"></div>
+        <div class="content">
+            <span class="eyebrow anim">Heritage No.149</span>
+            <h1 class="anim anim-2">수동성당.</h1>
+            <p class="lead anim anim-3" style="color: rgba(255,255,255,0.85); max-width: 24em;">한옥 처마 아래로, 서양의 종소리가 내려앉다.</p>
+            <div class="meta anim anim-4">
+                <div><span>Built</span>1935</div>
+                <div><span>Scale</span>32칸 · 팔작지붕</div>
+                <div><span>Founder</span>세실 쿠퍼 주교</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 11 ===== PIVOT ===== -->
+    <section class="slide light">
+        <span class="eyebrow anim">But</span>
+        <h2 class="anim anim-2">이건 사진<br>이야기가 아닙니다.</h2>
+    </section>
+
+    <!-- 12 ===== TRUE MESSAGE ===== -->
+    <section class="slide light">
+        <span class="eyebrow anim">It's about</span>
+        <h1 class="anim anim-2">우리가<br>누구였는가에<br>대한 이야기.</h1>
+    </section>
+
+    <!-- 13 ===== HOW WE BUILT IT ===== -->
+    <section class="slide">
+        <span class="eyebrow anim">How</span>
+        <h2 class="anim anim-2">한 명의 학생.<br>네 곳의 답사.<br>한 줄의 코드.</h2>
+        <p class="lead anim anim-3">HTML5 · GSAP · Cloudflare Pages</p>
+    </section>
+
+    <!-- 14 ===== ONE MORE THING ===== -->
+    <section class="slide">
+        <p class="tag anim" style="font-size: clamp(0.9rem, 1.6vw, 1.2rem);">And one more thing…</p>
+    </section>
+
+    <!-- 15 ===== CALL TO REMEMBER ===== -->
+    <section class="slide">
+        <h2 class="anim">기록은 시간을 이기는<br>유일한 방법입니다.</h2>
+        <p class="lead anim anim-2">— Curator's note</p>
+    </section>
+
+    <!-- 16 ===== CLOSING ===== -->
+    <section class="slide">
+        <h1 class="anim">Cheongju Archive.</h1>
+        <p class="tag anim anim-2">cjarchive.pages.dev</p>
+        <p class="tag anim anim-3" style="margin-top: 8px; color: rgba(255,255,255,0.3);">이민수 · 청석고등학교 2학년</p>
+    </section>
+
+</div>
+
+<div class="chrome" id="chrome">
+    <div>Cheongju Archive · Keynote</div>
+    <div id="counter">01 / 16</div>
+</div>
+<div class="nav-hint" id="hint">← →   navigate</div>
+<div class="progress" id="progress" style="width: 0;"></div>
+
+<script>
+    const deck = document.getElementById('deck');
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const total = slides.length;
+    const counter = document.getElementById('counter');
+    const progress = document.getElementById('progress');
+    const chrome = document.getElementById('chrome');
+    const hint = document.getElementById('hint');
+    let idx = 0;
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+
+    function render() {
+        slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+        counter.innerText = `${pad(idx + 1)} / ${pad(total)}`;
+        progress.style.width = `${((idx + 1) / total) * 100}%`;
+        const isLight = slides[idx].classList.contains('light');
+        chrome.classList.toggle('dark', isLight);
+        hint.classList.toggle('dark', isLight);
+    }
+
+    function go(n) {
+        idx = Math.max(0, Math.min(total - 1, n));
+        render();
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); go(idx + 1); }
+        else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(idx - 1); }
+        else if (e.key === 'Home') { go(0); }
+        else if (e.key === 'End') { go(total - 1); }
+        else if (e.key === 'f' || e.key === 'F') { document.documentElement.requestFullscreen?.(); }
+    });
+
+    // 클릭으로도 다음
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('a, button')) return;
+        const x = e.clientX;
+        if (x < window.innerWidth * 0.3) go(idx - 1);
+        else go(idx + 1);
+    });
+
+    render();
+</script>
+
+</body>
+</html>

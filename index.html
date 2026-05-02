@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="청주의 사라져가는 유산을 디지털로 기록하는 청석고등학교 학생 주도 아카이브 프로젝트입니다.">
+    <title>Cheongju Archive | 디지털 유산</title>
+
+    <link rel="icon" type="image/png" href="logo2.png">
+    <link rel="apple-touch-icon" href="logo2.png">
+    <meta name="theme-color" content="#211f20">
+
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+
+    <style>
+        :root {
+            --apple-black: #211f20;
+            --apple-gray: #86868b;
+            --apple-light: #d2d2d7;
+            --apple-bg: #f5f5f7;
+            --apple-divider: #e5e5e7;
+            --apple-blue: #0066cc;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: auto; }
+
+        body {
+            font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
+            background: #fff;
+            color: var(--apple-black);
+            overflow-x: hidden;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            letter-spacing: -0.01em;
+        }
+
+        ::selection { background: var(--apple-black); color: #fff; }
+        img { max-width: 100%; display: block; }
+
+        /* ===== NAV ===== */
+        .nav {
+            position: fixed; top: 0; width: 100%;
+            padding: clamp(12px, 3vw, 18px) clamp(20px, 5vw, 40px);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            background: rgba(255, 255, 255, 0.72);
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+            z-index: 1100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-title {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            line-height: 1;
+        }
+        .nav-title img {
+            height: clamp(24px, 3.6vw, 34px);
+            width: auto;
+            display: block;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+        /* 로고 파일이 없을 때 폴백 텍스트 */
+        .nav-title .fallback {
+            font-weight: 600;
+            font-size: clamp(0.95rem, 2vw, 1.05rem);
+            letter-spacing: -0.02em;
+        }
+
+        .menu-btn {
+            position: fixed;
+            top: calc(clamp(12px, 3vw, 18px) + clamp(24px, 3.6vw, 34px) / 2 - 18px);
+            right: clamp(20px, 5vw, 40px);
+            cursor: pointer;
+            border: none;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            gap: 5px;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: transparent;
+            z-index: 1300;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+        .menu-btn:hover { background: rgba(0,0,0,0.05); }
+        .menu-btn.open { background: rgba(255,255,255,0.9); box-shadow: 0 4px 18px rgba(0,0,0,0.08); }
+        .menu-btn.open:hover { background: #fff; }
+        .menu-btn span {
+            width: 22px; height: 1.5px;
+            background: var(--apple-black);
+            border-radius: 2px;
+            transform-origin: center;
+            transition:
+                transform 0.5s cubic-bezier(0.65, 0, 0.35, 1),
+                opacity 0.25s ease,
+                background 0.3s ease;
+        }
+        /* 햄버거 → X 모핑 */
+        .menu-btn.open span:nth-child(1) {
+            transform: translateY(6.5px) rotate(45deg);
+        }
+        .menu-btn.open span:nth-child(2) {
+            opacity: 0;
+            transform: scaleX(0);
+            transition: transform 0.2s ease, opacity 0.18s ease;
+        }
+        .menu-btn.open span:nth-child(3) {
+            transform: translateY(-6.5px) rotate(-45deg);
+        }
+        .menu-btn.open:hover { background: rgba(0,0,0,0.04); }
+
+        /* ===== SIDE MENU ===== */
+        .side-menu {
+            position: fixed;
+            top: 0; right: -340px;
+            width: min(340px, 82vw);
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: saturate(180%) blur(24px);
+            -webkit-backdrop-filter: saturate(180%) blur(24px);
+            z-index: 1200;
+            padding: clamp(90px, 16vw, 120px) clamp(28px, 5vw, 44px);
+            box-shadow: -16px 0 60px rgba(0,0,0,0.10);
+            display: flex; flex-direction: column; gap: 28px;
+        }
+        .side-menu h2 {
+            font-size: 0.75rem; font-weight: 600;
+            color: var(--apple-gray); letter-spacing: 0.12em;
+            text-transform: uppercase; margin-bottom: 6px;
+        }
+        .side-menu ul { list-style: none; }
+        .side-menu ul li {
+            font-size: clamp(1.15rem, 3vw, 1.3rem);
+            font-weight: 600;
+            margin-bottom: 22px;
+            cursor: pointer;
+            color: var(--apple-black);
+            transition: 0.3s ease;
+            letter-spacing: -0.02em;
+        }
+        .side-menu ul li:hover { color: var(--apple-blue); transform: translateX(-4px); }
+
+        .menu-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.25);
+            z-index: 1040;
+            display: none; opacity: 0;
+        }
+
+        /* ===== HERO ===== */
+        .hero { height: 250vh; position: relative; background: #000; }
+        .video-wrap {
+            position: sticky; top: 0;
+            width: 100%; height: 100vh;
+            overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .hero video {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover; filter: brightness(0.55);
+        }
+        .hero-content {
+            position: relative; text-align: center; color: white;
+            z-index: 10; width: 100%; padding: 0 20px;
+        }
+        .hero-content h1 {
+            font-size: clamp(2rem, 8vw, 5.4rem);
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            margin-bottom: 18px; opacity: 0;
+            line-height: 1.12;
+        }
+        .hero-content p {
+            font-size: clamp(0.95rem, 2.4vw, 1.4rem);
+            font-weight: 300;
+            letter-spacing: 0.06em;
+            opacity: 0;
+        }
+
+        .scroll-guide {
+            position: absolute; bottom: clamp(24px, 5vw, 44px); left: 50%;
+            transform: translateX(-50%); color: white;
+            text-align: center; z-index: 15; opacity: 0;
+        }
+        .scroll-guide p { font-size: 0.7rem; letter-spacing: 0.18em; margin-bottom: 10px; text-transform: uppercase; }
+        .mouse { width: 22px; height: 34px; border: 1.5px solid rgba(255,255,255,0.85); border-radius: 12px; margin: 0 auto; position: relative; }
+        .wheel { width: 3px; height: 6px; background: white; border-radius: 2px; position: absolute; top: 5px; left: 50%; transform: translateX(-50%); animation: scroll-ani 1.6s infinite; }
+        @keyframes scroll-ani { 0% { top: 5px; opacity: 1; } 100% { top: 18px; opacity: 0; } }
+
+        /* ===== SECTIONS ===== */
+        .section { padding: clamp(80px, 14vw, 160px) clamp(20px, 5vw, 40px); max-width: 1200px; margin: auto; }
+        .section-eyebrow {
+            display: inline-block;
+            font-size: clamp(0.72rem, 1.6vw, 0.82rem);
+            font-weight: 600;
+            color: var(--apple-blue);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-bottom: clamp(14px, 3vw, 20px);
+        }
+        .value-text { opacity: 0; transform: translateY(30px); word-break: keep-all; }
+
+        /* ===== GRID ===== */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: clamp(36px, 6vw, 72px) clamp(28px, 5vw, 56px);
+        }
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; gap: clamp(28px, 6vw, 48px); }
+            .hero { height: 200vh; }
+        }
+
+        .card {
+            position: relative; overflow: hidden; border-radius: 24px;
+            background: var(--apple-bg); aspect-ratio: 16 / 11;
+            cursor: pointer; opacity: 0; transform: translateY(50px);
+            transition: box-shadow 0.4s ease;
+        }
+        .card:hover { box-shadow: 0 20px 50px rgba(0,0,0,0.12); }
+        .card img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s cubic-bezier(0.2, 0, 0.2, 1); }
+        .card:hover img { transform: scale(1.06); }
+        .card-overlay {
+            position: absolute; inset: 0; padding: clamp(20px, 4vw, 40px);
+            display: flex; flex-direction: column; justify-content: flex-end;
+            background: linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.1) 55%, transparent 80%);
+            color: white;
+        }
+        .card-overlay .card-eyebrow {
+            font-size: 0.72rem; letter-spacing: 0.16em;
+            text-transform: uppercase; opacity: 0.85; margin-bottom: 14px;
+        }
+        .card h3 {
+            font-size: clamp(1.3rem, 3vw, 1.95rem);
+            margin-bottom: 10px; font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        .card-tagline { font-size: clamp(0.85rem, 2vw, 1.05rem); opacity: 0.85; font-weight: 300; }
+
+        /* ===== DETAIL PAGE ===== */
+        .detail-page {
+            display: none;
+            position: fixed; inset: 0;
+            background: #fff;
+            z-index: 2000;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .back-btn {
+            position: fixed; top: clamp(16px, 3vw, 24px); left: clamp(16px, 3vw, 24px);
+            width: clamp(44px, 5vw, 50px); height: clamp(44px, 5vw, 50px);
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 50%;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+            border: 1px solid rgba(0,0,0,0.06);
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 2100;
+            transition: 0.3s;
+        }
+        .back-btn:hover { background: var(--apple-bg); transform: translateX(-2px); }
+        .back-btn svg { width: 22px; height: 22px; fill: none; stroke: black; stroke-width: 2.2; }
+
+        .detail-hero {
+            width: 100%;
+            height: clamp(60vh, 90vh, 100vh);
+            position: relative;
+            overflow: hidden;
+            background: #000;
+        }
+        .detail-hero img,
+        .detail-hero video {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            filter: brightness(0.62);
+            transform: scale(1.06);
+        }
+        .detail-hero-content {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column;
+            justify-content: flex-end;
+            padding: clamp(40px, 8vw, 90px) clamp(24px, 6vw, 80px);
+            color: #fff;
+            text-align: left;
+            max-width: 1400px;
+            margin: 0 auto;
+            left: 0; right: 0;
+        }
+        .detail-eyebrow {
+            display: inline-block;
+            font-size: clamp(0.7rem, 1.5vw, 0.8rem);
+            font-weight: 600;
+            color: rgba(255,255,255,0.85);
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            margin-bottom: clamp(14px, 3vw, 22px);
+        }
+        .detail-hero-content h1 {
+            font-size: clamp(2.4rem, 9vw, 6rem);
+            font-weight: 700;
+            letter-spacing: -0.045em;
+            line-height: 1.05;
+            margin-bottom: clamp(14px, 3vw, 22px);
+            word-break: keep-all;
+        }
+        .detail-tagline {
+            font-size: clamp(1rem, 2.4vw, 1.4rem);
+            font-weight: 300;
+            color: rgba(255,255,255,0.92);
+            max-width: 720px;
+            word-break: keep-all;
+            line-height: 1.5;
+        }
+
+        /* ===== STAT STRIP ===== */
+        .stat-strip {
+            border-bottom: 1px solid var(--apple-divider);
+            padding: clamp(40px, 6vw, 70px) clamp(20px, 5vw, 40px);
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: clamp(20px, 3vw, 40px);
+        }
+        @media (max-width: 768px) {
+            .stat-strip { grid-template-columns: repeat(2, 1fr); gap: 30px 20px; }
+        }
+        .stat-cell {
+            text-align: left;
+            border-left: 1px solid var(--apple-divider);
+            padding-left: clamp(16px, 2vw, 24px);
+        }
+        .stat-cell:first-child { border-left: none; padding-left: 0; }
+        @media (max-width: 768px) {
+            .stat-cell:nth-child(odd) { border-left: none; padding-left: 0; }
+        }
+        .stat-cell .label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--apple-gray);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .stat-cell .value {
+            font-size: clamp(1.1rem, 2.4vw, 1.4rem);
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            line-height: 1.3;
+            word-break: keep-all;
+        }
+
+        /* ===== INTRO BLOCK ===== */
+        .intro-block {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: clamp(70px, 12vw, 130px) clamp(20px, 5vw, 40px) clamp(40px, 8vw, 80px);
+            text-align: center;
+        }
+        .intro-block h2 {
+            font-size: clamp(1.6rem, 4.5vw, 2.8rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.25;
+            margin-bottom: clamp(20px, 4vw, 32px);
+            word-break: keep-all;
+        }
+        .intro-block p {
+            font-size: clamp(1.05rem, 2.4vw, 1.35rem);
+            color: #424245;
+            line-height: 1.65;
+            font-weight: 400;
+            word-break: keep-all;
+            letter-spacing: -0.01em;
+        }
+
+        /* ===== FEATURE ROW ===== */
+        .feature-row {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: clamp(50px, 10vw, 100px) clamp(20px, 5vw, 40px);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(30px, 6vw, 80px);
+            align-items: center;
+        }
+        .feature-row.reverse .feature-text { order: 2; }
+        .feature-row.reverse .feature-media { order: 1; }
+        @media (max-width: 768px) {
+            .feature-row { grid-template-columns: 1fr; gap: 30px; padding-top: 40px; padding-bottom: 40px; }
+            .feature-row.reverse .feature-text,
+            .feature-row.reverse .feature-media { order: initial; }
+        }
+        .feature-media {
+            border-radius: 22px;
+            overflow: hidden;
+            aspect-ratio: 4/3;
+            background: var(--apple-bg);
+        }
+        .feature-media img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+        .feature-media:hover img { transform: scale(1.04); }
+        .feature-text h3 {
+            font-size: clamp(1.5rem, 3.5vw, 2.4rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.2;
+            margin-bottom: clamp(16px, 3vw, 22px);
+            word-break: keep-all;
+        }
+        .feature-text p {
+            font-size: clamp(0.98rem, 2vw, 1.12rem);
+            color: #424245;
+            line-height: 1.75;
+            word-break: keep-all;
+        }
+        .feature-text .feature-eyebrow {
+            display: inline-block;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--apple-blue);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        /* ===== PULL QUOTE ===== */
+        .pull-quote {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: clamp(70px, 12vw, 130px) clamp(20px, 5vw, 40px);
+            text-align: center;
+        }
+        .pull-quote blockquote {
+            font-size: clamp(1.35rem, 3.6vw, 2.3rem);
+            font-weight: 600;
+            letter-spacing: -0.025em;
+            line-height: 1.4;
+            color: var(--apple-black);
+            word-break: keep-all;
+        }
+        .pull-quote blockquote::before {
+            content: "“";
+            display: block;
+            font-size: 4em;
+            line-height: 0.4;
+            color: var(--apple-light);
+            margin-bottom: 30px;
+            font-family: Georgia, serif;
+        }
+        .pull-quote cite {
+            display: block;
+            margin-top: clamp(24px, 4vw, 36px);
+            font-size: 0.85rem;
+            font-style: normal;
+            color: var(--apple-gray);
+            letter-spacing: 0.04em;
+        }
+
+        /* ===== FULL BLEED IMAGE ===== */
+        .full-bleed {
+            width: 100%;
+            background: var(--apple-bg);
+        }
+        .full-bleed img {
+            width: 100%;
+            height: clamp(50vh, 70vw, 90vh);
+            object-fit: cover;
+        }
+
+        /* ===== NEXT NAV ===== */
+        .next-nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: clamp(60px, 10vw, 100px) clamp(20px, 5vw, 40px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            border-top: 1px solid var(--apple-divider);
+        }
+        .next-nav .next-meta { font-size: 0.85rem; color: var(--apple-gray); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+        .next-nav .next-title {
+            font-size: clamp(1.4rem, 3vw, 1.9rem);
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: var(--apple-blue);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .next-nav .next-title:hover { color: #004599; }
+        .next-nav .next-title::after {
+            content: " →";
+            transition: transform 0.3s;
+            display: inline-block;
+        }
+        .next-nav .next-title:hover::after { transform: translateX(4px); }
+
+        /* ===== TIMELINE ===== */
+        .timeline-section {
+            padding: clamp(80px, 14vw, 160px) clamp(20px, 5vw, 40px);
+            max-width: 1280px;
+            margin: 0 auto;
+            border-top: 1px solid var(--apple-divider);
+        }
+        .timeline-header { text-align: center; margin-bottom: clamp(50px, 8vw, 90px); max-width: 720px; margin-left: auto; margin-right: auto; }
+        .timeline-header h2 {
+            font-size: clamp(1.7rem, 4.5vw, 2.8rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.25;
+            margin-bottom: 16px;
+            word-break: keep-all;
+        }
+        .timeline-header p {
+            font-size: clamp(1rem, 2.2vw, 1.15rem);
+            color: var(--apple-gray);
+            word-break: keep-all;
+            line-height: 1.7;
+        }
+
+        .timeline {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: clamp(16px, 2vw, 28px);
+        }
+        .timeline::before {
+            content: "";
+            position: absolute;
+            top: clamp(38px, 5vw, 54px);
+            left: 8%; right: 8%;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--apple-light) 12%, var(--apple-light) 88%, transparent);
+            z-index: 0;
+        }
+
+        .timeline-item {
+            position: relative;
+            text-align: center;
+            padding-top: 0;
+            opacity: 0; transform: translateY(30px);
+        }
+        .timeline-item .year {
+            font-size: clamp(1.3rem, 3.4vw, 2.1rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1;
+            background: linear-gradient(135deg, #211f20 0%, #525258 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: clamp(14px, 2.4vw, 22px);
+        }
+        .timeline-item .dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid var(--apple-black);
+            margin: 0 auto clamp(16px, 2.4vw, 22px);
+            position: relative;
+            z-index: 2;
+            transition: transform 0.4s ease, background 0.4s ease;
+        }
+        .timeline-item:hover .dot { transform: scale(1.4); background: var(--apple-blue); border-color: var(--apple-blue); }
+        .timeline-item .place {
+            font-size: clamp(0.95rem, 2vw, 1.1rem);
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 6px;
+            word-break: keep-all;
+        }
+        .timeline-item .desc {
+            font-size: clamp(0.78rem, 1.6vw, 0.88rem);
+            color: var(--apple-gray);
+            line-height: 1.6;
+            word-break: keep-all;
+        }
+
+        @media (max-width: 768px) {
+            .timeline {
+                grid-template-columns: 1fr;
+                gap: clamp(28px, 6vw, 40px);
+                padding-left: clamp(20px, 6vw, 40px);
+            }
+            .timeline::before {
+                top: 0; bottom: 0;
+                left: clamp(8px, 2vw, 16px); right: auto;
+                width: 1px; height: auto;
+                background: linear-gradient(to bottom, transparent, var(--apple-light) 8%, var(--apple-light) 92%, transparent);
+            }
+            .timeline-item {
+                text-align: left;
+                display: grid;
+                grid-template-columns: auto 1fr;
+                grid-template-rows: auto auto;
+                column-gap: clamp(16px, 4vw, 24px);
+                row-gap: 4px;
+                align-items: start;
+            }
+            .timeline-item .dot {
+                grid-row: 1 / 3;
+                grid-column: 1;
+                margin: 6px 0 0;
+            }
+            .timeline-item .year {
+                grid-column: 2;
+                margin-bottom: 6px;
+                font-size: clamp(1.4rem, 5vw, 1.7rem);
+            }
+            .timeline-item .place {
+                grid-column: 2;
+            }
+            .timeline-item .desc {
+                grid-column: 2;
+                margin-top: 4px;
+            }
+        }
+
+        /* ===== FOOTER ===== */
+        .footer { padding: clamp(50px, 8vw, 90px) clamp(20px, 5vw, 40px) 60px; background: var(--apple-bg); color: var(--apple-gray); font-size: 0.9rem; }
+        .footer-grid {
+            max-width: 1200px; margin: 0 auto;
+            display: flex; flex-wrap: wrap; justify-content: space-between;
+            text-align: left; gap: 40px; padding-bottom: 50px;
+        }
+        .footer-grid h4 {
+            color: var(--apple-black);
+            margin-bottom: 18px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: -0.01em;
+        }
+        .footer-brand {
+            font-size: clamp(0.95rem, 2vw, 1.2rem);
+            line-height: 1.2;
+            letter-spacing: 0.02em;
+            color: var(--apple-black);
+            margin-bottom: 18px;
+            word-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        .footer-brand .b-heavy { font-weight: 900; }
+        .footer-brand .b-reg   { font-weight: 400; }
+        .footer-brand .b-light { font-weight: 300; text-transform: none; }
+        .footer-grid p, .footer-grid li {
+            font-size: 0.85rem;
+            color: var(--apple-gray);
+            line-height: 1.8;
+            word-break: keep-all;
+        }
+        .footer-bottom {
+            border-top: 1px solid var(--apple-divider);
+            padding-top: 26px;
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .reveal { opacity: 0; transform: translateY(36px); }
+    </style>
+</head>
+
+<body>
+
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<nav class="nav" id="navBar">
+    <div class="nav-title" onclick="goHome()">
+        <img src="logo.png" alt="Cheongju Archive" onerror="this.outerHTML='<span class=\'fallback\'>Cheongju Archive</span>'">
+    </div>
+</nav>
+
+<button class="menu-btn" id="menuBtn" aria-label="메뉴 열기">
+    <span></span><span></span><span></span>
+</button>
+
+<div class="side-menu" id="sideMenu">
+    <h2>Navigation</h2>
+    <ul>
+        <li onclick="scrollToSection('hero')">메인 홈</li>
+        <li onclick="openPlace('cjhg')">청주향교</li>
+        <li onclick="openPlace('sdsd')">수동성당</li>
+        <li onclick="openPlace('cdg')">용두사지 철당간</li>
+        <li onclick="openPlace('cjst')">옛 청주역</li>
+        <li onclick="scrollToSection('timeline')">타임라인</li>
+    </ul>
+</div>
+
+<!-- ===== MAIN HOME ===== -->
+<main id="home">
+
+<section class="hero" id="hero">
+    <div class="video-wrap">
+        <video autoplay muted loop playsinline>
+            <source src="drone.mp4" type="video/mp4">
+        </video>
+        <div class="hero-content" id="heroText">
+            <h1 id="mainTitle">유산, 디지털로 다시 태어나다.</h1>
+            <p id="subTitle">청주의 가치를 기록하는 아카이브 프로젝트</p>
+        </div>
+        <div class="scroll-guide" id="scrollGuide">
+            <p>Scroll Down</p>
+            <div class="mouse"><div class="wheel"></div></div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div style="text-align: center; max-width: 800px; margin: 0 auto;">
+        <span class="section-eyebrow value-text">Why We Archive</span>
+        <h2 class="value-text" style="font-size: clamp(1.7rem, 4.5vw, 2.8rem); margin-bottom: clamp(20px, 5vw, 36px); font-weight: 700; letter-spacing: -0.03em; word-break: keep-all; line-height: 1.25;">기록은 시간을 이기는<br>유일한 방법입니다</h2>
+        <p class="value-text" style="font-size: clamp(1.05rem, 2.4vw, 1.25rem); color: #424245; line-height: 1.75; word-break: keep-all;">
+            우리가 살아가는 청주의 풍경 속에는 수백 년의 시간이 겹겹이 쌓여 있습니다.
+            사라져가는 유산을 디지털로 기록하는 것은 미래 세대에게 우리의 정체성을 전달하는 교육적 실천입니다.
+        </p>
+    </div>
+</section>
+
+<section class="section" style="border-top: 1px solid var(--apple-divider); max-width: 1280px;">
+    <div style="text-align: center; max-width: 720px; margin: 0 auto clamp(40px, 8vw, 70px);">
+        <span class="section-eyebrow value-text">Heritage Stories</span>
+        <h2 class="value-text" style="font-size: clamp(1.5rem, 4vw, 2.4rem); font-weight: 700; letter-spacing: -0.03em; word-break: keep-all;">네 곳의 시간, 한 도시의 기억</h2>
+    </div>
+    <div class="grid">
+        <div class="card" id="card-cjhg" onclick="openPlace('cjhg')"><img src="cjhg1.jpg" alt="청주향교"><div class="card-overlay"><div class="card-eyebrow">Education · 1450s</div><h3>청주향교</h3><p class="card-tagline">전통 교육의 발자취</p></div></div>
+        <div class="card" id="card-sdsd" onclick="openPlace('sdsd')"><img src="sdsd1.jpg" alt="수동성당"><div class="card-overlay"><div class="card-eyebrow">Faith · 1935</div><h3>수동성당</h3><p class="card-tagline">한옥과 성공회의 만남</p></div></div>
+        <div class="card" id="card-cdg" onclick="openPlace('cdg')"><img src="cdg1.jpg" alt="용두사지 철당간"><div class="card-overlay"><div class="card-eyebrow">National Treasure · 962</div><h3>용두사지 철당간</h3><p class="card-tagline">천년을 견딘 쇠기둥</p></div></div>
+        <div class="card" id="card-cjst" onclick="openPlace('cjst')"><img src="cjst1.jpg" alt="옛 청주역사공원"><div class="card-overlay"><div class="card-eyebrow">Modernity · 1921</div><h3>옛 청주역</h3><p class="card-tagline">사라진 철길의 자리</p></div></div>
+    </div>
+</section>
+
+<!-- ===== TIMELINE ===== -->
+<section class="timeline-section" id="timeline">
+    <div class="timeline-header">
+        <span class="section-eyebrow value-text">A Thousand Years in One City</span>
+        <h2 class="value-text">하나의 도시가<br>걸어온 천 년의 시간</h2>
+        <p class="value-text">고려에서 시작된 시간이 조선과 근대를 지나, 지금 우리의 발 밑에 닿아 있습니다.</p>
+    </div>
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="year">962</div>
+            <div class="dot"></div>
+            <div class="place">용두사지 철당간</div>
+            <div class="desc">고려 광종 13년,<br>천 년의 시작.</div>
+        </div>
+        <div class="timeline-item">
+            <div class="year">조선 초</div>
+            <div class="dot"></div>
+            <div class="place">청주향교</div>
+            <div class="desc">지방 교육의<br>마루를 놓다.</div>
+        </div>
+        <div class="timeline-item">
+            <div class="year">1921</div>
+            <div class="dot"></div>
+            <div class="place">옛 청주역</div>
+            <div class="desc">충북선과 함께<br>도시의 관문이 열리다.</div>
+        </div>
+        <div class="timeline-item">
+            <div class="year">1935</div>
+            <div class="dot"></div>
+            <div class="place">수동성당</div>
+            <div class="desc">한옥과 성공회,<br>두 세계의 만남.</div>
+        </div>
+        <div class="timeline-item">
+            <div class="year">2017</div>
+            <div class="dot"></div>
+            <div class="place">청주역사공원</div>
+            <div class="desc">비워진 자리가<br>다시 풍경이 되다.</div>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="footer-grid">
+        <div style="flex: 1.4; min-width: 250px;">
+            <div class="footer-brand"><span class="b-heavy">Cheongju</span> <span class="b-reg">Archive</span> <span class="b-light">Project</span></div>
+            <p>
+                청석고등학교 학생 주도로 진행되는 디지털 아카이빙 프로젝트입니다.<br>
+                청주의 유구한 역사적 가치를 기록하고 보존하여 미래 세대에게 전달합니다.
+            </p>
+        </div>
+        <div style="flex: 1; min-width: 200px;">
+            <h4>Contributors</h4>
+            <p style="font-weight: 500; color: var(--apple-black);">제작 · 청석고등학교 2학년 이민수</p>
+            <p style="margin-top: 6px;">문의 · student@cshs.hs.kr</p>
+        </div>
+        <div style="flex: 1; min-width: 180px;">
+            <h4>Information</h4>
+            <ul style="list-style: none;">
+                <li>Last Updated · 2026. 05. 02</li>
+                <li>Data Source · 직접 촬영, 국가유산청</li>
+                <li>Technology · HTML5, GSAP, Cloudflare Pages</li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p style="font-size: 0.75rem; color: #a1a1a6;">&copy; 2026 Cheongseok High School Archive Project. All rights reserved.</p>
+    </div>
+</footer>
+
+</main>
+
+<!-- ===== DETAIL PAGE TEMPLATE ===== -->
+<section class="detail-page" id="detail">
+    <button class="back-btn" id="closeBtn" aria-label="닫기"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <div id="detail-content"></div>
+</section>
+
+<script>
+    gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+    /* ===== 콘텐츠 데이터 ===== */
+    const PLACES = {
+        cjhg: {
+            order: 1,
+            eyebrow: "Heritage No.1 · 충청북도 유형문화재",
+            title: "청주향교",
+            tagline: "조선 지방 교육의 마루를 걷다.",
+            img: "cjhg1.jpg",
+            stats: [
+                { label: "Type", value: "지방 향교" },
+                { label: "Designation", value: "유형문화재 39호" },
+                { label: "Designated", value: "1977년 12월" },
+                { label: "Buildings", value: "6동" }
+            ],
+            intro: {
+                h: "한 도시의 학문이 시작된 곳.",
+                p: "고려와 조선의 지방 사회에서 향교는 단순한 학교가 아니었습니다. 유교적 윤리와 학문, 그리고 지역 공동체의 의례가 함께 자라던 살아있는 교실이었습니다. 청주향교는 그 시대의 호흡을 가장 잘 보여주는 청주의 정신적 좌표입니다."
+            },
+            features: [
+                {
+                    eyebrow: "Architecture",
+                    h: "여섯 채의 건물,\n하나의 가르침.",
+                    p: "대성전, 명륜당, 동재와 서재 등 여섯 동의 건물이 만들어내는 배치는 단순하지만 정교합니다. 학문(明倫堂)과 제향(大成殿)이 축을 따라 마주 서며, 배움과 예가 분리될 수 없다는 조선의 교육 철학을 공간으로 이야기합니다.",
+                    img: "cjhg1.jpg",
+                    reverse: false
+                },
+                {
+                    eyebrow: "Continuity",
+                    h: "1977년에 다시\n빛을 본 시간.",
+                    p: "1977년 12월, 청주향교는 충청북도 유형문화재로 지정되며 보존의 길을 걷기 시작했습니다. 그러나 진짜 보존은 문화재 번호가 아닌, 그 안에서 여전히 책을 읽고 예를 갖추는 사람의 행위에서 이어집니다.",
+                    img: "cjhg1.jpg",
+                    reverse: true
+                }
+            ],
+            quote: {
+                text: "마루의 결을 따라 걸으면, 가장 오래된 학교는 여전히 가장 새로운 질문을 던지고 있다.",
+                cite: "— Curator's note"
+            },
+            next: { id: "sdsd", title: "수동성당" }
+        },
+        sdsd: {
+            order: 2,
+            eyebrow: "Heritage No.2 · 충청북도 유형문화재 149호",
+            title: "수동성당",
+            tagline: "한옥의 처마 아래로,\n서양의 종소리가 내려앉다.",
+            img: "sdsd1.jpg",
+            stats: [
+                { label: "Built", value: "1935년" },
+                { label: "Designation", value: "유형문화재 149호" },
+                { label: "Designated", value: "1985년 12월" },
+                { label: "Scale", value: "32칸 · 팔작지붕" }
+            ],
+            intro: {
+                h: "충돌이 아닌, 대화의 건축.",
+                p: "1935년, 청주 한복판에 한옥과 서양식이 절묘하게 만나는 성당이 세워졌습니다. 한국인의 풍토 위에 서구의 신앙을 새기려 했던 초기 성공회 선교사들의 토착화 의지가 한 채의 건축으로 응축된, 한국 근대건축사의 작은 사건입니다."
+            },
+            features: [
+                {
+                    eyebrow: "Material",
+                    h: "한식 기와, 그러나\n그 안의 풍경은 다르다.",
+                    p: "팔작지붕에 한식 기와를 얹었지만, 외벽은 벽돌과 콘크리트, 내벽은 석회로 마감되었습니다. 겉으로 보면 한옥처럼 보이는 형태 안에 서구식 예배 공간이 자리 잡으며, 두 건축 언어가 한 지붕 아래에서 공존합니다.",
+                    img: "sdsd1.jpg",
+                    reverse: false
+                },
+                {
+                    eyebrow: "Founder",
+                    h: "구세실 주교,\n토착화의 손.",
+                    p: "당시 대한성공회 주교였던 세실 쿠퍼(한국 이름 구세실)의 손에서 이 건물은 완성되었습니다. 외래의 종교를 한국의 풍경 안에 자리 잡게 하려던 그의 시선이, 지금도 처마 끝에 남아 있습니다.",
+                    img: "sdsd1.jpg",
+                    reverse: true
+                }
+            ],
+            quote: {
+                text: "다른 두 세계가 만나는 가장 아름다운 방식은, 어느 한쪽이 다른 한쪽을 흉내내지 않는 것이다.",
+                cite: "— Curator's note"
+            },
+            next: { id: "cdg", title: "용두사지 철당간" }
+        },
+        cdg: {
+            order: 3,
+            eyebrow: "Heritage No.3 · 국보 41호",
+            title: "용두사지 철당간",
+            tagline: "962년부터, 지금 이 거리에.",
+            img: "cdg1.jpg",
+            heroVideo: "cdg.mp4",
+            stats: [
+                { label: "Built", value: "962년 (광종 13년)" },
+                { label: "Designation", value: "국보 41호" },
+                { label: "Designated", value: "1962년 12월" },
+                { label: "Height", value: "13.1m · 철통 20개" }
+            ],
+            intro: {
+                h: "천 년 전의 시간이,\n도심의 한복판에 서 있다.",
+                p: "용두사지 철당간은 고려 광종 13년, 서기 962년에 세워졌습니다. 사찰은 사라졌지만, 13.1미터의 쇠기둥은 도시의 중심에 그대로 남아 천 년의 시간을 지키고 있습니다. 화려하지 않지만, 그래서 더 오래 머무르는 유산입니다."
+            },
+            features: [
+                {
+                    eyebrow: "Inscription",
+                    h: "‘준풍(峻豊)’,\n고려가 새긴 자기 이름.",
+                    p: "당간 아래쪽 철통에는 해서체로 새겨진 명문이 있습니다. 그 안에는 고려가 독자적으로 사용한 연호 ‘준풍(峻豊)’이 적혀 있습니다. 중국의 연호가 아닌 자신의 시간을 새긴 그 두 글자는, 한 왕조가 자신을 어떻게 부르고 싶어 했는지를 보여주는 결정적 증거입니다.",
+                    img: "cdg1.jpg",
+                    reverse: false
+                },
+                {
+                    eyebrow: "Structure",
+                    h: "두 개의 화강암,\n스무 개의 철통.",
+                    p: "두 개의 화강암 지주(높이 4.2m)가 20개의 철통을 단단히 붙들고 있습니다. 본래는 30개의 철통이 쌓여 있었지만, 시간은 그중 열을 가져갔습니다. 남은 스물은, 사라진 열이 있었음을 증언합니다.",
+                    img: "cdg1.jpg",
+                    reverse: true
+                }
+            ],
+            quote: {
+                text: "사찰은 사라졌고, 사람도 바뀌었지만, 쇠는 그 자리에서 천 년을 견뎠다.",
+                cite: "— Curator's note"
+            },
+            next: { id: "cjst", title: "옛 청주역" }
+        },
+        cjst: {
+            order: 4,
+            eyebrow: "Heritage No.4 · 근대 교통의 기억",
+            title: "옛 청주역",
+            tagline: "사라진 철길 위에 다시 세운 풍경.",
+            img: "cjst1.jpg",
+            heroVideo: "cjst.mp4",
+            stats: [
+                { label: "Opened", value: "1921년 11월" },
+                { label: "Relocated", value: "1968 · 1980년" },
+                { label: "Restored", value: "2017년 12월" },
+                { label: "Today", value: "청주역사공원" }
+            ],
+            intro: {
+                h: "도시는 떠났고,\n자리는 남았다.",
+                p: "1921년 11월 1일, 충북선의 시작과 함께 청주역은 도시의 관문이 되었습니다. 그러나 시가지는 자라났고 철길은 두 번 옮겨졌습니다. 비워진 자리는 2017년, 청주역사공원이라는 이름으로 다시 시민의 일상에 들어섰습니다."
+            },
+            features: [
+                {
+                    eyebrow: "1921",
+                    h: "충북선의 첫 정거장,\n도시가 깨어나던 자리.",
+                    p: "청주의 첫 철도는 본정4정목, 지금의 청주시청 인근에서 시작되었습니다. 사람과 짐, 소문과 약속이 함께 실려 들어오던 이 자리는 한때 도시에서 가장 분주한 점이었습니다.",
+                    img: "cjst1.jpg",
+                    reverse: false
+                },
+                {
+                    eyebrow: "1968 — 1980",
+                    h: "두 번의 이전,\n도시 외곽으로 밀려난 시간.",
+                    p: "1968년 시내 구간이 이설되며 우암동으로, 1980년 충북선 복선화로 다시 현재의 위치로. 두 번의 이동은 단순한 행정이 아니라, 도시가 자기 중심을 어떻게 다시 그렸는지를 보여주는 지도입니다.",
+                    img: "cjst1.jpg",
+                    reverse: true
+                },
+                {
+                    eyebrow: "2017",
+                    h: "비워진 자리,\n공원이 되다.",
+                    p: "2016년 7월부터 시작된 복원 공사는 2017년 12월에 마무리되었습니다. 청주역사공원은 더 이상 기차가 다니지 않는 자리에서, 사라진 시간을 기억하는 가장 일상적인 방식이 되었습니다.",
+                    img: "cjst1.jpg",
+                    reverse: false
+                }
+            ],
+            quote: {
+                text: "기차가 떠난 자리에 사람의 걸음이 다시 쌓일 때, 도시는 비로소 자기 역사를 이어 적기 시작한다.",
+                cite: "— Curator's note"
+            },
+            next: { id: "cjhg", title: "청주향교" }
+        }
+    };
+
+    /* ===== 메뉴 ===== */
+    const menuBtn = document.getElementById('menuBtn');
+    const sideMenu = document.getElementById('sideMenu');
+    const menuOverlay = document.getElementById('menuOverlay');
+    let isMenuOpen = false;
+
+    function openMenu() {
+        menuBtn.classList.add('open');
+        menuBtn.setAttribute('aria-label', '메뉴 닫기');
+        gsap.to(sideMenu, { right: 0, duration: 0.55, ease: "power3.out" });
+        menuOverlay.style.display = 'block';
+        gsap.to(menuOverlay, { opacity: 1, duration: 0.3 });
+        isMenuOpen = true;
+    }
+    function closeMenu() {
+        menuBtn.classList.remove('open');
+        menuBtn.setAttribute('aria-label', '메뉴 열기');
+        gsap.to(sideMenu, { right: -340, duration: 0.5, ease: "power3.in" });
+        gsap.to(menuOverlay, { opacity: 0, duration: 0.3, onComplete: () => { menuOverlay.style.display = 'none'; }});
+        isMenuOpen = false;
+    }
+    function toggleMenu() { isMenuOpen ? closeMenu() : openMenu(); }
+    menuBtn.addEventListener('click', toggleMenu);
+    menuOverlay.addEventListener('click', closeMenu);
+
+    function scrollToSection(id) {
+        if (isMenuOpen) closeMenu();
+        if (document.getElementById('detail').style.display === 'block') closeDetail();
+        gsap.to(window, { duration: 1.4, scrollTo: { y: `#${id}`, offsetY: 70 }, ease: "power3.inOut" });
+    }
+    function goHome() {
+        if (isMenuOpen) closeMenu();
+        if (document.getElementById('detail').style.display === 'block') closeDetail();
+        gsap.to(window, { duration: 1.2, scrollTo: 0, ease: "power3.inOut" });
+    }
+
+    /* ===== 상세 페이지 ===== */
+    const detailEl = document.getElementById('detail');
+    const detailContent = document.getElementById('detail-content');
+    let detailScrollTriggers = [];
+
+    function buildDetailHTML(data) {
+        const statsHTML = data.stats.map(s => `
+            <div class="stat-cell">
+                <div class="label">${s.label}</div>
+                <div class="value">${s.value}</div>
+            </div>`).join('');
+
+        const featuresHTML = data.features.map(f => `
+            <section class="feature-row ${f.reverse ? 'reverse' : ''}">
+                <div class="feature-text reveal">
+                    <span class="feature-eyebrow">${f.eyebrow}</span>
+                    <h3>${f.h.replace(/\n/g, '<br>')}</h3>
+                    <p>${f.p}</p>
+                </div>
+                <div class="feature-media reveal"><img src="${f.img}" alt="${data.title}" loading="lazy" onerror="this.style.display='none'"></div>
+            </section>`).join('');
+
+        const heroMedia = data.heroVideo
+            ? `<video autoplay muted loop playsinline><source src="${data.heroVideo}" type="video/mp4"></video>`
+            : `<img src="${data.img}" alt="${data.title}" onerror="this.style.display='none'">`;
+
+        return `
+            <section class="detail-hero">
+                ${heroMedia}
+                <div class="detail-hero-content">
+                    <span class="detail-eyebrow reveal">${data.eyebrow}</span>
+                    <h1 class="reveal">${data.title}</h1>
+                    <p class="detail-tagline reveal">${data.tagline.replace(/\n/g, '<br>')}</p>
+                </div>
+            </section>
+
+            <div class="stat-strip">${statsHTML}</div>
+
+            <section class="intro-block">
+                <h2 class="reveal">${data.intro.h}</h2>
+                <p class="reveal">${data.intro.p}</p>
+            </section>
+
+            ${featuresHTML}
+
+            <section class="full-bleed reveal">
+                <img src="${data.img}" alt="${data.title}" loading="lazy" onerror="this.parentElement.style.display='none'">
+            </section>
+
+            <section class="pull-quote">
+                <blockquote class="reveal">${data.quote.text}</blockquote>
+                <cite class="reveal">${data.quote.cite}</cite>
+            </section>
+
+            <nav class="next-nav">
+                <div>
+                    <div class="next-meta">No.${String(data.order).padStart(2,'0')} of 04</div>
+                    <div style="font-size: 1rem; color: var(--apple-gray);">${data.title}</div>
+                </div>
+                <div>
+                    <div class="next-meta">Next</div>
+                    <div class="next-title" onclick="openPlace('${data.next.id}')">${data.next.title}</div>
+                </div>
+            </nav>
+        `;
+    }
+
+    function openPlace(id) {
+        if (isMenuOpen) closeMenu();
+        const data = PLACES[id];
+        if (!data) return;
+
+        detailContent.innerHTML = buildDetailHTML(data);
+        detailEl.style.display = 'block';
+        detailEl.scrollTop = 0;
+        document.body.style.overflow = 'hidden';
+
+        gsap.fromTo(detailEl, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" });
+        gsap.fromTo(".detail-hero img, .detail-hero video", { scale: 1.15 }, { scale: 1.06, duration: 1.6, ease: "power2.out" });
+        gsap.fromTo(".detail-hero-content .reveal", { opacity: 0, y: 36 }, { opacity: 1, y: 0, duration: 1, stagger: 0.12, ease: "power3.out", delay: 0.2 });
+
+        // 스크롤 페이드인 (detail 내부 스크롤 컨테이너에 적용)
+        detailScrollTriggers.forEach(t => t.kill());
+        detailScrollTriggers = [];
+        const reveals = detailEl.querySelectorAll(".reveal");
+        reveals.forEach(el => {
+            if (el.closest('.detail-hero')) return;
+            const trig = ScrollTrigger.create({
+                trigger: el,
+                scroller: detailEl,
+                start: "top 88%",
+                onEnter: () => gsap.to(el, { opacity: 1, y: 0, duration: 1, ease: "power3.out" }),
+                onLeaveBack: () => gsap.to(el, { opacity: 0, y: 36, duration: 0.4 })
+            });
+            detailScrollTriggers.push(trig);
+        });
+    }
+
+    function closeDetail() {
+        gsap.to(detailEl, { opacity: 0, duration: 0.35, onComplete: () => {
+            detailEl.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            detailScrollTriggers.forEach(t => t.kill());
+            detailScrollTriggers = [];
+        }});
+    }
+
+    document.getElementById('closeBtn').addEventListener('click', closeDetail);
+    document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        if (detailEl.style.display === 'block') closeDetail();
+        else if (isMenuOpen) closeMenu();
+    });
+
+    /* ===== Hero 인트로 ===== */
+    const tl = gsap.timeline();
+    tl.to("#mainTitle", { opacity: 1, duration: 1.4, ease: "power2.out" })
+      .to("#subTitle", { opacity: 1, duration: 1.1, ease: "power2.out" }, "-=0.9")
+      .to("#scrollGuide", { opacity: 1, duration: 0.9 }, "-=0.4");
+
+    gsap.to(["#heroText", "#scrollGuide"], {
+        opacity: 0,
+        scrollTrigger: {
+            trigger: ".hero", start: "top top", end: "30% top", scrub: true,
+            onLeaveBack: () => gsap.to(["#heroText", "#scrollGuide"], { opacity: 1, duration: 0.5 })
+        }
+    });
+
+    /* ===== 홈 페이드인 ===== */
+    gsap.utils.toArray(".value-text, .card").forEach((el) => {
+        gsap.to(el, {
+            opacity: 1, y: 0, duration: 1.1, ease: "power3.out",
+            scrollTrigger: { trigger: el, start: "top 88%", toggleActions: "play none none reverse" }
+        });
+    });
+
+    /* ===== 타임라인 페이드인 (좌→우 stagger) ===== */
+    gsap.utils.toArray(".timeline-item").forEach((el, i) => {
+        gsap.to(el, {
+            opacity: 1, y: 0, duration: 0.9, ease: "power3.out", delay: i * 0.12,
+            scrollTrigger: { trigger: ".timeline", start: "top 80%", toggleActions: "play none none reverse" }
+        });
+    });
+</script>
+
+</body>
+</html>
