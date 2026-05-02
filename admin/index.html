@@ -864,6 +864,8 @@ function renderList(main) {
     $('#new-place').onclick = () => {
         const np = newPlaceTemplate();
         state.places.push(np);
+        // 타임라인에도 동일 장소명으로 마커 자동 추가 (year, desc는 비워둠 → 사용자가 채움)
+        state.timeline.push({ year: '', place: np.title, desc: '' });
         state.editingId = np.id;
         state.dirty = true;
         state.view = 'edit';
