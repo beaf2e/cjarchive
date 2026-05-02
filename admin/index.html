@@ -1069,9 +1069,11 @@ function renderEdit(main) {
     };
     $('#save-btn').onclick = () => saveData(`Update place: ${p.title}`);
     $('#delete-btn').onclick = async () => {
-        const ok = await confirmDialog(`'${p.title}' 삭제`, '이 장소를 삭제할까요? 저장 누른 뒤 적용됩니다.', '삭제', true);
+        const ok = await confirmDialog(`'${p.title}' 삭제`, '이 장소와 매칭되는 타임라인 마커까지 함께 삭제합니다. 저장 누른 뒤 적용돼요.', '삭제', true);
         if (!ok) return;
         state.places = state.places.filter(x => x.id !== p.id);
+        // 같은 이름의 타임라인 마커도 자동 삭제
+        state.timeline = state.timeline.filter(t => t.place !== p.title);
         markDirty();
         state.view = 'list';
         render();
