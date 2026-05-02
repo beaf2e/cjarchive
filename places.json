@@ -6,15 +6,27 @@
       "title": "청주향교",
       "cardEyebrow": "Education · 1450s",
       "cardTagline": "전통 교육의 발자취",
-      "detailEyebrow": "Heritage No.1 · 충청북도 유형문화재",
-      "tagline": "조선 지방 교육의 마루를 걷다.",
       "img": "cjhg1.jpg",
       "heroVideo": "",
+      "detailEyebrow": "Heritage No.1 · 충청북도 유형문화재",
+      "tagline": "조선 지방 교육의 마루를 걷다.",
       "stats": [
-        { "label": "Type", "value": "지방 향교" },
-        { "label": "Designation", "value": "유형문화재 39호" },
-        { "label": "Designated", "value": "1977년 12월" },
-        { "label": "Buildings", "value": "6동" }
+        {
+          "label": "Type",
+          "value": "지방 향교"
+        },
+        {
+          "label": "Designation",
+          "value": "유형문화재 39호"
+        },
+        {
+          "label": "Designated",
+          "value": "1977년 12월"
+        },
+        {
+          "label": "Buildings",
+          "value": "6동"
+        }
       ],
       "intro": {
         "h": "한 도시의 학문이 시작된 곳.",
@@ -47,15 +59,27 @@
       "title": "수동성당",
       "cardEyebrow": "Faith · 1935",
       "cardTagline": "한옥과 성공회의 만남",
-      "detailEyebrow": "Heritage No.2 · 충청북도 유형문화재 149호",
-      "tagline": "한옥의 처마 아래로,\n서양의 종소리가 내려앉다.",
       "img": "sdsd1.jpg",
       "heroVideo": "",
+      "detailEyebrow": "Heritage No.2 · 충청북도 유형문화재 149호",
+      "tagline": "한옥의 처마 아래로,\n서양의 종소리가 내려앉다.",
       "stats": [
-        { "label": "Built", "value": "1935년" },
-        { "label": "Designation", "value": "유형문화재 149호" },
-        { "label": "Designated", "value": "1985년 12월" },
-        { "label": "Scale", "value": "32칸 · 팔작지붕" }
+        {
+          "label": "Built",
+          "value": "1935년"
+        },
+        {
+          "label": "Designation",
+          "value": "유형문화재 149호"
+        },
+        {
+          "label": "Designated",
+          "value": "1985년 12월"
+        },
+        {
+          "label": "Scale",
+          "value": "32칸 · 팔작지붕"
+        }
       ],
       "intro": {
         "h": "충돌이 아닌, 대화의 건축.",
@@ -88,15 +112,27 @@
       "title": "용두사지 철당간",
       "cardEyebrow": "National Treasure · 962",
       "cardTagline": "천년을 견딘 쇠기둥",
-      "detailEyebrow": "Heritage No.3 · 국보 41호",
-      "tagline": "962년부터, 지금 이 거리에.",
       "img": "cdg1.jpg",
       "heroVideo": "cdg.mp4",
+      "detailEyebrow": "Heritage No.3 · 국보 41호",
+      "tagline": "962년부터, 지금 이 거리에.",
       "stats": [
-        { "label": "Built", "value": "962년 (광종 13년)" },
-        { "label": "Designation", "value": "국보 41호" },
-        { "label": "Designated", "value": "1962년 12월" },
-        { "label": "Height", "value": "13.1m · 철통 20개" }
+        {
+          "label": "Built",
+          "value": "962년 (광종 13년)"
+        },
+        {
+          "label": "Designation",
+          "value": "국보 41호"
+        },
+        {
+          "label": "Designated",
+          "value": "1962년 12월"
+        },
+        {
+          "label": "Height",
+          "value": "13.1m · 철통 20개"
+        }
       ],
       "intro": {
         "h": "천 년 전의 시간이,\n도심의 한복판에 서 있다.",
@@ -129,15 +165,27 @@
       "title": "옛 청주역",
       "cardEyebrow": "Modernity · 1921",
       "cardTagline": "사라진 철길의 자리",
-      "detailEyebrow": "Heritage No.4 · 근대 교통의 기억",
-      "tagline": "사라진 철길 위에 다시 세운 풍경.",
       "img": "cjst1.jpg",
       "heroVideo": "cjst.mp4",
+      "detailEyebrow": "Heritage No.4 · 근대 교통의 기억",
+      "tagline": "사라진 철길 위에 다시 세운 풍경.",
       "stats": [
-        { "label": "Opened", "value": "1921년 11월" },
-        { "label": "Relocated", "value": "1968 · 1980년" },
-        { "label": "Restored", "value": "2017년 12월" },
-        { "label": "Today", "value": "청주역사공원" }
+        {
+          "label": "Opened",
+          "value": "1921년 11월"
+        },
+        {
+          "label": "Relocated",
+          "value": "1968 · 1980년"
+        },
+        {
+          "label": "Restored",
+          "value": "2017년 12월"
+        },
+        {
+          "label": "Today",
+          "value": "청주역사공원"
+        }
       ],
       "intro": {
         "h": "도시는 떠났고,\n자리는 남았다.",
@@ -170,13 +218,67 @@
         "text": "기차가 떠난 자리에 사람의 걸음이 다시 쌓일 때, 도시는 비로소 자기 역사를 이어 적기 시작한다.",
         "cite": "— Curator's note"
       }
+    },
+    {
+      "id": "cshs",
+      "order": 5,
+      "title": "청석고등학교",
+      "cardEyebrow": "School · 1975",
+      "cardTagline": "고등학교",
+      "img": "/cshs.webp",
+      "heroVideo": "",
+      "detailEyebrow": "고등학교",
+      "tagline": "안녕하세요",
+      "stats": [
+        {
+          "label": "Established",
+          "value": "1975년"
+        }
+      ],
+      "intro": {
+        "h": "고등학교",
+        "p": "고등학교"
+      },
+      "features": [
+        {
+          "eyebrow": "High School / 1975",
+          "h": "asdf",
+          "p": "asdf",
+          "img": "/cshs.webp",
+          "reverse": false
+        }
+      ],
+      "quote": {
+        "text": "청석",
+        "cite": "— Curator's note"
+      }
     }
   ],
   "timeline": [
-    { "year": "962", "place": "용두사지 철당간", "desc": "고려 광종 13년,\n천 년의 시작." },
-    { "year": "조선 초", "place": "청주향교", "desc": "지방 교육의\n마루를 놓다." },
-    { "year": "1921", "place": "옛 청주역", "desc": "충북선과 함께\n도시의 관문이 열리다." },
-    { "year": "1935", "place": "수동성당", "desc": "한옥과 성공회,\n두 세계의 만남." },
-    { "year": "2017", "place": "청주역사공원", "desc": "비워진 자리가\n다시 풍경이 되다." }
+    {
+      "year": "962",
+      "place": "용두사지 철당간",
+      "desc": "고려 광종 13년,\n천 년의 시작."
+    },
+    {
+      "year": "조선 초",
+      "place": "청주향교",
+      "desc": "지방 교육의\n마루를 놓다."
+    },
+    {
+      "year": "1921",
+      "place": "옛 청주역",
+      "desc": "충북선과 함께\n도시의 관문이 열리다."
+    },
+    {
+      "year": "1935",
+      "place": "수동성당",
+      "desc": "한옥과 성공회,\n두 세계의 만남."
+    },
+    {
+      "year": "2017",
+      "place": "청주역사공원",
+      "desc": "비워진 자리가\n다시 풍경이 되다."
+    }
   ]
 }
