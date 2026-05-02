@@ -4,15 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cheongju Archive — 관리</title>
-    <link rel="icon" type="image/png" href="../logo2.png">
+    <link rel="icon" type="image/png" href="../logo4.png">
 
-    <!-- 외부 도메인 사전 연결 (DNS·TLS 핸드셰이크 미리 시작) -->
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <!-- 외부 도메인 사전 연결 -->
     <link rel="preconnect" href="https://api.github.com" crossorigin>
     <link rel="dns-prefetch" href="https://github.com">
 
-    <!-- 메인 CMS 스크립트를 high-priority로 미리 로드 -->
-    <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/@sveltia/cms/dist/sveltia-cms.js">
+    <!-- Sveltia 번들을 high-priority로 미리 로드 (캐시되어 있으면 즉시 사용) -->
+    <link rel="modulepreload" href="./sveltia-cms.js">
 
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
     <style>
@@ -40,77 +39,64 @@
             text-align: center;
             padding: 24px;
             z-index: 9999;
+            gap: 0;
         }
         .splash .logo {
-            width: 56px; height: 56px;
-            border-radius: 14px;
-            background: var(--black);
-            display: flex; align-items: center; justify-content: center;
-            margin-bottom: 28px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
-        }
-        .splash .logo::before {
-            content: "";
             display: block;
-            width: 6px; height: 26px;
-            background: #fff;
-            border-radius: 3px;
-            position: relative;
-        }
-        .splash .logo::after {
-            content: "";
-            display: block;
-            width: 12px; height: 12px;
-            background: #fff;
-            border-radius: 50%;
-            position: absolute;
-            margin-top: -8px;
+            height: clamp(48px, 8vw, 64px);
+            width: auto;
+            margin-bottom: 24px;
+            user-select: none;
+            -webkit-user-drag: none;
         }
         .splash h1 {
             font-weight: 700;
-            font-size: clamp(1.4rem, 3vw, 1.85rem);
+            font-size: clamp(1.3rem, 2.6vw, 1.6rem);
             letter-spacing: -0.025em;
-            margin-bottom: 10px;
+            margin: 0 0 8px;
         }
         .splash .sub {
             color: var(--gray);
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             font-weight: 400;
-            margin-bottom: 36px;
+            margin: 0 0 32px;
         }
         .splash .spinner {
-            width: 28px; height: 28px;
+            width: 26px; height: 26px;
             border: 2px solid var(--light);
             border-top-color: var(--black);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
-            margin-bottom: 18px;
+            margin-bottom: 16px;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         .splash .hint {
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             color: var(--gray);
             letter-spacing: 0.02em;
+            margin: 0;
         }
         .splash .footer {
             position: fixed;
             bottom: 24px;
-            font-size: 0.75rem;
+            left: 0; right: 0;
+            text-align: center;
+            font-size: 0.72rem;
             color: var(--gray);
-            letter-spacing: 0.04em;
+            letter-spacing: 0.06em;
         }
     </style>
 </head>
 <body>
     <div class="splash" id="splash">
-        <div class="logo"></div>
+        <img src="../logo4.png" alt="Cheongju Archive" class="logo" onerror="this.style.display='none'">
         <h1>Cheongju Archive</h1>
         <p class="sub">콘텐츠 관리자</p>
         <div class="spinner"></div>
         <p class="hint">편집기를 불러오는 중...</p>
-        <p class="footer">cjarchive.pages.dev · admin</p>
+        <p class="footer">cjarchive.pages.dev / admin</p>
     </div>
-    <!-- Sveltia CMS (jsDelivr — 한국 엣지 PoP 사용) -->
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@sveltia/cms/dist/sveltia-cms.js"></script>
+    <!-- Sveltia CMS — 자체 호스팅 (Cloudflare CDN 한국 엣지 직접 사용) -->
+    <script type="module" src="./sveltia-cms.js"></script>
 </body>
 </html>
