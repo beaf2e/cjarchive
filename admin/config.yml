@@ -2,8 +2,7 @@ backend:
   name: github
   repo: beaf2e/cjarchive
   branch: main
-  # OAuth 인증을 위한 Cloudflare Worker URL (Phase 4b 마지막 단계에서 채워짐)
-  # base_url: https://<your-worker>.workers.dev
+  base_url: https://sveltia-cms-auth.minsoo-lee2405.workers.dev
 
 # 미디어 파일은 리포 루트에 저장 (기존 cjhg1.jpg 등과 같은 위치)
 media_folder: ""
