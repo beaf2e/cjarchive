@@ -541,7 +541,7 @@
         .timeline {
             position: relative;
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(var(--tl-cols, 5), minmax(0, 1fr));
             gap: clamp(16px, 2vw, 28px);
         }
         .timeline::before {
@@ -1020,6 +1020,9 @@
     function renderTimeline() {
         const grid = document.getElementById('timelineGrid');
         if (!grid) return;
+        // 마커 수에 맞춰 컬럼 수 + 잇는 선 길이 자동 조정
+        const n = Math.max(TIMELINE.length, 1);
+        grid.style.setProperty('--tl-cols', n);
         grid.innerHTML = TIMELINE.map(t => `
             <div class="timeline-item">
                 <div class="year">${esc(t.year)}</div>
