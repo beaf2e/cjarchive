@@ -252,6 +252,40 @@
         "text": "청석",
         "cite": "— Curator's note"
       }
+    },
+    {
+      "id": "dddd",
+      "order": 6,
+      "title": "청석고",
+      "cardEyebrow": "School · 1975",
+      "cardTagline": "ㄴㅇㅇㅇ",
+      "img": "cshs.webp",
+      "heroVideo": "",
+      "detailEyebrow": "High School",
+      "tagline": "고등학교",
+      "stats": [
+        {
+          "label": "Established",
+          "value": "1975년"
+        }
+      ],
+      "intro": {
+        "h": "안녕",
+        "p": "안녕"
+      },
+      "features": [
+        {
+          "eyebrow": "High School",
+          "h": "asdf",
+          "p": "asdf",
+          "img": "cshs.webp",
+          "reverse": false
+        }
+      ],
+      "quote": {
+        "text": "HELLO",
+        "cite": "— Curator's note"
+      }
     }
   ],
   "timeline": [
@@ -279,6 +313,16 @@
       "year": "2017",
       "place": "청주역사공원",
       "desc": "비워진 자리가\n다시 풍경이 되다."
+    },
+    {
+      "year": "",
+      "place": "새 장소",
+      "desc": ""
+    },
+    {
+      "year": "",
+      "place": "새 장소",
+      "desc": ""
     }
   ]
 }
