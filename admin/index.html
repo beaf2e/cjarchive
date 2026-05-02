@@ -96,6 +96,32 @@
         <p class="hint">편집기를 불러오는 중...</p>
         <p class="footer">cjarchive.pages.dev / admin</p>
     </div>
+
+    <script>
+        // Sveltia가 body에 UI를 추가하면 splash 자동 페이드아웃
+        (function() {
+            const splash = document.getElementById('splash');
+            if (!splash) return;
+            const hide = () => {
+                splash.style.transition = 'opacity 0.4s ease';
+                splash.style.opacity = '0';
+                setTimeout(() => splash.remove(), 400);
+            };
+            const observer = new MutationObserver(() => {
+                const others = Array.from(document.body.children).filter(
+                    el => el !== splash && el.tagName !== 'SCRIPT'
+                );
+                if (others.length > 0) {
+                    hide();
+                    observer.disconnect();
+                }
+            });
+            observer.observe(document.body, { childList: true });
+            // 안전장치: 10초 지나도 안 사라지면 강제 제거
+            setTimeout(() => { if (document.getElementById('splash')) hide(); }, 10000);
+        })();
+    </script>
+
     <!-- Sveltia CMS — 자체 호스팅 (Cloudflare CDN 한국 엣지 직접 사용) -->
     <script type="module" src="./sveltia-cms.js"></script>
 </body>
