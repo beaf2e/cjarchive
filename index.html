@@ -696,12 +696,9 @@
 
 <div class="side-menu" id="sideMenu">
     <h2>Navigation</h2>
-    <ul>
+    <ul id="sideMenuList">
         <li onclick="scrollToSection('hero')">메인 홈</li>
-        <li onclick="openPlace('cjhg')">청주향교</li>
-        <li onclick="openPlace('sdsd')">수동성당</li>
-        <li onclick="openPlace('cdg')">용두사지 철당간</li>
-        <li onclick="openPlace('cjst')">옛 청주역</li>
+        <!-- 장소 메뉴는 places.json에서 자동 생성됨 -->
         <li onclick="scrollToSection('timeline')">타임라인</li>
     </ul>
 </div>
@@ -741,11 +738,8 @@
         <span class="section-eyebrow value-text">Heritage Stories</span>
         <h2 class="value-text" style="font-size: clamp(1.5rem, 4vw, 2.4rem); font-weight: 700; letter-spacing: -0.03em; word-break: keep-all;">네 곳의 시간, 한 도시의 기억</h2>
     </div>
-    <div class="grid">
-        <div class="card" id="card-cjhg" onclick="openPlace('cjhg')"><img src="cjhg1.jpg" alt="청주향교"><div class="card-overlay"><div class="card-eyebrow">Education · 1450s</div><h3>청주향교</h3><p class="card-tagline">전통 교육의 발자취</p></div></div>
-        <div class="card" id="card-sdsd" onclick="openPlace('sdsd')"><img src="sdsd1.jpg" alt="수동성당"><div class="card-overlay"><div class="card-eyebrow">Faith · 1935</div><h3>수동성당</h3><p class="card-tagline">한옥과 성공회의 만남</p></div></div>
-        <div class="card" id="card-cdg" onclick="openPlace('cdg')"><img src="cdg1.jpg" alt="용두사지 철당간"><div class="card-overlay"><div class="card-eyebrow">National Treasure · 962</div><h3>용두사지 철당간</h3><p class="card-tagline">천년을 견딘 쇠기둥</p></div></div>
-        <div class="card" id="card-cjst" onclick="openPlace('cjst')"><img src="cjst1.jpg" alt="옛 청주역사공원"><div class="card-overlay"><div class="card-eyebrow">Modernity · 1921</div><h3>옛 청주역</h3><p class="card-tagline">사라진 철길의 자리</p></div></div>
+    <div class="grid" id="placeGrid">
+        <!-- 카드는 places.json에서 자동 생성됨 -->
     </div>
 </section>
 
@@ -756,37 +750,8 @@
         <h2 class="value-text">하나의 도시가<br>걸어온 천 년의 시간</h2>
         <p class="value-text">고려에서 시작된 시간이 조선과 근대를 지나, 지금 우리의 발 밑에 닿아 있습니다.</p>
     </div>
-    <div class="timeline">
-        <div class="timeline-item">
-            <div class="year">962</div>
-            <div class="dot"></div>
-            <div class="place">용두사지 철당간</div>
-            <div class="desc">고려 광종 13년,<br>천 년의 시작.</div>
-        </div>
-        <div class="timeline-item">
-            <div class="year">조선 초</div>
-            <div class="dot"></div>
-            <div class="place">청주향교</div>
-            <div class="desc">지방 교육의<br>마루를 놓다.</div>
-        </div>
-        <div class="timeline-item">
-            <div class="year">1921</div>
-            <div class="dot"></div>
-            <div class="place">옛 청주역</div>
-            <div class="desc">충북선과 함께<br>도시의 관문이 열리다.</div>
-        </div>
-        <div class="timeline-item">
-            <div class="year">1935</div>
-            <div class="dot"></div>
-            <div class="place">수동성당</div>
-            <div class="desc">한옥과 성공회,<br>두 세계의 만남.</div>
-        </div>
-        <div class="timeline-item">
-            <div class="year">2017</div>
-            <div class="dot"></div>
-            <div class="place">청주역사공원</div>
-            <div class="desc">비워진 자리가<br>다시 풍경이 되다.</div>
-        </div>
+    <div class="timeline" id="timelineGrid">
+        <!-- 타임라인 항목은 places.json에서 자동 생성됨 -->
     </div>
 </section>
 
@@ -829,170 +794,11 @@
 <script>
     gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
-    /* ===== 콘텐츠 데이터 ===== */
-    const PLACES = {
-        cjhg: {
-            order: 1,
-            eyebrow: "Heritage No.1 · 충청북도 유형문화재",
-            title: "청주향교",
-            tagline: "조선 지방 교육의 마루를 걷다.",
-            img: "cjhg1.jpg",
-            stats: [
-                { label: "Type", value: "지방 향교" },
-                { label: "Designation", value: "유형문화재 39호" },
-                { label: "Designated", value: "1977년 12월" },
-                { label: "Buildings", value: "6동" }
-            ],
-            intro: {
-                h: "한 도시의 학문이 시작된 곳.",
-                p: "고려와 조선의 지방 사회에서 향교는 단순한 학교가 아니었습니다. 유교적 윤리와 학문, 그리고 지역 공동체의 의례가 함께 자라던 살아있는 교실이었습니다. 청주향교는 그 시대의 호흡을 가장 잘 보여주는 청주의 정신적 좌표입니다."
-            },
-            features: [
-                {
-                    eyebrow: "Architecture",
-                    h: "여섯 채의 건물,\n하나의 가르침.",
-                    p: "대성전, 명륜당, 동재와 서재 등 여섯 동의 건물이 만들어내는 배치는 단순하지만 정교합니다. 학문(明倫堂)과 제향(大成殿)이 축을 따라 마주 서며, 배움과 예가 분리될 수 없다는 조선의 교육 철학을 공간으로 이야기합니다.",
-                    img: "cjhg1.jpg",
-                    reverse: false
-                },
-                {
-                    eyebrow: "Continuity",
-                    h: "1977년에 다시\n빛을 본 시간.",
-                    p: "1977년 12월, 청주향교는 충청북도 유형문화재로 지정되며 보존의 길을 걷기 시작했습니다. 그러나 진짜 보존은 문화재 번호가 아닌, 그 안에서 여전히 책을 읽고 예를 갖추는 사람의 행위에서 이어집니다.",
-                    img: "cjhg1.jpg",
-                    reverse: true
-                }
-            ],
-            quote: {
-                text: "마루의 결을 따라 걸으면, 가장 오래된 학교는 여전히 가장 새로운 질문을 던지고 있다.",
-                cite: "— Curator's note"
-            },
-            next: { id: "sdsd", title: "수동성당" }
-        },
-        sdsd: {
-            order: 2,
-            eyebrow: "Heritage No.2 · 충청북도 유형문화재 149호",
-            title: "수동성당",
-            tagline: "한옥의 처마 아래로,\n서양의 종소리가 내려앉다.",
-            img: "sdsd1.jpg",
-            stats: [
-                { label: "Built", value: "1935년" },
-                { label: "Designation", value: "유형문화재 149호" },
-                { label: "Designated", value: "1985년 12월" },
-                { label: "Scale", value: "32칸 · 팔작지붕" }
-            ],
-            intro: {
-                h: "충돌이 아닌, 대화의 건축.",
-                p: "1935년, 청주 한복판에 한옥과 서양식이 절묘하게 만나는 성당이 세워졌습니다. 한국인의 풍토 위에 서구의 신앙을 새기려 했던 초기 성공회 선교사들의 토착화 의지가 한 채의 건축으로 응축된, 한국 근대건축사의 작은 사건입니다."
-            },
-            features: [
-                {
-                    eyebrow: "Material",
-                    h: "한식 기와, 그러나\n그 안의 풍경은 다르다.",
-                    p: "팔작지붕에 한식 기와를 얹었지만, 외벽은 벽돌과 콘크리트, 내벽은 석회로 마감되었습니다. 겉으로 보면 한옥처럼 보이는 형태 안에 서구식 예배 공간이 자리 잡으며, 두 건축 언어가 한 지붕 아래에서 공존합니다.",
-                    img: "sdsd1.jpg",
-                    reverse: false
-                },
-                {
-                    eyebrow: "Founder",
-                    h: "구세실 주교,\n토착화의 손.",
-                    p: "당시 대한성공회 주교였던 세실 쿠퍼(한국 이름 구세실)의 손에서 이 건물은 완성되었습니다. 외래의 종교를 한국의 풍경 안에 자리 잡게 하려던 그의 시선이, 지금도 처마 끝에 남아 있습니다.",
-                    img: "sdsd1.jpg",
-                    reverse: true
-                }
-            ],
-            quote: {
-                text: "다른 두 세계가 만나는 가장 아름다운 방식은, 어느 한쪽이 다른 한쪽을 흉내내지 않는 것이다.",
-                cite: "— Curator's note"
-            },
-            next: { id: "cdg", title: "용두사지 철당간" }
-        },
-        cdg: {
-            order: 3,
-            eyebrow: "Heritage No.3 · 국보 41호",
-            title: "용두사지 철당간",
-            tagline: "962년부터, 지금 이 거리에.",
-            img: "cdg1.jpg",
-            heroVideo: "cdg.mp4",
-            stats: [
-                { label: "Built", value: "962년 (광종 13년)" },
-                { label: "Designation", value: "국보 41호" },
-                { label: "Designated", value: "1962년 12월" },
-                { label: "Height", value: "13.1m · 철통 20개" }
-            ],
-            intro: {
-                h: "천 년 전의 시간이,\n도심의 한복판에 서 있다.",
-                p: "용두사지 철당간은 고려 광종 13년, 서기 962년에 세워졌습니다. 사찰은 사라졌지만, 13.1미터의 쇠기둥은 도시의 중심에 그대로 남아 천 년의 시간을 지키고 있습니다. 화려하지 않지만, 그래서 더 오래 머무르는 유산입니다."
-            },
-            features: [
-                {
-                    eyebrow: "Inscription",
-                    h: "‘준풍(峻豊)’,\n고려가 새긴 자기 이름.",
-                    p: "당간 아래쪽 철통에는 해서체로 새겨진 명문이 있습니다. 그 안에는 고려가 독자적으로 사용한 연호 ‘준풍(峻豊)’이 적혀 있습니다. 중국의 연호가 아닌 자신의 시간을 새긴 그 두 글자는, 한 왕조가 자신을 어떻게 부르고 싶어 했는지를 보여주는 결정적 증거입니다.",
-                    img: "cdg1.jpg",
-                    reverse: false
-                },
-                {
-                    eyebrow: "Structure",
-                    h: "두 개의 화강암,\n스무 개의 철통.",
-                    p: "두 개의 화강암 지주(높이 4.2m)가 20개의 철통을 단단히 붙들고 있습니다. 본래는 30개의 철통이 쌓여 있었지만, 시간은 그중 열을 가져갔습니다. 남은 스물은, 사라진 열이 있었음을 증언합니다.",
-                    img: "cdg1.jpg",
-                    reverse: true
-                }
-            ],
-            quote: {
-                text: "사찰은 사라졌고, 사람도 바뀌었지만, 쇠는 그 자리에서 천 년을 견뎠다.",
-                cite: "— Curator's note"
-            },
-            next: { id: "cjst", title: "옛 청주역" }
-        },
-        cjst: {
-            order: 4,
-            eyebrow: "Heritage No.4 · 근대 교통의 기억",
-            title: "옛 청주역",
-            tagline: "사라진 철길 위에 다시 세운 풍경.",
-            img: "cjst1.jpg",
-            heroVideo: "cjst.mp4",
-            stats: [
-                { label: "Opened", value: "1921년 11월" },
-                { label: "Relocated", value: "1968 · 1980년" },
-                { label: "Restored", value: "2017년 12월" },
-                { label: "Today", value: "청주역사공원" }
-            ],
-            intro: {
-                h: "도시는 떠났고,\n자리는 남았다.",
-                p: "1921년 11월 1일, 충북선의 시작과 함께 청주역은 도시의 관문이 되었습니다. 그러나 시가지는 자라났고 철길은 두 번 옮겨졌습니다. 비워진 자리는 2017년, 청주역사공원이라는 이름으로 다시 시민의 일상에 들어섰습니다."
-            },
-            features: [
-                {
-                    eyebrow: "1921",
-                    h: "충북선의 첫 정거장,\n도시가 깨어나던 자리.",
-                    p: "청주의 첫 철도는 본정4정목, 지금의 청주시청 인근에서 시작되었습니다. 사람과 짐, 소문과 약속이 함께 실려 들어오던 이 자리는 한때 도시에서 가장 분주한 점이었습니다.",
-                    img: "cjst1.jpg",
-                    reverse: false
-                },
-                {
-                    eyebrow: "1968 — 1980",
-                    h: "두 번의 이전,\n도시 외곽으로 밀려난 시간.",
-                    p: "1968년 시내 구간이 이설되며 우암동으로, 1980년 충북선 복선화로 다시 현재의 위치로. 두 번의 이동은 단순한 행정이 아니라, 도시가 자기 중심을 어떻게 다시 그렸는지를 보여주는 지도입니다.",
-                    img: "cjst1.jpg",
-                    reverse: true
-                },
-                {
-                    eyebrow: "2017",
-                    h: "비워진 자리,\n공원이 되다.",
-                    p: "2016년 7월부터 시작된 복원 공사는 2017년 12월에 마무리되었습니다. 청주역사공원은 더 이상 기차가 다니지 않는 자리에서, 사라진 시간을 기억하는 가장 일상적인 방식이 되었습니다.",
-                    img: "cjst1.jpg",
-                    reverse: false
-                }
-            ],
-            quote: {
-                text: "기차가 떠난 자리에 사람의 걸음이 다시 쌓일 때, 도시는 비로소 자기 역사를 이어 적기 시작한다.",
-                cite: "— Curator's note"
-            },
-            next: { id: "cjhg", title: "청주향교" }
-        }
-    };
+    /* ===== 콘텐츠 데이터 (places.json에서 동적 로드) ===== */
+    let PLACES = {};
+    let PLACES_LIST = [];
+    let TIMELINE = [];
+
 
     /* ===== 메뉴 ===== */
     const menuBtn = document.getElementById('menuBtn');
@@ -1035,64 +841,79 @@
     const detailContent = document.getElementById('detail-content');
     let detailScrollTriggers = [];
 
+    function esc(s) {
+        return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+    function nl2br(s) { return esc(s).replace(/\n/g, '<br>'); }
+
+    function getNextPlace(currentId) {
+        const idx = PLACES_LIST.findIndex(p => p.id === currentId);
+        if (idx === -1 || PLACES_LIST.length === 0) return null;
+        return PLACES_LIST[(idx + 1) % PLACES_LIST.length];
+    }
+
     function buildDetailHTML(data) {
-        const statsHTML = data.stats.map(s => `
+        const statsHTML = (data.stats || []).map(s => `
             <div class="stat-cell">
-                <div class="label">${s.label}</div>
-                <div class="value">${s.value}</div>
+                <div class="label">${esc(s.label)}</div>
+                <div class="value">${esc(s.value)}</div>
             </div>`).join('');
 
-        const featuresHTML = data.features.map(f => `
+        const featuresHTML = (data.features || []).map(f => `
             <section class="feature-row ${f.reverse ? 'reverse' : ''}">
                 <div class="feature-text reveal">
-                    <span class="feature-eyebrow">${f.eyebrow}</span>
-                    <h3>${f.h.replace(/\n/g, '<br>')}</h3>
-                    <p>${f.p}</p>
+                    <span class="feature-eyebrow">${esc(f.eyebrow)}</span>
+                    <h3>${nl2br(f.h)}</h3>
+                    <p>${esc(f.p)}</p>
                 </div>
-                <div class="feature-media reveal"><img src="${f.img}" alt="${data.title}" loading="lazy" onerror="this.style.display='none'"></div>
+                <div class="feature-media reveal"><img src="${esc(f.img)}" alt="${esc(data.title)}" loading="lazy" onerror="this.style.display='none'"></div>
             </section>`).join('');
 
         const heroMedia = data.heroVideo
-            ? `<video autoplay muted loop playsinline><source src="${data.heroVideo}" type="video/mp4"></video>`
-            : `<img src="${data.img}" alt="${data.title}" onerror="this.style.display='none'">`;
+            ? `<video autoplay muted loop playsinline><source src="${esc(data.heroVideo)}" type="video/mp4"></video>`
+            : `<img src="${esc(data.img)}" alt="${esc(data.title)}" onerror="this.style.display='none'">`;
+
+        const next = getNextPlace(data.id);
+        const total = PLACES_LIST.length;
 
         return `
             <section class="detail-hero">
                 ${heroMedia}
                 <div class="detail-hero-content">
-                    <span class="detail-eyebrow reveal">${data.eyebrow}</span>
-                    <h1 class="reveal">${data.title}</h1>
-                    <p class="detail-tagline reveal">${data.tagline.replace(/\n/g, '<br>')}</p>
+                    <span class="detail-eyebrow reveal">${esc(data.detailEyebrow || data.eyebrow || '')}</span>
+                    <h1 class="reveal">${esc(data.title)}</h1>
+                    <p class="detail-tagline reveal">${nl2br(data.tagline)}</p>
                 </div>
             </section>
 
             <div class="stat-strip">${statsHTML}</div>
 
             <section class="intro-block">
-                <h2 class="reveal">${data.intro.h}</h2>
-                <p class="reveal">${data.intro.p}</p>
+                <h2 class="reveal">${esc(data.intro?.h || '')}</h2>
+                <p class="reveal">${esc(data.intro?.p || '')}</p>
             </section>
 
             ${featuresHTML}
 
             <section class="full-bleed reveal">
-                <img src="${data.img}" alt="${data.title}" loading="lazy" onerror="this.parentElement.style.display='none'">
+                <img src="${esc(data.img)}" alt="${esc(data.title)}" loading="lazy" onerror="this.parentElement.style.display='none'">
             </section>
 
+            ${data.quote ? `
             <section class="pull-quote">
-                <blockquote class="reveal">${data.quote.text}</blockquote>
-                <cite class="reveal">${data.quote.cite}</cite>
-            </section>
+                <blockquote class="reveal">${esc(data.quote.text)}</blockquote>
+                <cite class="reveal">${esc(data.quote.cite)}</cite>
+            </section>` : ''}
 
             <nav class="next-nav">
                 <div>
-                    <div class="next-meta">No.${String(data.order).padStart(2,'0')} of 04</div>
-                    <div style="font-size: 1rem; color: var(--apple-gray);">${data.title}</div>
+                    <div class="next-meta">No.${String(data.order).padStart(2,'0')} of ${String(total).padStart(2,'0')}</div>
+                    <div style="font-size: 1rem; color: var(--apple-gray);">${esc(data.title)}</div>
                 </div>
-                <div>
+                ${next ? `<div>
                     <div class="next-meta">Next</div>
-                    <div class="next-title" onclick="openPlace('${data.next.id}')">${data.next.title}</div>
-                </div>
+                    <div class="next-title" onclick="openPlace('${esc(next.id)}')">${esc(next.title)}</div>
+                </div>` : ''}
             </nav>
         `;
     }
@@ -1158,21 +979,95 @@
         }
     });
 
-    /* ===== 홈 페이드인 ===== */
-    gsap.utils.toArray(".value-text, .card").forEach((el) => {
+    /* ===== value-text 페이드인 (정적) ===== */
+    gsap.utils.toArray(".value-text").forEach((el) => {
         gsap.to(el, {
             opacity: 1, y: 0, duration: 1.1, ease: "power3.out",
             scrollTrigger: { trigger: el, start: "top 88%", toggleActions: "play none none reverse" }
         });
     });
 
-    /* ===== 타임라인 페이드인 (좌→우 stagger) ===== */
-    gsap.utils.toArray(".timeline-item").forEach((el, i) => {
-        gsap.to(el, {
-            opacity: 1, y: 0, duration: 0.9, ease: "power3.out", delay: i * 0.12,
-            scrollTrigger: { trigger: ".timeline", start: "top 80%", toggleActions: "play none none reverse" }
+    /* ===== 동적 렌더 (places.json) ===== */
+    function renderSideMenu() {
+        const ul = document.getElementById('sideMenuList');
+        if (!ul) return;
+        // 기존 li 모두 제거 후 재구성
+        ul.innerHTML = '';
+        const items = [
+            { label: '메인 홈', action: `scrollToSection('hero')` },
+            ...PLACES_LIST.map(p => ({ label: p.title, action: `openPlace('${esc(p.id)}')` })),
+            { label: '타임라인', action: `scrollToSection('timeline')` }
+        ];
+        ul.innerHTML = items.map(it => `<li onclick="${it.action}">${esc(it.label)}</li>`).join('');
+    }
+
+    function renderCards() {
+        const grid = document.getElementById('placeGrid');
+        if (!grid) return;
+        grid.innerHTML = PLACES_LIST.map(p => `
+            <div class="card" id="card-${esc(p.id)}" onclick="openPlace('${esc(p.id)}')">
+                <img src="${esc(p.img)}" alt="${esc(p.title)}">
+                <div class="card-overlay">
+                    <div class="card-eyebrow">${esc(p.cardEyebrow || '')}</div>
+                    <h3>${esc(p.title)}</h3>
+                    <p class="card-tagline">${esc(p.cardTagline || '')}</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function renderTimeline() {
+        const grid = document.getElementById('timelineGrid');
+        if (!grid) return;
+        grid.innerHTML = TIMELINE.map(t => `
+            <div class="timeline-item">
+                <div class="year">${esc(t.year)}</div>
+                <div class="dot"></div>
+                <div class="place">${esc(t.place)}</div>
+                <div class="desc">${nl2br(t.desc)}</div>
+            </div>
+        `).join('');
+    }
+
+    function applyDynamicAnimations() {
+        // 카드 페이드인
+        gsap.utils.toArray(".card").forEach((el) => {
+            gsap.to(el, {
+                opacity: 1, y: 0, duration: 1.1, ease: "power3.out",
+                scrollTrigger: { trigger: el, start: "top 88%", toggleActions: "play none none reverse" }
+            });
         });
-    });
+        // 타임라인 페이드인 (좌→우 stagger)
+        gsap.utils.toArray(".timeline-item").forEach((el, i) => {
+            gsap.to(el, {
+                opacity: 1, y: 0, duration: 0.9, ease: "power3.out", delay: i * 0.12,
+                scrollTrigger: { trigger: ".timeline", start: "top 80%", toggleActions: "play none none reverse" }
+            });
+        });
+    }
+
+    async function loadPlaces() {
+        try {
+            const res = await fetch('places.json?v=' + Date.now(), { cache: 'no-cache' });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const data = await res.json();
+            PLACES_LIST = (data.places || []).slice().sort((a, b) => (a.order || 0) - (b.order || 0));
+            PLACES = Object.fromEntries(PLACES_LIST.map(p => [p.id, p]));
+            TIMELINE = data.timeline || [];
+
+            renderSideMenu();
+            renderCards();
+            renderTimeline();
+            applyDynamicAnimations();
+            ScrollTrigger.refresh();
+        } catch (e) {
+            console.error('places.json 로드 실패:', e);
+            const grid = document.getElementById('placeGrid');
+            if (grid) grid.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color:var(--apple-gray); padding:40px;">콘텐츠를 불러오지 못했습니다. 잠시 후 새로고침해주세요.</p>`;
+        }
+    }
+
+    loadPlaces();
 </script>
 
 </body>
