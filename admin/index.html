@@ -5,69 +5,1292 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cheongju Archive — 관리</title>
     <link rel="icon" type="image/png" href="../logo2.png">
-
-    <!-- 외부 도메인 사전 연결 -->
     <link rel="preconnect" href="https://api.github.com" crossorigin>
-    <link rel="dns-prefetch" href="https://github.com">
-
-    <!-- Sveltia 번들 high-priority 프리로드 -->
-    <link rel="modulepreload" href="./sveltia-cms.js">
-
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
     <style>
         :root {
-            --apple-black: #211f20;
-            --apple-gray: #86868b;
-            --apple-light: #d2d2d7;
-            --apple-bg: #f5f5f7;
-            --apple-divider: #e5e5e7;
-            --apple-blue: #0066cc;
+            --black: #211f20;
+            --gray: #86868b;
+            --light: #d2d2d7;
+            --bg: #f5f5f7;
+            --divider: #e5e5e7;
+            --blue: #0066cc;
+            --green: #34c759;
+            --red: #ff3b30;
+            --card-shadow: 0 4px 24px rgba(0,0,0,0.06);
         }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body {
-            margin: 0; padding: 0;
-            background: var(--apple-bg);
-            color: var(--apple-black);
-            font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif !important;
+            font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+            background: var(--bg);
+            color: var(--black);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             letter-spacing: -0.01em;
+            line-height: 1.5;
         }
-        ::selection { background: var(--apple-black); color: #fff; }
+        ::selection { background: var(--black); color: #fff; }
+        button, input, textarea, select { font-family: inherit; }
+        a { color: var(--blue); text-decoration: none; }
+        img { max-width: 100%; display: block; }
 
-        /* Sveltia CMS UI 가능한 영역에 Apple-스러운 디테일 주입 */
-        :root, body {
-            /* Sveltia에서 일부 컴포넌트가 참조할 수 있는 CSS 변수 */
-            --primary-accent-color-light: #0066cc;
-            --primary-accent-color: #0066cc;
-            --tertiary-foreground-color: #86868b;
-        }
-        /* 전역 폰트와 모서리 톤 (가능한 한 모든 inputs/buttons에 적용) */
-        body * {
-            font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif !important;
+        /* ─── 공통 컴포넌트 ─── */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 10px 20px;
+            border: none; border-radius: 980px;
+            background: var(--black); color: #fff;
+            font-size: 14px; font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+            white-space: nowrap;
             letter-spacing: -0.01em;
         }
-        /* 더 부드러운 모서리 */
-        button, input, textarea, select, dialog, [role="button"], [role="dialog"], .button, .modal {
-            border-radius: 10px !important;
-        }
-        /* 매끄러운 스크롤바 (macOS 스타일) */
-        ::-webkit-scrollbar { width: 10px; height: 10px; }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(0,0,0,0.18);
-            border-radius: 10px;
-            border: 2px solid transparent;
-            background-clip: padding-box;
-        }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.28); background-clip: padding-box; }
-        ::-webkit-scrollbar-track { background: transparent; }
+        .btn:hover { opacity: 0.85; }
+        .btn:active { transform: scale(0.97); }
+        .btn[disabled] { opacity: 0.4; cursor: not-allowed; }
+        .btn.secondary { background: #fff; color: var(--black); border: 1px solid var(--divider); }
+        .btn.secondary:hover { background: var(--bg); opacity: 1; }
+        .btn.ghost { background: transparent; color: var(--black); padding: 8px 12px; }
+        .btn.ghost:hover { background: rgba(0,0,0,0.04); opacity: 1; }
+        .btn.danger { background: var(--red); }
+        .btn.blue { background: var(--blue); }
+        .btn.small { padding: 6px 14px; font-size: 13px; }
+        .btn.icon-only { padding: 8px; width: 32px; height: 32px; border-radius: 50%; }
 
-        /* 부드러운 페이지 진입 페이드 */
-        body { animation: fadeIn 0.4s ease-out both; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .input, .textarea, .select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--divider);
+            border-radius: 10px;
+            background: #fff;
+            font-size: 14px;
+            color: var(--black);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            letter-spacing: -0.01em;
+        }
+        .input:focus, .textarea:focus, .select:focus {
+            outline: none;
+            border-color: var(--black);
+            box-shadow: 0 0 0 3px rgba(0,0,0,0.08);
+        }
+        .textarea { resize: vertical; min-height: 80px; line-height: 1.6; font-family: inherit; }
+
+        .field { margin-bottom: 18px; }
+        .field-label { display: block; font-size: 12px; font-weight: 600; color: var(--gray); margin-bottom: 6px; letter-spacing: 0.04em; text-transform: uppercase; }
+        .field-hint { font-size: 12px; color: var(--gray); margin-top: 5px; line-height: 1.4; }
+        .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .field-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+        @media (max-width: 700px) {
+            .field-row, .field-row-3 { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 18px;
+        }
+        .card-title {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 18px;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        .card-title .sub { font-weight: 400; font-size: 13px; color: var(--gray); }
+
+        .toggle {
+            display: inline-flex; align-items: center; gap: 8px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .toggle input { display: none; }
+        .toggle .slider {
+            width: 36px; height: 22px;
+            background: var(--light);
+            border-radius: 22px;
+            position: relative;
+            transition: background 0.25s;
+        }
+        .toggle .slider::after {
+            content: "";
+            position: absolute;
+            top: 2px; left: 2px;
+            width: 18px; height: 18px;
+            background: #fff; border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            transition: transform 0.25s;
+        }
+        .toggle input:checked + .slider { background: var(--green); }
+        .toggle input:checked + .slider::after { transform: translateX(14px); }
+
+        /* ─── 토스트 ─── */
+        .toast {
+            position: fixed; bottom: 28px; left: 50%;
+            transform: translateX(-50%) translateY(120px);
+            background: var(--black); color: #fff;
+            padding: 12px 22px;
+            border-radius: 12px;
+            font-size: 14px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            z-index: 9999;
+            transition: transform 0.4s cubic-bezier(0.2, 0, 0.2, 1);
+            pointer-events: none;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast.error { background: var(--red); }
+        .toast.success { background: var(--green); }
+
+        /* ─── 모달 ─── */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center; justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal {
+            background: #fff;
+            border-radius: 18px;
+            padding: 28px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.2);
+        }
+        .modal h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.02em; }
+        .modal p { color: var(--gray); font-size: 14px; margin-bottom: 22px; line-height: 1.5; }
+        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+        /* ─── 로딩 스피너 ─── */
+        .spinner {
+            display: inline-block;
+            width: 16px; height: 16px;
+            border: 2px solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        .spinner-large { width: 28px; height: 28px; border-width: 2.5px; color: var(--black); }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .center-loading {
+            position: fixed; inset: 0;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 14px;
+        }
+        .center-loading p { color: var(--gray); font-size: 13px; }
+
+        /* ═════ 로그인 화면 ═════ */
+        #login-view {
+            min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            padding: 24px;
+        }
+        .login-card {
+            background: #fff;
+            border-radius: 22px;
+            padding: clamp(36px, 6vw, 56px);
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.06);
+        }
+        .login-card .logo-box {
+            display: inline-block;
+            background: var(--bg);
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 24px;
+        }
+        .login-card .logo-box img { height: 44px; width: auto; }
+        .login-card h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.025em; margin-bottom: 6px; }
+        .login-card p.sub { color: var(--gray); font-size: 14px; margin-bottom: 32px; }
+        .login-card .btn { width: 100%; padding: 13px; font-size: 15px; }
+        .login-card .footer-note { margin-top: 20px; font-size: 12px; color: var(--gray); line-height: 1.5; }
+
+        /* ═════ 메인 레이아웃 ═════ */
+        #app {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            min-height: 100vh;
+        }
+        @media (max-width: 800px) {
+            #app { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+        }
+
+        /* ─── 사이드바 ─── */
+        .sidebar {
+            background: #fff;
+            border-right: 1px solid var(--divider);
+            padding: 22px 16px;
+            position: sticky; top: 0;
+            height: 100vh;
+            display: flex; flex-direction: column;
+        }
+        .sidebar .brand {
+            display: flex; align-items: center; gap: 10px;
+            padding: 6px 10px; margin-bottom: 24px;
+        }
+        .sidebar .brand img { height: 22px; width: auto; }
+        .sidebar .brand .text {
+            font-weight: 700; font-size: 14px; letter-spacing: -0.02em;
+        }
+        .sidebar .brand .text .small { font-weight: 400; color: var(--gray); font-size: 11px; display: block; letter-spacing: 0; margin-top: -2px; }
+
+        .sidebar nav { flex: 1; }
+        .nav-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 12px; border-radius: 10px;
+            font-size: 14px; font-weight: 500; color: var(--black);
+            cursor: pointer;
+            transition: background 0.15s;
+            margin-bottom: 2px;
+        }
+        .nav-item:hover { background: var(--bg); }
+        .nav-item.active { background: var(--black); color: #fff; }
+        .nav-item .icon { width: 18px; height: 18px; flex-shrink: 0; }
+        .nav-divider { height: 1px; background: var(--divider); margin: 14px 4px; }
+
+        .sidebar .user {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 12px; border-radius: 12px;
+            font-size: 13px;
+            background: var(--bg);
+        }
+        .sidebar .user .avatar {
+            width: 28px; height: 28px; border-radius: 50%;
+            background: var(--black); color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 600;
+            overflow: hidden;
+        }
+        .sidebar .user .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .sidebar .user .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        /* ─── 메인 ─── */
+        main {
+            padding: clamp(20px, 3vw, 36px);
+            max-width: 1100px;
+            width: 100%;
+        }
+
+        /* ─── 헤더 ─── */
+        .page-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+        .page-header h1 {
+            font-size: clamp(22px, 3vw, 28px);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+        }
+        .page-header h1 .count {
+            font-weight: 400;
+            color: var(--gray);
+            font-size: 0.7em;
+            margin-left: 10px;
+        }
+        .page-header .actions { display: flex; gap: 8px; }
+
+        /* ─── 장소 카드 그리드 ─── */
+        .places-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 18px;
+        }
+        .place-card {
+            background: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .place-card:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(0,0,0,0.1); }
+        .place-card .thumb {
+            width: 100%; aspect-ratio: 16/11; background: var(--bg);
+            background-size: cover; background-position: center;
+        }
+        .place-card .body { padding: 16px 18px; }
+        .place-card .body .eyebrow {
+            font-size: 10.5px; color: var(--blue); letter-spacing: 0.12em;
+            text-transform: uppercase; margin-bottom: 4px; font-weight: 600;
+        }
+        .place-card .body .title { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px; }
+        .place-card .body .tagline { font-size: 13px; color: var(--gray); }
+
+        /* ─── 편집 페이지 ─── */
+        .edit-toolbar {
+            position: sticky; top: 0;
+            background: rgba(245, 245, 247, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            margin: -36px -36px 28px;
+            padding: 18px 36px;
+            display: flex; align-items: center; justify-content: space-between;
+            z-index: 10;
+            border-bottom: 1px solid var(--divider);
+        }
+        .edit-toolbar .left { display: flex; align-items: center; gap: 8px; }
+        .edit-toolbar .left .title-area { display: flex; flex-direction: column; }
+        .edit-toolbar .left .title-area .breadcrumb { font-size: 11px; color: var(--gray); letter-spacing: 0.05em; text-transform: uppercase; }
+        .edit-toolbar .left .title-area .title { font-size: 17px; font-weight: 700; letter-spacing: -0.02em; }
+        .edit-toolbar .right { display: flex; gap: 8px; align-items: center; }
+        .edit-toolbar .right .dirty-indicator { font-size: 12px; color: var(--gray); margin-right: 8px; }
+
+        /* ─── 이미지 픽커 ─── */
+        .image-picker {
+            border: 2px dashed var(--light);
+            border-radius: 14px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .image-picker:hover, .image-picker.dragover {
+            border-color: var(--black);
+            background: var(--bg);
+        }
+        .image-picker.has-image { padding: 0; border: 1px solid var(--divider); }
+        .image-picker.has-image .preview {
+            width: 100%; aspect-ratio: 16/10; object-fit: cover;
+            border-radius: 12px;
+        }
+        .image-picker .actions { padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; }
+        .image-picker .actions .filename { font-size: 12px; color: var(--gray); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .image-picker .empty-icon { font-size: 36px; color: var(--light); margin-bottom: 8px; }
+        .image-picker .empty-text { font-size: 14px; color: var(--gray); }
+        .image-picker .empty-text strong { color: var(--black); display: block; margin-bottom: 4px; font-weight: 600; }
+
+        /* ─── 리스트 항목 (stats, features, timeline) ─── */
+        .list-item {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        .list-item .item-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .list-item .item-header .num {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 22px; height: 22px;
+            background: var(--black); color: #fff;
+            border-radius: 50%;
+            font-size: 11px; font-weight: 600;
+        }
+        .list-item .item-actions { display: flex; gap: 6px; }
+        .list-item .item-actions button {
+            background: transparent; border: none; cursor: pointer;
+            color: var(--gray); padding: 4px 6px; border-radius: 6px;
+            font-size: 13px;
+        }
+        .list-item .item-actions button:hover { background: rgba(0,0,0,0.06); color: var(--black); }
+        .list-item .item-actions button.del:hover { color: var(--red); }
+        .add-item-btn {
+            width: 100%;
+            border: 1px dashed var(--light);
+            background: transparent;
+            color: var(--gray);
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .add-item-btn:hover { border-color: var(--black); color: var(--black); background: var(--bg); }
+
+        /* ─── 섹션 헤더 ─── */
+        .section-header {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--gray);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin: 30px 0 14px 6px;
+        }
+        .section-header:first-child { margin-top: 0; }
+
+        /* ─── 빈 상태 ─── */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--gray);
+        }
+        .empty-state h2 { font-size: 18px; font-weight: 600; color: var(--black); margin-bottom: 8px; letter-spacing: -0.02em; }
+        .empty-state p { font-size: 14px; margin-bottom: 20px; }
+
+        /* ─── 모바일 ─── */
+        @media (max-width: 800px) {
+            .edit-toolbar { margin: -20px -20px 20px; padding: 14px 20px; }
+            main { padding: 20px; }
+        }
     </style>
 </head>
 <body>
-    <!-- Sveltia CMS — 자체 호스팅 (Cloudflare CDN 한국 엣지 직접 사용) -->
-    <script type="module" src="./sveltia-cms.js"></script>
+
+<div id="root">
+    <div class="center-loading">
+        <span class="spinner spinner-large"></span>
+        <p>관리자 페이지 불러오는 중...</p>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="modal-overlay" id="modal"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// 설정
+// ═══════════════════════════════════════════════
+const CONFIG = {
+    repo: 'beaf2e/cjarchive',
+    branch: 'main',
+    dataFile: 'places.json',
+    authBase: 'https://sveltia-cms-auth.minsoo-lee2405.workers.dev',
+    siteUrl: 'https://cjarchive.pages.dev'
+};
+
+// ═══════════════════════════════════════════════
+// 상태
+// ═══════════════════════════════════════════════
+const state = {
+    token: sessionStorage.getItem('cja_token') || null,
+    user: JSON.parse(sessionStorage.getItem('cja_user') || 'null'),
+    places: [],
+    timeline: [],
+    sha: null,
+    view: 'login',          // 'login' | 'list' | 'edit' | 'timeline'
+    editingId: null,
+    saving: false,
+    dirty: false,
+    loading: false
+};
+
+// ═══════════════════════════════════════════════
+// 유틸
+// ═══════════════════════════════════════════════
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+const escapeHTML = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function utf8ToBase64(str) {
+    const bytes = new TextEncoder().encode(str);
+    let binary = '';
+    bytes.forEach(b => binary += String.fromCharCode(b));
+    return btoa(binary);
+}
+function base64ToUtf8(b64) {
+    const binary = atob(b64.replace(/\s/g, ''));
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
+}
+function fileToBase64(file) {
+    return new Promise((res, rej) => {
+        const r = new FileReader();
+        r.onload = () => {
+            const data = r.result.split(',')[1];
+            res(data);
+        };
+        r.onerror = rej;
+        r.readAsDataURL(file);
+    });
+}
+function toast(msg, type = '') {
+    const el = $('#toast');
+    el.textContent = msg;
+    el.className = 'toast show ' + type;
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.classList.remove('show'), 2500);
+}
+function confirmDialog(title, message, confirmLabel = '확인', danger = false) {
+    return new Promise(resolve => {
+        const m = $('#modal');
+        m.innerHTML = `
+            <div class="modal">
+                <h3>${escapeHTML(title)}</h3>
+                <p>${escapeHTML(message)}</p>
+                <div class="modal-actions">
+                    <button class="btn secondary" data-ok="0">취소</button>
+                    <button class="btn ${danger ? 'danger' : ''}" data-ok="1">${escapeHTML(confirmLabel)}</button>
+                </div>
+            </div>
+        `;
+        m.classList.add('show');
+        m.onclick = (e) => {
+            if (e.target.dataset.ok != null) {
+                m.classList.remove('show');
+                resolve(e.target.dataset.ok === '1');
+            }
+        };
+    });
+}
+
+// ═══════════════════════════════════════════════
+// 인증 (GitHub OAuth via Worker)
+// ═══════════════════════════════════════════════
+function login() {
+    const url = `${CONFIG.authBase}/auth?provider=github&site_id=cjarchive.pages.dev&scope=repo`;
+    const w = 600, h = 700;
+    const left = window.screenX + (window.outerWidth - w) / 2;
+    const top = window.screenY + (window.outerHeight - h) / 2;
+    const popup = window.open(url, 'cja_oauth', `width=${w},height=${h},left=${left},top=${top}`);
+    if (!popup) { toast('팝업이 차단되었어요. 허용해주세요.', 'error'); return; }
+}
+window.addEventListener('message', async (e) => {
+    if (typeof e.data !== 'string') return;
+    const m = e.data.match(/^authorization:github:(success|error):(.+)$/);
+    if (!m) return;
+    if (m[1] === 'error') { toast('로그인 실패', 'error'); return; }
+    try {
+        const data = JSON.parse(m[2]);
+        state.token = data.token;
+        sessionStorage.setItem('cja_token', data.token);
+        await fetchUser();
+        await loadData();
+        state.view = 'list';
+        render();
+        toast('로그인 성공', 'success');
+    } catch (err) {
+        console.error(err);
+        toast('로그인 처리 오류', 'error');
+    }
+});
+async function fetchUser() {
+    const res = await fetch('https://api.github.com/user', {
+        headers: { Authorization: `Bearer ${state.token}` }
+    });
+    if (!res.ok) throw new Error('user fetch failed');
+    state.user = await res.json();
+    sessionStorage.setItem('cja_user', JSON.stringify(state.user));
+}
+function logout() {
+    state.token = null;
+    state.user = null;
+    sessionStorage.removeItem('cja_token');
+    sessionStorage.removeItem('cja_user');
+    state.view = 'login';
+    render();
+}
+
+// ═══════════════════════════════════════════════
+// GitHub API
+// ═══════════════════════════════════════════════
+async function ghGet(path) {
+    const res = await fetch(`https://api.github.com/repos/${CONFIG.repo}/contents/${encodeURIComponent(path)}?ref=${CONFIG.branch}`, {
+        headers: { Authorization: `Bearer ${state.token}` }
+    });
+    if (res.status === 401) { logout(); throw new Error('인증 만료'); }
+    if (!res.ok) throw new Error(`GitHub ${res.status}`);
+    return res.json();
+}
+async function ghPut(path, content_b64, sha, message) {
+    const body = { message, content: content_b64, branch: CONFIG.branch };
+    if (sha) body.sha = sha;
+    const res = await fetch(`https://api.github.com/repos/${CONFIG.repo}/contents/${encodeURIComponent(path)}`, {
+        method: 'PUT',
+        headers: {
+            Authorization: `Bearer ${state.token}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+    });
+    if (res.status === 401) { logout(); throw new Error('인증 만료'); }
+    if (!res.ok) {
+        const t = await res.text();
+        throw new Error(`GitHub ${res.status}: ${t}`);
+    }
+    return res.json();
+}
+
+async function loadData() {
+    state.loading = true;
+    render();
+    try {
+        const f = await ghGet(CONFIG.dataFile);
+        state.sha = f.sha;
+        const json = JSON.parse(base64ToUtf8(f.content));
+        state.places = (json.places || []).slice().sort((a, b) => (a.order || 0) - (b.order || 0));
+        state.timeline = json.timeline || [];
+    } catch (e) {
+        console.error(e);
+        toast('데이터 로드 실패: ' + e.message, 'error');
+    } finally {
+        state.loading = false;
+    }
+}
+
+async function saveData(message = 'Update content via admin') {
+    if (state.saving) return;
+    state.saving = true;
+    render();
+    try {
+        const json = { places: state.places, timeline: state.timeline };
+        const content = JSON.stringify(json, null, 2);
+        const r = await ghPut(CONFIG.dataFile, utf8ToBase64(content), state.sha, message);
+        state.sha = r.content.sha;
+        state.dirty = false;
+        toast('저장 완료. 1~2분 후 사이트에 반영됩니다.', 'success');
+    } catch (e) {
+        console.error(e);
+        toast('저장 실패: ' + e.message, 'error');
+    } finally {
+        state.saving = false;
+        render();
+    }
+}
+
+async function uploadImage(file) {
+    const safeName = file.name.normalize('NFC').replace(/\s+/g, '-').replace(/[^a-zA-Z0-9._-]/g, '');
+    const path = safeName;
+    const b64 = await fileToBase64(file);
+    // 같은 이름이 이미 있으면 sha를 가져와서 update
+    let sha;
+    try {
+        const existing = await ghGet(path);
+        sha = existing.sha;
+    } catch { /* 없으면 새로 생성 */ }
+    await ghPut(path, b64, sha, `Upload media: ${path}`);
+    return path;
+}
+
+// ═══════════════════════════════════════════════
+// 데이터 mutation
+// ═══════════════════════════════════════════════
+function markDirty() { state.dirty = true; updateToolbar(); }
+
+function updatePlace(id, mutate) {
+    const i = state.places.findIndex(p => p.id === id);
+    if (i === -1) return;
+    mutate(state.places[i]);
+    markDirty();
+}
+
+function newPlaceTemplate() {
+    const maxOrder = state.places.reduce((m, p) => Math.max(m, p.order || 0), 0);
+    return {
+        id: 'new' + Date.now().toString(36),
+        order: maxOrder + 1,
+        title: '새 장소',
+        cardEyebrow: '',
+        cardTagline: '',
+        img: '',
+        heroVideo: '',
+        detailEyebrow: '',
+        tagline: '',
+        stats: [],
+        intro: { h: '', p: '' },
+        features: [],
+        quote: { text: '', cite: "— Curator's note" }
+    };
+}
+
+// ═══════════════════════════════════════════════
+// 뷰
+// ═══════════════════════════════════════════════
+const ICONS = {
+    place: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`,
+    timeline: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+    external: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`,
+    logout: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>`,
+    back: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>`,
+    image: `<svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`
+};
+
+function render() {
+    const root = $('#root');
+    if (!state.token) { renderLogin(root); return; }
+    if (state.loading) {
+        root.innerHTML = `<div class="center-loading"><span class="spinner spinner-large"></span><p>데이터 불러오는 중...</p></div>`;
+        return;
+    }
+    renderApp(root);
+}
+
+function renderLogin(root) {
+    root.innerHTML = `
+        <div id="login-view">
+            <div class="login-card">
+                <div class="logo-box">
+                    <img src="../logo4.png" alt="Cheongju Archive" onerror="this.style.display='none'">
+                </div>
+                <h1>Cheongju Archive</h1>
+                <p class="sub">콘텐츠 관리자</p>
+                <button class="btn" id="login-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.9 1.2 1.9 1.2 1 1.9 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.3-3.1-.2-.4-.6-1.6 0-3.2 0 0 1-.3 3.4 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.6.2 2.8 0 3.2.9.8 1.3 1.9 1.3 3.1 0 4.6-2.8 5.6-5.5 5.9.5.4.9 1.2.9 2.3v3.4c0 .3.1.7.8.6A12 12 0 0 0 12 .3"/></svg>
+                    GitHub 계정으로 로그인
+                </button>
+                <p class="footer-note">
+                    이 리포지토리의 collaborator 만 편집 가능합니다.<br>
+                    <a href="${CONFIG.siteUrl}" target="_blank" style="color: var(--gray);">사이트로 돌아가기 →</a>
+                </p>
+            </div>
+        </div>
+    `;
+    $('#login-btn').onclick = login;
+}
+
+function renderApp(root) {
+    root.innerHTML = `
+        <div id="app">
+            ${renderSidebar()}
+            <main id="main"></main>
+        </div>
+    `;
+    bindSidebar();
+    renderMain();
+}
+
+function renderSidebar() {
+    const initial = (state.user?.login || 'U')[0].toUpperCase();
+    const avatar = state.user?.avatar_url
+        ? `<img src="${escapeHTML(state.user.avatar_url)}" alt="">`
+        : initial;
+    return `
+        <aside class="sidebar">
+            <div class="brand">
+                <img src="../logo2.png" alt="Cheongju Archive" onerror="this.style.display='none'">
+                <div class="text">Cheongju<div class="small">Archive Admin</div></div>
+            </div>
+            <nav>
+                <div class="nav-item ${state.view === 'list' || state.view === 'edit' ? 'active' : ''}" data-nav="list">
+                    ${ICONS.place}<span>장소</span>
+                </div>
+                <div class="nav-item ${state.view === 'timeline' ? 'active' : ''}" data-nav="timeline">
+                    ${ICONS.timeline}<span>타임라인</span>
+                </div>
+                <div class="nav-divider"></div>
+                <a class="nav-item" href="${CONFIG.siteUrl}" target="_blank" style="text-decoration: none;">
+                    ${ICONS.external}<span>사이트 보기</span>
+                </a>
+            </nav>
+            <div>
+                <div class="user">
+                    <div class="avatar">${avatar}</div>
+                    <span class="name">${escapeHTML(state.user?.login || '...')}</span>
+                    <button class="btn icon-only ghost" id="logout-btn" title="로그아웃">${ICONS.logout}</button>
+                </div>
+            </div>
+        </aside>
+    `;
+}
+
+function bindSidebar() {
+    $$('[data-nav]').forEach(el => {
+        el.onclick = async () => {
+            const nav = el.dataset.nav;
+            if (await confirmIfDirty()) {
+                state.view = nav;
+                state.editingId = null;
+                state.dirty = false;
+                render();
+            }
+        };
+    });
+    const lo = $('#logout-btn');
+    if (lo) lo.onclick = logout;
+}
+
+async function confirmIfDirty() {
+    if (!state.dirty) return true;
+    return await confirmDialog('저장 안 된 변경사항이 있어요', '계속하면 변경사항을 잃어버립니다. 그래도 계속할까요?', '계속', true);
+}
+
+function renderMain() {
+    const main = $('#main');
+    if (state.view === 'list') renderList(main);
+    else if (state.view === 'edit') renderEdit(main);
+    else if (state.view === 'timeline') renderTimeline(main);
+}
+
+// ─── 장소 리스트 ───
+function renderList(main) {
+    if (state.places.length === 0) {
+        main.innerHTML = `
+            <div class="page-header"><h1>장소</h1><div class="actions"><button class="btn" id="new-place">+ 새 장소</button></div></div>
+            <div class="empty-state"><h2>아직 장소가 없어요</h2><p>첫 장소를 추가해보세요.</p></div>
+        `;
+    } else {
+        main.innerHTML = `
+            <div class="page-header">
+                <h1>장소 <span class="count">${state.places.length}</span></h1>
+                <div class="actions">
+                    <button class="btn" id="new-place">+ 새 장소</button>
+                </div>
+            </div>
+            <div class="places-grid">
+                ${state.places.map(p => `
+                    <div class="place-card" data-id="${escapeHTML(p.id)}">
+                        <div class="thumb" style="background-image: url('${escapeHTML(toMediaUrl(p.img))}')"></div>
+                        <div class="body">
+                            <div class="eyebrow">${escapeHTML(p.cardEyebrow || '')}</div>
+                            <div class="title">${escapeHTML(p.title)}</div>
+                            <div class="tagline">${escapeHTML(p.cardTagline || '')}</div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+    $('#new-place').onclick = () => {
+        const np = newPlaceTemplate();
+        state.places.push(np);
+        state.editingId = np.id;
+        state.dirty = true;
+        state.view = 'edit';
+        render();
+    };
+    $$('.place-card').forEach(c => c.onclick = () => {
+        state.editingId = c.dataset.id;
+        state.view = 'edit';
+        render();
+    });
+}
+
+function toMediaUrl(name) {
+    if (!name) return '';
+    if (/^https?:/.test(name) || name.startsWith('/')) return CONFIG.siteUrl + (name.startsWith('/') ? name : '/' + name);
+    return CONFIG.siteUrl + '/' + name;
+}
+
+// ─── 장소 편집 ───
+function renderEdit(main) {
+    const p = state.places.find(x => x.id === state.editingId);
+    if (!p) { state.view = 'list'; render(); return; }
+    main.innerHTML = `
+        <div class="edit-toolbar">
+            <div class="left">
+                <button class="btn icon-only ghost" id="back-btn" title="뒤로">${ICONS.back}</button>
+                <div class="title-area">
+                    <div class="breadcrumb">장소 편집</div>
+                    <div class="title" id="title-preview">${escapeHTML(p.title || '제목 없음')}</div>
+                </div>
+            </div>
+            <div class="right">
+                ${state.dirty ? '<span class="dirty-indicator">변경사항 있음</span>' : ''}
+                <button class="btn secondary small" id="delete-btn">삭제</button>
+                <button class="btn small" id="save-btn" ${state.saving ? 'disabled' : ''}>
+                    ${state.saving ? '<span class="spinner"></span> 저장 중...' : '저장'}
+                </button>
+            </div>
+        </div>
+
+        <div class="section-header">기본 정보</div>
+        <div class="card">
+            <div class="field-row-3">
+                <div class="field">
+                    <label class="field-label">ID (변경 불가)</label>
+                    <input class="input" data-bind="id" value="${escapeHTML(p.id)}">
+                    <div class="field-hint">영문 소문자/숫자만</div>
+                </div>
+                <div class="field">
+                    <label class="field-label">정렬 순서</label>
+                    <input class="input" type="number" data-bind="order" value="${p.order || 1}">
+                </div>
+                <div class="field">
+                    <label class="field-label">장소 이름</label>
+                    <input class="input" data-bind="title" value="${escapeHTML(p.title || '')}">
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">홈 카드</div>
+        <div class="card">
+            <div class="field">
+                <label class="field-label">메인 이미지</label>
+                <div id="img-picker"></div>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label class="field-label">카드 위 라벨 (영문 권장)</label>
+                    <input class="input" data-bind="cardEyebrow" value="${escapeHTML(p.cardEyebrow || '')}" placeholder="예: Faith · 1935">
+                </div>
+                <div class="field">
+                    <label class="field-label">카드 한 줄 태그라인</label>
+                    <input class="input" data-bind="cardTagline" value="${escapeHTML(p.cardTagline || '')}">
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">상세 페이지 헤더</div>
+        <div class="card">
+            <div class="field">
+                <label class="field-label">상세 페이지 위 라벨</label>
+                <input class="input" data-bind="detailEyebrow" value="${escapeHTML(p.detailEyebrow || '')}" placeholder="예: Heritage No.1 · 충청북도 유형문화재">
+            </div>
+            <div class="field">
+                <label class="field-label">상세 페이지 부제 (개행 가능)</label>
+                <textarea class="textarea" data-bind="tagline">${escapeHTML(p.tagline || '')}</textarea>
+            </div>
+            <div class="field">
+                <label class="field-label">히어로 영상 (선택, .mp4)</label>
+                <div id="vid-picker"></div>
+            </div>
+        </div>
+
+        <div class="section-header">스펙 시트 (4개 권장)</div>
+        <div class="card">
+            <div id="stats-list"></div>
+            <button class="add-item-btn" id="add-stat">+ 스펙 추가</button>
+        </div>
+
+        <div class="section-header">도입 섹션</div>
+        <div class="card">
+            <div class="field">
+                <label class="field-label">헤드라인</label>
+                <input class="input" data-bind="intro.h" value="${escapeHTML(p.intro?.h || '')}">
+            </div>
+            <div class="field">
+                <label class="field-label">본문</label>
+                <textarea class="textarea" data-bind="intro.p">${escapeHTML(p.intro?.p || '')}</textarea>
+            </div>
+        </div>
+
+        <div class="section-header">피처 섹션</div>
+        <div class="card">
+            <div id="features-list"></div>
+            <button class="add-item-btn" id="add-feature">+ 피처 추가</button>
+        </div>
+
+        <div class="section-header">마무리 인용구</div>
+        <div class="card">
+            <div class="field">
+                <label class="field-label">본문</label>
+                <textarea class="textarea" data-bind="quote.text">${escapeHTML(p.quote?.text || '')}</textarea>
+            </div>
+            <div class="field">
+                <label class="field-label">출처</label>
+                <input class="input" data-bind="quote.cite" value="${escapeHTML(p.quote?.cite || "— Curator's note")}">
+            </div>
+        </div>
+    `;
+
+    bindBindings(p);
+    renderImagePicker('#img-picker', p.img, (newPath) => { p.img = newPath; markDirty(); }, 'image');
+    renderImagePicker('#vid-picker', p.heroVideo, (newPath) => { p.heroVideo = newPath; markDirty(); }, 'video');
+    renderStats(p);
+    renderFeatures(p);
+
+    $('#back-btn').onclick = async () => {
+        if (await confirmIfDirty()) { state.view = 'list'; state.dirty = false; render(); }
+    };
+    $('#save-btn').onclick = () => saveData(`Update place: ${p.title}`);
+    $('#delete-btn').onclick = async () => {
+        const ok = await confirmDialog(`'${p.title}' 삭제`, '이 장소를 삭제할까요? 저장 누른 뒤 적용됩니다.', '삭제', true);
+        if (!ok) return;
+        state.places = state.places.filter(x => x.id !== p.id);
+        markDirty();
+        state.view = 'list';
+        render();
+    };
+}
+
+function bindBindings(p) {
+    $$('[data-bind]').forEach(el => {
+        el.oninput = () => {
+            const path = el.dataset.bind.split('.');
+            let obj = p;
+            for (let i = 0; i < path.length - 1; i++) {
+                obj[path[i]] = obj[path[i]] || {};
+                obj = obj[path[i]];
+            }
+            const v = el.type === 'number' ? Number(el.value) : el.value;
+            obj[path[path.length - 1]] = v;
+            if (path[path.length - 1] === 'title') $('#title-preview').textContent = el.value || '제목 없음';
+            markDirty();
+        };
+    });
+}
+
+function renderStats(p) {
+    if (!p.stats) p.stats = [];
+    const c = $('#stats-list');
+    c.innerHTML = p.stats.map((s, i) => `
+        <div class="list-item">
+            <div class="item-header">
+                <span class="num">${i + 1}</span>
+                <div class="item-actions">
+                    <button data-i="${i}" data-act="up" ${i === 0 ? 'disabled' : ''}>↑</button>
+                    <button data-i="${i}" data-act="down" ${i === p.stats.length - 1 ? 'disabled' : ''}>↓</button>
+                    <button class="del" data-i="${i}" data-act="del">삭제</button>
+                </div>
+            </div>
+            <div class="field-row">
+                <div class="field" style="margin: 0;">
+                    <label class="field-label">항목명</label>
+                    <input class="input" data-stat="${i}" data-key="label" value="${escapeHTML(s.label || '')}" placeholder="예: Built">
+                </div>
+                <div class="field" style="margin: 0;">
+                    <label class="field-label">값</label>
+                    <input class="input" data-stat="${i}" data-key="value" value="${escapeHTML(s.value || '')}" placeholder="예: 1935년">
+                </div>
+            </div>
+        </div>
+    `).join('');
+    $$('[data-stat]', c).forEach(el => el.oninput = () => {
+        p.stats[+el.dataset.stat][el.dataset.key] = el.value;
+        markDirty();
+    });
+    $$('[data-act]', c).forEach(b => b.onclick = () => {
+        const i = +b.dataset.i;
+        if (b.dataset.act === 'del') p.stats.splice(i, 1);
+        if (b.dataset.act === 'up' && i > 0) [p.stats[i-1], p.stats[i]] = [p.stats[i], p.stats[i-1]];
+        if (b.dataset.act === 'down' && i < p.stats.length - 1) [p.stats[i+1], p.stats[i]] = [p.stats[i], p.stats[i+1]];
+        markDirty();
+        renderStats(p);
+    });
+    $('#add-stat').onclick = () => {
+        p.stats.push({ label: '', value: '' });
+        markDirty();
+        renderStats(p);
+    };
+}
+
+function renderFeatures(p) {
+    if (!p.features) p.features = [];
+    const c = $('#features-list');
+    c.innerHTML = p.features.map((f, i) => `
+        <div class="list-item" data-fi="${i}">
+            <div class="item-header">
+                <span class="num">${i + 1}</span>
+                <div class="item-actions">
+                    <button data-fact="up" ${i === 0 ? 'disabled' : ''}>↑</button>
+                    <button data-fact="down" ${i === p.features.length - 1 ? 'disabled' : ''}>↓</button>
+                    <button class="del" data-fact="del">삭제</button>
+                </div>
+            </div>
+            <div class="field">
+                <label class="field-label">라벨 (작은 위 글자)</label>
+                <input class="input" data-feat="label" data-key="eyebrow" value="${escapeHTML(f.eyebrow || '')}" placeholder="예: Architecture">
+            </div>
+            <div class="field">
+                <label class="field-label">제목 (개행 가능)</label>
+                <textarea class="textarea" data-feat="title" data-key="h" style="min-height:60px;">${escapeHTML(f.h || '')}</textarea>
+            </div>
+            <div class="field">
+                <label class="field-label">본문</label>
+                <textarea class="textarea" data-feat="body" data-key="p">${escapeHTML(f.p || '')}</textarea>
+            </div>
+            <div class="field">
+                <label class="field-label">이미지</label>
+                <div id="feat-img-${i}"></div>
+            </div>
+            <label class="toggle">
+                <input type="checkbox" data-feat="rev" data-key="reverse" ${f.reverse ? 'checked' : ''}>
+                <span class="slider"></span>
+                <span style="font-size:13px;">이미지를 왼쪽에 배치 (좌우 반전)</span>
+            </label>
+        </div>
+    `).join('');
+    $$('[data-feat]', c).forEach(el => {
+        const i = +el.closest('[data-fi]').dataset.fi;
+        el.oninput = () => {
+            const v = el.type === 'checkbox' ? el.checked : el.value;
+            p.features[i][el.dataset.key] = v;
+            markDirty();
+        };
+    });
+    $$('[data-fact]', c).forEach(b => b.onclick = () => {
+        const i = +b.closest('[data-fi]').dataset.fi;
+        if (b.dataset.fact === 'del') p.features.splice(i, 1);
+        if (b.dataset.fact === 'up' && i > 0) [p.features[i-1], p.features[i]] = [p.features[i], p.features[i-1]];
+        if (b.dataset.fact === 'down' && i < p.features.length - 1) [p.features[i+1], p.features[i]] = [p.features[i], p.features[i+1]];
+        markDirty();
+        renderFeatures(p);
+    });
+    p.features.forEach((f, i) => {
+        renderImagePicker(`#feat-img-${i}`, f.img, (np) => { f.img = np; markDirty(); }, 'image');
+    });
+    $('#add-feature').onclick = () => {
+        p.features.push({ eyebrow: '', h: '', p: '', img: '', reverse: false });
+        markDirty();
+        renderFeatures(p);
+    };
+}
+
+// ─── 이미지/영상 픽커 ───
+function renderImagePicker(sel, value, onChange, kind) {
+    const el = $(sel);
+    if (!el) return;
+    const accept = kind === 'video' ? 'video/mp4' : 'image/*';
+    const isVid = kind === 'video';
+    function paint() {
+        if (value) {
+            el.className = 'image-picker has-image';
+            const url = toMediaUrl(value);
+            el.innerHTML = `
+                ${isVid
+                    ? `<video src="${escapeHTML(url)}" muted style="width:100%;border-radius:12px 12px 0 0;background:#000;aspect-ratio:16/10;object-fit:cover;"></video>`
+                    : `<img class="preview" src="${escapeHTML(url)}" alt="" onerror="this.style.opacity=0.3">`}
+                <div class="actions">
+                    <span class="filename">${escapeHTML(value)}</span>
+                    <div style="display:flex;gap:6px;">
+                        <button class="btn small ghost" data-act="change">변경</button>
+                        <button class="btn small ghost" data-act="clear" style="color:var(--red);">제거</button>
+                    </div>
+                </div>
+            `;
+            $('[data-act="change"]', el).onclick = pick;
+            $('[data-act="clear"]', el).onclick = () => { value = ''; onChange(''); paint(); };
+        } else {
+            el.className = 'image-picker';
+            el.innerHTML = `
+                <div class="empty-icon">${ICONS.image}</div>
+                <div class="empty-text">
+                    <strong>${isVid ? '영상' : '이미지'} 끌어다 놓기</strong>
+                    또는 클릭해서 ${isVid ? 'mp4' : '파일'} 선택
+                </div>
+            `;
+            el.onclick = pick;
+            el.ondragover = (e) => { e.preventDefault(); el.classList.add('dragover'); };
+            el.ondragleave = () => el.classList.remove('dragover');
+            el.ondrop = (e) => {
+                e.preventDefault();
+                el.classList.remove('dragover');
+                if (e.dataTransfer.files[0]) handle(e.dataTransfer.files[0]);
+            };
+        }
+    }
+    function pick() {
+        const inp = document.createElement('input');
+        inp.type = 'file';
+        inp.accept = accept;
+        inp.onchange = () => inp.files[0] && handle(inp.files[0]);
+        inp.click();
+    }
+    async function handle(file) {
+        if (file.size > 25 * 1024 * 1024) {
+            toast('25MB 초과 — Cloudflare Pages 제한이에요. 압축해서 다시 올려주세요.', 'error');
+            return;
+        }
+        toast(`업로드 중... ${file.name}`);
+        try {
+            const path = await uploadImage(file);
+            value = path;
+            onChange(path);
+            paint();
+            toast(`업로드 완료: ${path}`, 'success');
+        } catch (e) {
+            console.error(e);
+            toast('업로드 실패: ' + e.message, 'error');
+        }
+    }
+    paint();
+}
+
+// ─── 타임라인 ───
+function renderTimeline(main) {
+    main.innerHTML = `
+        <div class="edit-toolbar">
+            <div class="left">
+                <div class="title-area">
+                    <div class="breadcrumb">홈 화면 연표</div>
+                    <div class="title">타임라인</div>
+                </div>
+            </div>
+            <div class="right">
+                ${state.dirty ? '<span class="dirty-indicator">변경사항 있음</span>' : ''}
+                <button class="btn small" id="save-btn" ${state.saving ? 'disabled' : ''}>
+                    ${state.saving ? '<span class="spinner"></span> 저장 중...' : '저장'}
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div id="tl-list"></div>
+            <button class="add-item-btn" id="add-tl">+ 마커 추가</button>
+        </div>
+    `;
+    function paintList() {
+        const c = $('#tl-list');
+        c.innerHTML = state.timeline.map((t, i) => `
+            <div class="list-item" data-tli="${i}">
+                <div class="item-header">
+                    <span class="num">${i + 1}</span>
+                    <div class="item-actions">
+                        <button data-tl="up" ${i === 0 ? 'disabled' : ''}>↑</button>
+                        <button data-tl="down" ${i === state.timeline.length - 1 ? 'disabled' : ''}>↓</button>
+                        <button class="del" data-tl="del">삭제</button>
+                    </div>
+                </div>
+                <div class="field-row-3">
+                    <div class="field" style="margin:0;">
+                        <label class="field-label">연도/시대</label>
+                        <input class="input" data-tk="year" value="${escapeHTML(t.year || '')}" placeholder="962">
+                    </div>
+                    <div class="field" style="margin:0;">
+                        <label class="field-label">장소</label>
+                        <input class="input" data-tk="place" value="${escapeHTML(t.place || '')}">
+                    </div>
+                    <div class="field" style="margin:0;">
+                        <label class="field-label">설명 (개행 가능)</label>
+                        <textarea class="textarea" data-tk="desc" style="min-height:42px;">${escapeHTML(t.desc || '')}</textarea>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        $$('[data-tk]', c).forEach(el => {
+            const i = +el.closest('[data-tli]').dataset.tli;
+            el.oninput = () => { state.timeline[i][el.dataset.tk] = el.value; markDirty(); };
+        });
+        $$('[data-tl]', c).forEach(b => b.onclick = () => {
+            const i = +b.closest('[data-tli]').dataset.tli;
+            if (b.dataset.tl === 'del') state.timeline.splice(i, 1);
+            if (b.dataset.tl === 'up' && i > 0) [state.timeline[i-1], state.timeline[i]] = [state.timeline[i], state.timeline[i-1]];
+            if (b.dataset.tl === 'down' && i < state.timeline.length - 1) [state.timeline[i+1], state.timeline[i]] = [state.timeline[i], state.timeline[i+1]];
+            markDirty();
+            paintList();
+        });
+    }
+    $('#add-tl').onclick = () => {
+        state.timeline.push({ year: '', place: '', desc: '' });
+        markDirty();
+        paintList();
+    };
+    $('#save-btn').onclick = () => saveData('Update timeline');
+    paintList();
+}
+
+// ─── 헬퍼 ───
+function updateToolbar() {
+    const tb = $('.edit-toolbar .right');
+    if (!tb) return;
+    const exists = tb.querySelector('.dirty-indicator');
+    if (state.dirty && !exists) {
+        tb.insertAdjacentHTML('afterbegin', '<span class="dirty-indicator">변경사항 있음</span>');
+    } else if (!state.dirty && exists) {
+        exists.remove();
+    }
+}
+
+// ═══════════════════════════════════════════════
+// 부트
+// ═══════════════════════════════════════════════
+(async function init() {
+    if (state.token) {
+        try {
+            await fetchUser();
+            await loadData();
+            state.view = 'list';
+        } catch {
+            // 토큰 만료 등
+            logout();
+            return;
+        }
+    }
+    render();
+})();
+</script>
 </body>
 </html>
