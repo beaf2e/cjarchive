@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
     <style>
         :root {
-            --black: #1d1d1f;
+            --black: #211f20;
             --gray: #86868b;
             --light: #d2d2d7;
             --bg: #f5f5f7;
@@ -25,8 +25,9 @@
             letter-spacing: -0.01em;
         }
         ::selection { background: var(--black); color: #fff; }
+        img { max-width: 100%; display: block; }
 
-        /* ===== PAGE FRAMING (screen view) ===== */
+        /* ───── 페이지 프레임 (화면) ───── */
         .page {
             width: 21cm;
             min-height: 29.7cm;
@@ -46,45 +47,47 @@
             font-size: 9pt;
             color: var(--gray);
             letter-spacing: 0.1em;
+            font-feature-settings: "tnum";
         }
         .page-foot {
             position: absolute;
             bottom: 1.2cm; left: 2cm;
-            font-size: 9pt;
+            font-size: 8.5pt;
             color: var(--gray);
-            letter-spacing: 0.04em;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
         }
 
-        /* ===== TYPOGRAPHY ===== */
+        /* ───── 타이포 ───── */
         .eyebrow {
-            font-size: 9.5pt;
+            font-size: 9pt;
             font-weight: 600;
             color: var(--blue);
-            letter-spacing: 0.16em;
+            letter-spacing: 0.18em;
             text-transform: uppercase;
             margin-bottom: 14px;
         }
         h1.cover-title {
             font-size: 60pt;
             font-weight: 700;
-            letter-spacing: -0.04em;
+            letter-spacing: -0.045em;
             line-height: 1.02;
             margin-bottom: 24px;
             word-break: keep-all;
         }
         h2.section-title {
-            font-size: 28pt;
+            font-size: 30pt;
             font-weight: 700;
-            letter-spacing: -0.03em;
-            line-height: 1.2;
+            letter-spacing: -0.035em;
+            line-height: 1.15;
             margin-bottom: 18px;
             word-break: keep-all;
         }
         h3 {
-            font-size: 16pt;
+            font-size: 14pt;
             font-weight: 600;
             letter-spacing: -0.02em;
-            margin: 24px 0 10px;
+            margin: 22px 0 10px;
         }
         p {
             font-size: 11pt;
@@ -94,44 +97,48 @@
             margin-bottom: 14px;
         }
         p.lead {
-            font-size: 14pt;
+            font-size: 13.5pt;
             font-weight: 400;
             line-height: 1.55;
-            color: #2d2d31;
+            color: #1d1d20;
             margin-bottom: 22px;
         }
-        .small { font-size: 9.5pt; color: var(--gray); }
+        .small { font-size: 9pt; color: var(--gray); }
 
-        /* ===== COVER ===== */
+        /* ───── 표지 ───── */
         .cover {
             justify-content: space-between;
             background: #fff;
+            padding-top: 1.8cm;
         }
-        .cover-top { padding-top: 1.2cm; }
         .cover-mark {
-            display: inline-flex; align-items: center; gap: 8px;
-            font-size: 9.5pt; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+            display: inline-flex; align-items: baseline; gap: 0.5em;
+            font-size: 11pt;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
             color: var(--black);
         }
-        .cover-mark .pillar { width: 4px; height: 18px; background: var(--black); }
-        .cover-mark .pillar::before {
-            content: ""; display: block;
-            width: 8px; height: 8px; background: var(--black);
-            border-radius: 50%;
-            margin: -10px 0 0 -2px;
-        }
+        .cover-mark .h { font-weight: 900; }
+        .cover-mark .r { font-weight: 400; }
+        .cover-mark .l { font-weight: 300; text-transform: none; letter-spacing: -0.01em; }
         .cover-meta {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
+            gap: 14px 24px;
             border-top: 1px solid var(--divider);
             padding-top: 22px;
             font-size: 10pt;
         }
-        .cover-meta .label { color: var(--gray); font-size: 9pt; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+        .cover-meta .label {
+            color: var(--gray);
+            font-size: 8.5pt;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
         .cover-meta .value { font-weight: 600; }
 
-        /* ===== TWO-COL ===== */
+        /* ───── 두 컬럼 ───── */
         .two-col {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -139,7 +146,7 @@
             margin-top: 28px;
         }
 
-        /* ===== STAT BLOCK ===== */
+        /* ───── 스펙 스트립 ───── */
         .stat-row {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -149,14 +156,32 @@
             padding: 22px 0;
             margin: 30px 0;
         }
-        .stat-row .cell { padding-left: 14px; border-left: 1px solid var(--divider); }
-        .stat-row .cell:first-child { border-left: none; padding-left: 0; }
-        .stat-row .label { font-size: 8pt; color: var(--gray); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
-        .stat-row .value { font-size: 14pt; font-weight: 700; letter-spacing: -0.02em; word-break: keep-all; line-height: 1.2; }
+        .stat-row .cell {
+            padding-left: 14px;
+            border-left: 1px solid var(--divider);
+        }
+        .stat-row .cell:first-child {
+            border-left: none;
+            padding-left: 0;
+        }
+        .stat-row .label {
+            font-size: 8pt;
+            color: var(--gray);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .stat-row .value {
+            font-size: 13pt;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            word-break: keep-all;
+            line-height: 1.25;
+        }
 
-        /* ===== QUOTE ===== */
+        /* ───── 풀 쿼트 ───── */
         .pull {
-            border-left: 2px solid var(--black);
+            border-left: 2.5px solid var(--black);
             padding-left: 22px;
             margin: 28px 0;
         }
@@ -176,46 +201,77 @@
             letter-spacing: 0.04em;
         }
 
-        /* ===== IMAGE PLATE ===== */
+        /* ───── 이미지 플레이트 ───── */
         .plate {
             width: 100%;
             border-radius: 12px;
             overflow: hidden;
             background: var(--bg);
-            margin: 20px 0;
+            margin: 18px 0;
         }
-        .plate img { width: 100%; display: block; aspect-ratio: 16/10; object-fit: cover; }
-        .plate-cap { font-size: 9pt; color: var(--gray); margin-top: 8px; letter-spacing: 0.02em; }
+        .plate img {
+            width: 100%;
+            display: block;
+            aspect-ratio: 16/10;
+            object-fit: cover;
+        }
+        .plate-cap {
+            font-size: 8.5pt;
+            color: var(--gray);
+            margin-top: 8px;
+            letter-spacing: 0.02em;
+        }
 
-        /* ===== TIMELINE TABLE ===== */
+        /* ───── 타임라인 표 ───── */
         .tl {
             border-top: 1px solid var(--divider);
             margin-top: 16px;
         }
         .tl .row {
             display: grid;
-            grid-template-columns: 90px 1fr 1.5fr;
+            grid-template-columns: 90px 1fr 1.7fr;
             gap: 18px;
             padding: 16px 0;
             border-bottom: 1px solid var(--divider);
             align-items: baseline;
         }
-        .tl .yr { font-size: 16pt; font-weight: 700; letter-spacing: -0.02em; }
+        .tl .yr {
+            font-size: 16pt;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            font-feature-settings: "tnum";
+        }
         .tl .nm { font-size: 11pt; font-weight: 600; }
-        .tl .dc { font-size: 10pt; color: #4a4a4f; line-height: 1.6; word-break: keep-all; }
+        .tl .dc {
+            font-size: 10pt;
+            color: #4a4a4f;
+            line-height: 1.55;
+            word-break: keep-all;
+        }
 
-        /* ===== INDEX ===== */
+        /* ───── 목차 ───── */
         .toc { list-style: none; }
         .toc li {
-            display: flex; justify-content: space-between; align-items: baseline;
-            padding: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 11px 0;
             border-bottom: 1px solid var(--divider);
             font-size: 11pt;
         }
-        .toc li .num { color: var(--gray); font-feature-settings: "tnum"; }
+        .toc li .num {
+            color: var(--gray);
+            font-feature-settings: "tnum";
+            font-size: 10pt;
+        }
         .toc li .ttl { font-weight: 500; }
+        .toc li.sub .ttl {
+            color: #4a4a4f;
+            font-weight: 400;
+            padding-left: 18px;
+        }
 
-        /* ===== KV TABLE ===== */
+        /* ───── 키-밸류 ───── */
         .kv {
             display: grid;
             grid-template-columns: 130px 1fr;
@@ -225,11 +281,19 @@
             border-top: 1px solid var(--divider);
             padding-top: 14px;
         }
-        .kv dt { color: var(--gray); letter-spacing: 0.04em; padding: 4px 0; }
-        .kv dd { color: var(--black); font-weight: 500; padding: 4px 0; border-bottom: 1px solid var(--divider); }
-        .kv dt:nth-of-type(1), .kv dd:nth-of-type(1) { border-top: none; }
+        .kv dt {
+            color: var(--gray);
+            letter-spacing: 0.04em;
+            padding: 5px 0;
+        }
+        .kv dd {
+            color: var(--black);
+            font-weight: 500;
+            padding: 5px 0;
+            border-bottom: 1px solid var(--divider);
+        }
 
-        /* ===== PRINT BUTTON ===== */
+        /* ───── 인쇄 버튼 ───── */
         .print-btn {
             position: fixed; top: 24px; right: 24px;
             background: var(--black); color: #fff;
@@ -241,7 +305,7 @@
         }
         .print-btn:hover { background: #333; }
 
-        /* ===== PRINT RULES ===== */
+        /* ───── 인쇄 규칙 ───── */
         @media print {
             html, body { background: #fff; }
             .print-btn { display: none; }
@@ -259,13 +323,17 @@
 
 <button class="print-btn" onclick="window.print()">PDF로 저장 (⌘P)</button>
 
-<!-- ===== COVER ===== -->
+<!-- ───── 표지 ───── -->
 <section class="page cover">
-    <div class="cover-top">
-        <div class="cover-mark"><span class="pillar"></span> CHEONGJU ARCHIVE</div>
+    <div>
+        <div class="cover-mark">
+            <span class="h">CHEONGJU</span>
+            <span class="r">ARCHIVE</span>
+            <span class="l">Project</span>
+        </div>
     </div>
     <div>
-        <div class="eyebrow">Project Report · 2026</div>
+        <div class="eyebrow">Project Report · Vol. 01 · 2026</div>
         <h1 class="cover-title">유산, 디지털로<br>다시 태어나다.</h1>
         <p class="lead" style="max-width: 14cm;">
             청주의 사라져가는 유산을 디지털로 기록하는 청석고등학교 학생 주도 아카이브 프로젝트.
@@ -278,43 +346,44 @@
             <div class="value">이민수 · 청석고등학교 2학년</div>
         </div>
         <div>
-            <div class="label">Domain</div>
+            <div class="label">Live</div>
             <div class="value">cjarchive.pages.dev</div>
         </div>
         <div>
             <div class="label">Period</div>
-            <div class="value">2025 – 2026</div>
+            <div class="value">2025 — 2026</div>
         </div>
         <div>
             <div class="label">Document</div>
-            <div class="value">Project Report v1.0</div>
+            <div class="value">Report v1.1 · 2026. 05</div>
         </div>
     </div>
     <div class="page-foot">Cheongseok High School</div>
     <div class="page-num">01</div>
 </section>
 
-<!-- ===== TOC ===== -->
+<!-- ───── 목차 ───── -->
 <section class="page">
     <div class="eyebrow">Contents</div>
     <h2 class="section-title">목차</h2>
-    <ul class="toc" style="margin-top: 30px;">
-        <li><span class="ttl">1. Why We Archive — 기록의 의미</span><span class="num">03</span></li>
-        <li><span class="ttl">2. Heritage Stories — 네 곳의 유산</span><span class="num">04</span></li>
-        <li><span class="ttl">　청주향교</span><span class="num">05</span></li>
-        <li><span class="ttl">　수동성당</span><span class="num">06</span></li>
-        <li><span class="ttl">　용두사지 철당간</span><span class="num">07</span></li>
-        <li><span class="ttl">　옛 청주역</span><span class="num">08</span></li>
-        <li><span class="ttl">3. Timeline — 천 년의 시간</span><span class="num">09</span></li>
-        <li><span class="ttl">4. Methodology — 어떻게 기록했는가</span><span class="num">10</span></li>
-        <li><span class="ttl">5. Reflection — 큐레이터 노트</span><span class="num">11</span></li>
-        <li><span class="ttl">6. Credits</span><span class="num">12</span></li>
+    <ul class="toc" style="margin-top: 32px;">
+        <li><span class="ttl">01.  Why We Archive — 기록의 의미</span><span class="num">03</span></li>
+        <li><span class="ttl">02.  Heritage Stories — 네 곳의 유산</span><span class="num">04</span></li>
+        <li class="sub"><span class="ttl">청주향교</span><span class="num">05</span></li>
+        <li class="sub"><span class="ttl">수동성당</span><span class="num">06</span></li>
+        <li class="sub"><span class="ttl">용두사지 철당간</span><span class="num">07</span></li>
+        <li class="sub"><span class="ttl">옛 청주역</span><span class="num">08</span></li>
+        <li><span class="ttl">03.  Timeline — 천 년의 시간</span><span class="num">09</span></li>
+        <li><span class="ttl">04.  Methodology — 어떻게 기록했는가</span><span class="num">10</span></li>
+        <li><span class="ttl">05.  System Architecture — 어떻게 굴러가는가</span><span class="num">11</span></li>
+        <li><span class="ttl">06.  Reflection — 큐레이터 노트</span><span class="num">12</span></li>
+        <li><span class="ttl">07.  Credits</span><span class="num">13</span></li>
     </ul>
-    <div class="page-foot">Cheongju Archive · Project Report</div>
+    <div class="page-foot">Project Report</div>
     <div class="page-num">02</div>
 </section>
 
-<!-- ===== 1. WHY WE ARCHIVE ===== -->
+<!-- ───── 01. WHY ───── -->
 <section class="page">
     <div class="eyebrow">01 — Why We Archive</div>
     <h2 class="section-title">기록은 시간을 이기는<br>유일한 방법입니다.</h2>
@@ -330,17 +399,17 @@
     <p>
         우리가 남기는 사진과 영상은 단순한 자료가 아닙니다. 도시의 자기 인식이 어디에서
         만들어지고, 무엇을 잃어가고 있는지를 묻는 작은 거울입니다. 기록은 거대한 보존 사업이 아니라,
-        한 명의 학생이 자신이 사는 도시를 천천히 들여다본 행위로부터 시작됩니다.
+        한 명의 학생이 자신이 사는 도시를 천천히 들여다본 행위에서 시작됩니다.
     </p>
     <div class="pull">
         <div class="text">기록은 거대한 보존이 아니라,<br>한 사람의 시선에서 시작된다.</div>
         <span class="cite">— Curator's Note</span>
     </div>
-    <div class="page-foot">Cheongju Archive · Why We Archive</div>
+    <div class="page-foot">Why We Archive</div>
     <div class="page-num">03</div>
 </section>
 
-<!-- ===== 2. HERITAGE OVERVIEW ===== -->
+<!-- ───── 02. OVERVIEW ───── -->
 <section class="page">
     <div class="eyebrow">02 — Heritage Stories</div>
     <h2 class="section-title">네 곳의 시간,<br>한 도시의 기억.</h2>
@@ -384,19 +453,21 @@
             <p>옛 청주역 — 충북선의 첫 정거장이자, 비워진 자리가 다시 공원이 된 도시 기억의 풍경.</p>
         </div>
     </div>
-    <div class="page-foot">Cheongju Archive · Heritage Stories</div>
+    <div class="page-foot">Heritage Stories</div>
     <div class="page-num">04</div>
 </section>
 
-<!-- ===== HYANGGYO ===== -->
+<!-- ───── 향교 ───── -->
 <section class="page">
-    <div class="eyebrow">Heritage No.01</div>
+    <div class="eyebrow">Heritage No. 01</div>
     <h2 class="section-title">청주향교</h2>
     <p class="lead">조선 지방 교육의 마루를 걷다.</p>
     <div class="plate"><img src="cjhg1.jpg" alt="청주향교"></div>
     <p>
         고려와 조선의 지방 사회에서 향교는 단순한 학교가 아니었습니다. 유교적 윤리와 학문, 그리고 지역 공동체의
-        의례가 함께 자라던 살아있는 교실이었습니다. 청주향교는 그 시대의 호흡을 가장 잘 보여주는 청주의 정신적 좌표입니다.
+        의례가 함께 자라던 살아있는 교실이었습니다. 청주향교는 그 시대의 호흡을 가장 잘 보여주는 청주의
+        정신적 좌표입니다. 대성전과 명륜당이 축을 따라 마주 서며, 배움과 예가 분리될 수 없다는 조선의
+        교육 철학을 공간으로 이야기합니다.
     </p>
     <dl class="kv">
         <dt>Type</dt><dd>지방 향교</dd>
@@ -404,13 +475,13 @@
         <dt>Designated</dt><dd>1977년 12월</dd>
         <dt>Buildings</dt><dd>6동 (대성전, 명륜당, 동재, 서재 등)</dd>
     </dl>
-    <div class="page-foot">Cheongju Archive · 청주향교</div>
+    <div class="page-foot">청주향교</div>
     <div class="page-num">05</div>
 </section>
 
-<!-- ===== SUDONG ===== -->
+<!-- ───── 수동성당 ───── -->
 <section class="page">
-    <div class="eyebrow">Heritage No.02</div>
+    <div class="eyebrow">Heritage No. 02</div>
     <h2 class="section-title">수동성당</h2>
     <p class="lead">한옥의 처마 아래로, 서양의 종소리가 내려앉다.</p>
     <div class="plate"><img src="sdsd1.jpg" alt="수동성당"></div>
@@ -426,20 +497,21 @@
         <dt>Scale</dt><dd>32칸 · 팔작지붕 한식 기와</dd>
         <dt>Founder</dt><dd>세실 쿠퍼(구세실) 주교</dd>
     </dl>
-    <div class="page-foot">Cheongju Archive · 수동성당</div>
+    <div class="page-foot">수동성당</div>
     <div class="page-num">06</div>
 </section>
 
-<!-- ===== CHEOLDANGAN ===== -->
+<!-- ───── 철당간 ───── -->
 <section class="page">
-    <div class="eyebrow">Heritage No.03 — National Treasure</div>
+    <div class="eyebrow">Heritage No. 03  ·  National Treasure</div>
     <h2 class="section-title">용두사지 철당간</h2>
     <p class="lead">962년부터, 지금 이 거리에.</p>
     <div class="plate"><img src="cdg1.jpg" alt="용두사지 철당간"></div>
     <p>
         용두사지 철당간은 고려 광종 13년, 서기 962년에 세워졌습니다. 사찰은 사라졌지만, 13.1미터의 쇠기둥은
         도시의 중심에 그대로 남아 천 년의 시간을 지키고 있습니다. 당간 아래쪽 철통에는 해서체로 새겨진 명문이 있고,
-        그 안에는 고려가 독자적으로 사용한 연호 '준풍(峻豊)' 이 적혀 있습니다.
+        그 안에는 고려가 독자적으로 사용한 연호 '준풍(峻豊)' 이 적혀 있습니다. 중국의 연호가 아닌 자신의 시간을
+        새긴 그 두 글자는, 한 왕조가 자신을 어떻게 부르고 싶어 했는지 보여주는 결정적 증거입니다.
     </p>
     <dl class="kv">
         <dt>Built</dt><dd>962년 (고려 광종 13년)</dd>
@@ -448,20 +520,21 @@
         <dt>Height</dt><dd>13.1m · 철통 20개</dd>
         <dt>Inscription</dt><dd>'준풍(峻豊)' 연호 명문</dd>
     </dl>
-    <div class="page-foot">Cheongju Archive · 용두사지 철당간</div>
+    <div class="page-foot">용두사지 철당간</div>
     <div class="page-num">07</div>
 </section>
 
-<!-- ===== STATION ===== -->
+<!-- ───── 옛 청주역 ───── -->
 <section class="page">
-    <div class="eyebrow">Heritage No.04</div>
+    <div class="eyebrow">Heritage No. 04</div>
     <h2 class="section-title">옛 청주역</h2>
     <p class="lead">사라진 철길 위에 다시 세운 풍경.</p>
     <div class="plate"><img src="cjst1.jpg" alt="옛 청주역사공원"></div>
     <p>
         1921년 11월 1일, 충북선의 시작과 함께 청주역은 도시의 관문이 되었습니다. 그러나 시가지는 자라났고
         철길은 두 번 옮겨졌습니다 — 1968년 우암동으로, 1980년 현재 위치로. 비워진 자리는 2017년 12월,
-        청주역사공원이라는 이름으로 다시 시민의 일상에 들어섰습니다.
+        청주역사공원이라는 이름으로 다시 시민의 일상에 들어섰습니다. 더 이상 기차가 다니지 않는 자리에서,
+        사라진 시간을 기억하는 가장 일상적인 방식이 되었습니다.
     </p>
     <dl class="kv">
         <dt>Opened</dt><dd>1921년 11월 1일</dd>
@@ -469,11 +542,11 @@
         <dt>Restored</dt><dd>2017년 12월 (역사공원)</dd>
         <dt>Line</dt><dd>충북선 시발점</dd>
     </dl>
-    <div class="page-foot">Cheongju Archive · 옛 청주역</div>
+    <div class="page-foot">옛 청주역</div>
     <div class="page-num">08</div>
 </section>
 
-<!-- ===== TIMELINE ===== -->
+<!-- ───── 03. TIMELINE ───── -->
 <section class="page">
     <div class="eyebrow">03 — Timeline</div>
     <h2 class="section-title">하나의 도시가<br>걸어온 천 년의 시간.</h2>
@@ -508,45 +581,70 @@
             <div class="dc">두 번 옮겨진 철길이 비운 자리에, 시민의 일상이 다시 풍경이 되어 들어서다.</div>
         </div>
     </div>
-    <div class="page-foot">Cheongju Archive · Timeline</div>
+    <div class="page-foot">Timeline</div>
     <div class="page-num">09</div>
 </section>
 
-<!-- ===== METHODOLOGY ===== -->
+<!-- ───── 04. METHODOLOGY ───── -->
 <section class="page">
     <div class="eyebrow">04 — Methodology</div>
     <h2 class="section-title">어떻게 기록했는가.</h2>
     <p class="lead">
-        Cheongju Archive는 거창한 장비나 기관 자원 없이 만들어졌습니다.
+        거창한 장비나 기관 자원 없이 만들어졌습니다.
         한 명의 고등학생이 답사하고, 직접 촬영하고, 손으로 정리한 기록입니다.
     </p>
-    <h3>Field Work</h3>
+    <h3>Field Work — 답사와 촬영</h3>
     <p>
         4개 장소를 직접 방문해 외관과 내부, 주변 풍경을 사진과 드론 영상으로 촬영했습니다.
-        문화재청 및 위키백과의 1차 자료를 참고해 문화재 지정 번호, 건립 연도, 구조 정보를 검증했습니다.
+        문화재청과 위키백과의 1차 자료를 참고해 문화재 지정 번호, 건립 연도, 구조 정보를 검증하고,
+        오해의 소지가 있는 연도(예: '조선 초'와 같은 시대 표기)는 보수적으로 표기했습니다.
     </p>
-    <h3>Design System</h3>
+    <h3>Editorial — 큐레이팅 톤</h3>
     <p>
-        Apple의 미니멀리즘을 기반으로, 흰 배경·넓은 여백·SF Pro/Pretendard 타이포그래피·미세한 그라데이션
-        포인트를 활용해 아카이브의 무게감과 가독성을 동시에 추구했습니다.
-        모든 측정값은 clamp() 로 처리해 모바일과 데스크탑에서 동일한 균형을 유지합니다.
+        각 장소를 단순한 정보 카드가 아니라 한 편의 짧은 챕터로 구성했습니다. 사실(Designation, Built, Height)과
+        해석(인용구, 큐레이터 노트)이 교차하면서, 학생이 도시를 '바라본 시선'이 자연스럽게 드러나도록 의도했습니다.
     </p>
-    <h3>Technology Stack</h3>
-    <dl class="kv">
-        <dt>Markup</dt><dd>HTML5</dd>
-        <dt>Style</dt><dd>CSS3 (clamp, custom properties, backdrop-filter)</dd>
-        <dt>Animation</dt><dd>GSAP 3.12 — ScrollTrigger, ScrollToPlugin</dd>
-        <dt>Typography</dt><dd>Pretendard, SF Pro Display</dd>
-        <dt>Hosting</dt><dd>Cloudflare Pages (cjarchive.pages.dev)</dd>
-        <dt>Source</dt><dd>국가유산청, 직접 촬영, 위키백과</dd>
-    </dl>
-    <div class="page-foot">Cheongju Archive · Methodology</div>
+    <h3>Design — Apple-스러운 절제</h3>
+    <p>
+        흰 배경, 넓은 여백, Pretendard 타이포그래피, 미세한 그라데이션 포인트를 사용해 아카이브의
+        무게감과 가독성을 동시에 추구했습니다. 모든 측정값은 clamp() 로 처리해 모바일과 데스크탑에서
+        동일한 비율로 확장됩니다.
+    </p>
+    <div class="page-foot">Methodology</div>
     <div class="page-num">10</div>
 </section>
 
-<!-- ===== REFLECTION ===== -->
+<!-- ───── 05. ARCHITECTURE ───── -->
 <section class="page">
-    <div class="eyebrow">05 — Reflection</div>
+    <div class="eyebrow">05 — System Architecture</div>
+    <h2 class="section-title">어떻게 굴러가는가.</h2>
+    <p>
+        Cheongju Archive는 단순한 정적 사이트가 아니라, 학생 한 명이 핸드폰만 들고도 콘텐츠를 추가할 수 있도록
+        설계된 작은 발행 시스템입니다. 모든 데이터는 GitHub 저장소에 투명하게 보존되고, 변경 사항은
+        Cloudflare 글로벌 CDN을 통해 자동으로 전 세계에 배포됩니다.
+    </p>
+    <dl class="kv">
+        <dt>Frontend</dt><dd>HTML5 · CSS3 (clamp · custom properties · backdrop-filter)</dd>
+        <dt>Animation</dt><dd>GSAP 3.12 — ScrollTrigger, ScrollToPlugin</dd>
+        <dt>Typography</dt><dd>Pretendard (jsDelivr CDN), -apple-system fallback</dd>
+        <dt>Data Source</dt><dd>places.json — 모든 장소·타임라인 콘텐츠 단일 파일</dd>
+        <dt>CMS</dt><dd>자체 구축 (vanilla JS, ~50KB) · GitHub Contents API 직접 호출</dd>
+        <dt>Auth</dt><dd>GitHub OAuth (Cloudflare Worker) 또는 Personal Access Token</dd>
+        <dt>Hosting</dt><dd>Cloudflare Pages — 무료, 글로벌 CDN, 자동 SSL</dd>
+        <dt>Repository</dt><dd>github.com/beaf2e/cjarchive</dd>
+        <dt>Workflow</dt><dd>로컬 편집 또는 /admin → git commit → 1~2분 후 라이브 자동 배포</dd>
+    </dl>
+    <div class="pull" style="margin-top: 30px;">
+        <div class="text">기록의 도구는 가벼울수록, 기록은 더 자주 일어난다.</div>
+        <span class="cite">— Project principle</span>
+    </div>
+    <div class="page-foot">System Architecture</div>
+    <div class="page-num">11</div>
+</section>
+
+<!-- ───── 06. REFLECTION ───── -->
+<section class="page">
+    <div class="eyebrow">06 — Reflection</div>
     <h2 class="section-title">도시는 끊임없이<br>자기 자신을 다시 쓴다.</h2>
     <p>
         이 아카이브를 만들면서 가장 자주 마주친 감정은 '느림'이었습니다. 향교 마루의 결을 한 번 쓸어보고,
@@ -554,40 +652,52 @@
         이해하는 가장 정확한 단위라는 사실을 알게 되었습니다.
     </p>
     <p>
-        교육과 사회과학을 진로로 삼고자 하는 학생으로서, 이 프로젝트는 단순한 코딩 연습이 아니라 '한 도시가
-        자신을 어떻게 이해하는가' 라는 사회학적 질문을 던지는 작업이었습니다. 이 사이트가 다른 학생들에게
-        '내가 사는 도시도 이렇게 들여다볼 수 있다' 는 작은 시작점이 되기를 바랍니다.
+        교육과 사회과학을 진로로 삼고자 하는 학생으로서, 이 프로젝트는 단순한 코딩 연습이 아니라
+        '한 도시가 자신을 어떻게 이해하는가' 라는 사회학적 질문을 던지는 작업이었습니다. 사이트가 다른
+        학생들에게 '내가 사는 도시도 이렇게 들여다볼 수 있다' 는 작은 시작점이 되기를 바랍니다.
+    </p>
+    <p>
+        앞으로의 계획은 두 가지입니다. 첫째, 청주의 다른 유산들 — 남석교, 옛 충북도청, 동부창고 같은
+        장소들 — 을 점진적으로 추가합니다. 둘째, 이 시스템 자체를 다른 도시 학생들도 손쉽게 fork해서
+        쓸 수 있도록 다듬습니다. 한 도시의 기록 방식이 다른 도시로 옮겨갈 수 있다면, 작은 아카이브들의
+        네트워크가 만들어질 수 있을 것이라 믿습니다.
     </p>
     <div class="pull">
         <div class="text">사찰은 사라졌고, 사람도 바뀌었지만,<br>쇠는 그 자리에서 천 년을 견뎠다.</div>
         <span class="cite">— 용두사지 철당간 앞에서</span>
     </div>
-    <div class="page-foot">Cheongju Archive · Reflection</div>
-    <div class="page-num">11</div>
+    <div class="page-foot">Reflection</div>
+    <div class="page-num">12</div>
 </section>
 
-<!-- ===== CREDITS ===== -->
+<!-- ───── 07. CREDITS ───── -->
 <section class="page">
-    <div class="eyebrow">06 — Credits</div>
+    <div class="eyebrow">07 — Credits</div>
     <h2 class="section-title">Credits.</h2>
     <dl class="kv" style="margin-top: 30px;">
         <dt>Project</dt><dd>Cheongju Archive — 청주 디지털 유산 아카이브</dd>
         <dt>Author</dt><dd>이민수 · 청석고등학교 2학년</dd>
         <dt>Live URL</dt><dd>cjarchive.pages.dev</dd>
+        <dt>Source</dt><dd>github.com/beaf2e/cjarchive (public)</dd>
         <dt>Hosting</dt><dd>Cloudflare Pages</dd>
-        <dt>Document</dt><dd>Project Report v1.0 · 2026.05</dd>
-        <dt>Sources</dt><dd>국가유산청 · 위키백과 · 직접 촬영</dd>
-        <dt>Tools</dt><dd>HTML5 · CSS3 · GSAP · Pretendard</dd>
+        <dt>Document</dt><dd>Project Report v1.1 · 2026. 05</dd>
+        <dt>Photo Sources</dt><dd>직접 촬영 · 국가유산청 · 위키백과</dd>
+        <dt>Tools</dt><dd>HTML5 · CSS3 · GSAP · Pretendard · GitHub · Cloudflare</dd>
         <dt>Contact</dt><dd>dentalart.2804@gmail.com</dd>
     </dl>
     <div style="margin-top: auto; padding-top: 60px; border-top: 1px solid var(--divider);">
+        <div class="cover-mark" style="margin-bottom: 14px;">
+            <span class="h">CHEONGJU</span>
+            <span class="r">ARCHIVE</span>
+            <span class="l">Project</span>
+        </div>
         <p class="small">
-            © 2026 Cheongseok High School Archive Project. All rights reserved.<br>
+            © 2026 CHEONGJU ARCHIVE Project. All rights reserved.<br>
             본 보고서의 사진과 텍스트는 학생 주도 비영리 학습 목적으로 사용되었습니다.
         </p>
     </div>
-    <div class="page-foot">Cheongju Archive · Credits</div>
-    <div class="page-num">12</div>
+    <div class="page-foot">Credits</div>
+    <div class="page-num">13</div>
 </section>
 
 </body>
