@@ -636,76 +636,6 @@
             }
         }
 
-        /* ===== PHOTO CREDITS ===== */
-        .credits-section {
-            border-top: 1px solid var(--apple-divider);
-            padding: clamp(40px, 6vw, 60px) clamp(20px, 5vw, 40px);
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .credits-section .header {
-            display: flex; align-items: baseline; justify-content: space-between;
-            flex-wrap: wrap; gap: 12px;
-            margin-bottom: 18px;
-        }
-        .credits-section .title-row {
-            display: flex; align-items: baseline; gap: 14px;
-        }
-        .credits-section h3 {
-            font-size: clamp(0.95rem, 1.4vw, 1.05rem);
-            font-weight: 700;
-            letter-spacing: -0.015em;
-        }
-        .credits-section .count {
-            font-size: 12px;
-            color: var(--apple-gray);
-            font-weight: 400;
-        }
-        .credits-section .toggle-btn {
-            background: transparent;
-            border: none;
-            color: var(--apple-gray);
-            font-size: 12px;
-            cursor: pointer;
-            font-family: inherit;
-            letter-spacing: 0.04em;
-            padding: 4px 10px;
-            border-radius: 999px;
-            transition: background 0.2s, color 0.2s;
-        }
-        .credits-section .toggle-btn:hover { background: rgba(0,0,0,0.04); color: var(--apple-black); }
-        .credits-list {
-            display: none;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 12px 24px;
-            font-size: 12px;
-            color: var(--apple-gray);
-            line-height: 1.55;
-        }
-        .credits-list.open { display: grid; }
-        .credits-list .item {
-            border-top: 1px solid var(--apple-divider);
-            padding-top: 10px;
-            word-break: keep-all;
-        }
-        .credits-list .filename {
-            font-family: ui-monospace, SF Mono, monospace;
-            color: var(--apple-black);
-            font-weight: 500;
-            font-size: 11.5px;
-            margin-bottom: 4px;
-        }
-        .credits-list .src strong { color: var(--apple-black); font-weight: 600; }
-        .credits-list .src a { color: var(--apple-blue); text-decoration: none; }
-        .credits-list .src a:hover { text-decoration: underline; }
-        .credits-section .summary-text {
-            font-size: 12px;
-            color: var(--apple-gray);
-            line-height: 1.6;
-            word-break: keep-all;
-        }
-        .credits-section .summary-text strong { color: var(--apple-black); font-weight: 500; }
-
         /* ===== FOOTER ===== */
         .footer { padding: clamp(50px, 8vw, 90px) clamp(20px, 5vw, 40px) 60px; background: var(--apple-bg); color: var(--apple-gray); font-size: 0.9rem; }
         .footer-grid {
@@ -829,19 +759,6 @@
     </div>
 </section>
 
-<!-- ===== PHOTO CREDITS ===== -->
-<section class="credits-section" id="credits-section" style="display:none;">
-    <div class="header">
-        <div class="title-row">
-            <h3>사진 출처</h3>
-            <span class="count" id="credits-count"></span>
-        </div>
-        <button class="toggle-btn" id="credits-toggle">전체 보기 ↓</button>
-    </div>
-    <p class="summary-text" id="credits-summary"></p>
-    <div class="credits-list" id="credits-list"></div>
-</section>
-
 <footer class="footer">
     <div class="footer-grid">
         <div style="flex: 1.4; min-width: 250px;">
@@ -886,7 +803,6 @@
     let PLACES = {};
     let PLACES_LIST = [];
     let TIMELINE = [];
-    let CREDITS = {};
 
 
     /* ===== 메뉴 ===== */
@@ -1161,80 +1077,16 @@
             PLACES_LIST = (data.places || []).slice().sort((a, b) => (a.order || 0) - (b.order || 0));
             PLACES = Object.fromEntries(PLACES_LIST.map(p => [p.id, p]));
             TIMELINE = data.timeline || [];
-            CREDITS = data.credits || {};
 
             renderSideMenu();
             renderCards();
             renderTimeline();
-            renderPhotoCredits();
             applyDynamicAnimations();
             ScrollTrigger.refresh();
         } catch (e) {
             console.error('places.json 로드 실패:', e);
             const grid = document.getElementById('placeGrid');
             if (grid) grid.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color:var(--apple-gray); padding:40px;">콘텐츠를 불러오지 못했습니다. 잠시 후 새로고침해주세요.</p>`;
-        }
-    }
-
-    function collectAllMediaSite() {
-        const set = new Set();
-        PLACES_LIST.forEach(p => {
-            if (p.img) set.add(p.img);
-            if (p.heroVideo) set.add(p.heroVideo);
-            (p.features || []).forEach(f => { if (f.img) set.add(f.img); });
-        });
-        return Array.from(set);
-    }
-
-    function renderPhotoCredits() {
-        const section = document.getElementById('credits-section');
-        const list = document.getElementById('credits-list');
-        const countEl = document.getElementById('credits-count');
-        const summary = document.getElementById('credits-summary');
-        const toggleBtn = document.getElementById('credits-toggle');
-        if (!section || !list) return;
-
-        const all = collectAllMediaSite();
-        if (all.length === 0) { section.style.display = 'none'; return; }
-        section.style.display = 'block';
-
-        // 출처별로 그룹화 (요약용)
-        const sourceCount = {};
-        all.forEach(f => {
-            const key = f.split('/').pop();
-            const c = CREDITS[key];
-            const src = c ? (c.source || '본인 직접 촬영') : '본인 직접 촬영';
-            sourceCount[src] = (sourceCount[src] || 0) + 1;
-        });
-        const summaryParts = Object.entries(sourceCount)
-            .sort((a, b) => b[1] - a[1])
-            .map(([s, n]) => `<strong>${esc(s)}</strong> ${n}장`);
-        summary.innerHTML = `이 페이지에 표시된 ${all.length}개 미디어의 출처. ` + summaryParts.join(' · ') + '.';
-
-        countEl.textContent = `${all.length} files`;
-
-        list.innerHTML = all.map(f => {
-            const key = f.split('/').pop();
-            const c = CREDITS[key] || { source: '본인 직접 촬영', author: '이민수', license: '본인 저작' };
-            const meta = [c.source, c.author, c.year].filter(Boolean).join(' · ');
-            const lic = c.license ? `라이선스: ${esc(c.license)}` : '';
-            const link = c.url ? ` · <a href="${esc(c.url)}" target="_blank" rel="noopener">출처 →</a>` : '';
-            return `
-                <div class="item">
-                    <div class="filename">${esc(key)}</div>
-                    <div class="src"><strong>${esc(meta)}</strong>${link}</div>
-                    ${lic ? `<div class="src">${lic}</div>` : ''}
-                </div>
-            `;
-        }).join('');
-
-        if (toggleBtn) {
-            let open = false;
-            toggleBtn.onclick = () => {
-                open = !open;
-                list.classList.toggle('open', open);
-                toggleBtn.textContent = open ? '접기 ↑' : '전체 보기 ↓';
-            };
         }
     }
 
