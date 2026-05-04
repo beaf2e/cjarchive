@@ -246,5 +246,56 @@
       "place": "청주역사공원",
       "desc": "비워진 자리가\n다시 풍경이 되다."
     }
-  ]
+  ],
+  "credits": {
+    "cjhg1.jpg": {
+      "source": "본인 직접 촬영",
+      "author": "이민수",
+      "license": "본인 저작",
+      "url": "",
+      "year": "2025"
+    },
+    "sdsd1.jpg": {
+      "source": "본인 직접 촬영",
+      "author": "이민수",
+      "license": "본인 저작",
+      "url": "",
+      "year": "2026"
+    },
+    "cdg1.jpg": {
+      "source": "본인 직접 촬영",
+      "author": "이민수",
+      "license": "본인 저작",
+      "url": "",
+      "year": "2025"
+    },
+    "cjst1.jpg": {
+      "source": "본인 직접 촬영",
+      "author": "이민수",
+      "license": "본인 저작",
+      "url": "",
+      "year": "2026"
+    },
+    "cdg.mp4": {
+      "source": "본인 직접 촬영",
+      "author": "이민수",
+      "license": "본인 저작",
+      "url": "",
+      "year": "2025"
+    },
+    "cjst.mp4": {
+      "source": "본인 직접 촬영",
+      "author": "이민수",
+      "license": "본인 저작",
+      "url": "",
+      "year": "2026"
+    },
+    "drone.mp4": {
+      "source": "본인 직접 촬영",
+      "author": "이민수",
+      "license": "본인 저작",
+      "url": "",
+      "year": "2025"
+    }
+  }
 }
