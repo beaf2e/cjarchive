@@ -1,7 +1,6 @@
-# SPA 라우트 — 해당 경로는 index.html이 처리 (200)
-/heritage       /index.html       200
-/heritage/*     /index.html       200
-/timeline       /index.html       200
-
 # 옛 주소 호환 — /place/cdg → /heritage/cdg
-/place/*        /heritage/:splat  301
+/place/*   /heritage/:splat   301
+
+# SPA 폴백 — 실제 파일이 없는 경로는 index.html이 처리(클라이언트 라우팅)
+# 정적 파일(이미지·places.json·/admin·/404.html 등)은 이 규칙보다 우선 서빙됨
+/*         /index.html        200
