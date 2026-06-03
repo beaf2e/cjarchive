@@ -708,8 +708,8 @@
 
 <div id="boot-cover"></div>
 <script>
-    // 첫 페인트부터 가려야 하므로 즉시 실행 (/place/id 직접 진입 시)
-    if (/^\/place\//.test(location.pathname)) {
+    // 첫 페인트부터 가려야 하므로 즉시 실행 (/heritage/id 상세로 직접 진입 시)
+    if (/^\/heritage\/[^\/?#]+/.test(location.pathname)) {
         document.getElementById('boot-cover').classList.add('show');
     }
 </script>
@@ -858,15 +858,24 @@
     menuBtn.addEventListener('click', toggleMenu);
     menuOverlay.addEventListener('click', closeMenu);
 
+    // 섹션 이동도 주소를 바꾼다 ('hero'→/, 'heritage'→/heritage, 'timeline'→/timeline)
     function scrollToSection(id) {
         if (isMenuOpen) closeMenu();
-        if (document.getElementById('detail').style.display === 'block') closeDetail();
-        gsap.to(window, { duration: 1.4, scrollTo: { y: `#${id}`, offsetY: 70 }, ease: "power3.inOut" });
+        if (id === 'timeline') return navigate('/timeline');
+        if (id === 'heritage') return navigate('/heritage');
+        return navigate('/');   // hero / home
     }
     function goHome() {
         if (isMenuOpen) closeMenu();
-        if (document.getElementById('detail').style.display === 'block') closeDetail();
-        gsap.to(window, { duration: 1.2, scrollTo: 0, ease: "power3.inOut" });
+        navigate('/');
+    }
+    function scrollToId(id, animate) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        gsap.to(window, { duration: animate ? 1.2 : 0, scrollTo: { y: `#${id}`, offsetY: 70 }, ease: "power3.inOut" });
+    }
+    function scrollToTop(animate) {
+        gsap.to(window, { duration: animate ? 1.0 : 0, scrollTo: 0, ease: "power3.inOut" });
     }
 
     /* ===== 상세 페이지 ===== */
@@ -990,9 +999,9 @@
     function hideDetail(animate) {
         if (detailEl.style.display !== 'block') return;
         currentDetailId = null;
+        document.body.style.overflow = 'auto';   // 즉시 복원 → 섹션 이동 스크롤이 막히지 않게
         const done = () => {
             detailEl.style.display = 'none';
-            document.body.style.overflow = 'auto';
             detailScrollTriggers.forEach(t => t.kill());
             detailScrollTriggers = [];
             ScrollTrigger.refresh();
@@ -1001,36 +1010,56 @@
         else done();
     }
 
-    /* ===== URL 라우팅 — 주소(/place/id)가 곧 화면 상태 ===== */
-    function getPlaceParam() {
-        const m = location.pathname.match(/^\/place\/([^\/?#]+)/);
-        return m ? decodeURIComponent(m[1]) : null;
+    /* ===== URL 라우팅 — 주소가 곧 화면 상태 =====
+       /                → 홈(상단)
+       /heritage        → Heritage Stories(카드 목록)
+       /heritage/<id>   → 해당 장소 상세 (없는 id면 404)
+       /timeline        → 타임라인                                     */
+    function getRoute() {
+        const p = (location.pathname.replace(/\/+$/, '') || '/');
+        if (p === '/') return { type: 'home' };
+        if (p === '/heritage') return { type: 'heritage' };
+        if (p === '/timeline') return { type: 'timeline' };
+        const m = p.match(/^\/heritage\/([^\/?#]+)/);
+        if (m) return { type: 'place', id: decodeURIComponent(m[1]) };
+        return { type: 'home' };
     }
+
     function syncRoute(animate) {
-        const id = getPlaceParam();
-        if (id && PLACES[id]) {
-            if (id !== currentDetailId) renderDetail(id, animate);
-        } else {
-            hideDetail(animate);
+        const r = getRoute();
+        if (r.type === 'place') {
+            if (PLACES[r.id]) {
+                if (r.id !== currentDetailId) renderDetail(r.id, animate);
+            } else {
+                location.replace('/404.html');   // 없는 장소 → 404
+            }
+            return;
         }
+        // 섹션 라우트: 상세가 떠 있으면 닫고 해당 위치로 이동
+        hideDetail(animate);
+        if (r.type === 'timeline') scrollToId('timeline', animate);
+        else if (r.type === 'heritage') scrollToId('heritage', animate);
+        else scrollToTop(animate);   // home
     }
     window.addEventListener('popstate', () => syncRoute(true));
 
-    // 카드/메뉴 클릭 → 실제 페이지 이동처럼 주소를 바꾼다
-    function openPlace(id) {
-        if (!PLACES[id]) return;
-        if (getPlaceParam() === id) { renderDetail(id, true); return; }
-        history.pushState({ place: id }, '', '/place/' + encodeURIComponent(id));
-        renderDetail(id, true);
+    // 주소를 바꾸고 화면을 그 주소에 맞춘다
+    function navigate(path) {
+        if (location.pathname !== path) history.pushState({ path }, '', path);
+        syncRoute(true);
     }
 
+    // 카드/사이드바 장소 클릭 → /heritage/<id> 로 이동
+    function openPlace(id) {
+        if (!PLACES[id]) return;
+        navigate('/heritage/' + encodeURIComponent(id));
+    }
+
+    // 닫기(X·Esc) → 항상 Heritage Stories 목록으로 복귀
     function closeDetail() {
-        if (history.state && history.state.place) {
-            history.back();   // 메인으로 복귀 — popstate가 화면을 정리
-        } else {
-            history.replaceState({}, '', '/');
-            hideDetail(true);
-        }
+        history.replaceState({ path: '/heritage' }, '', '/heritage');
+        hideDetail(true);
+        scrollToId('heritage', false);
     }
 
     document.getElementById('closeBtn').addEventListener('click', closeDetail);
@@ -1153,7 +1182,7 @@
             renderTimeline();
             applyDynamicAnimations();
             ScrollTrigger.refresh();
-            syncRoute(false);   // /place/id 로 직접 들어온 경우 해당 상세를 연다
+            syncRoute(false);   // 직접 진입한 주소(/heritage·/heritage/id·/timeline)에 화면을 맞춘다
         } catch (e) {
             console.error('places.json 로드 실패:', e);
             const grid = document.getElementById('placeGrid');

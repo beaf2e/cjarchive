@@ -1,1 +1,7 @@
-/place/*  /index.html  200
+# SPA 라우트 — 해당 경로는 index.html이 처리 (200)
+/heritage       /index.html       200
+/heritage/*     /index.html       200
+/timeline       /index.html       200
+
+# 옛 주소 호환 — /place/cdg → /heritage/cdg
+/place/*        /heritage/:splat  301
