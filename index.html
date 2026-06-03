@@ -687,10 +687,30 @@
         }
 
         .reveal { opacity: 0; transform: translateY(36px); }
+
+        /* ?place=id 로 직접 진입 시 메인이 깜빡이지 않도록 덮는 가림막 */
+        #boot-cover {
+            position: fixed; inset: 0;
+            background: #fff;
+            z-index: 5000;
+            display: none;
+            opacity: 1;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+        #boot-cover.show { display: block; }
     </style>
 </head>
 
 <body>
+
+<div id="boot-cover"></div>
+<script>
+    // 첫 페인트부터 가려야 하므로 즉시 실행 (?place=id 직접 진입 시)
+    if (new URLSearchParams(location.search).get('place')) {
+        document.getElementById('boot-cover').classList.add('show');
+    }
+</script>
 
 <div class="menu-overlay" id="menuOverlay"></div>
 
@@ -1135,7 +1155,16 @@
             console.error('places.json 로드 실패:', e);
             const grid = document.getElementById('placeGrid');
             if (grid) grid.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color:var(--apple-gray); padding:40px;">콘텐츠를 불러오지 못했습니다. 잠시 후 새로고침해주세요.</p>`;
+        } finally {
+            hideBootCover();   // 데이터 로드(성공/실패) 후 가림막 해제
         }
+    }
+
+    function hideBootCover() {
+        const bc = document.getElementById('boot-cover');
+        if (!bc || !bc.classList.contains('show')) return;
+        bc.style.opacity = '0';
+        bc.addEventListener('transitionend', () => bc.classList.remove('show'), { once: true });
     }
 
     loadPlaces();
