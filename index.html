@@ -929,17 +929,22 @@
         `;
     }
 
-    function openPlace(id) {
-        if (isMenuOpen) closeMenu();
+    let currentDetailId = null;
+
+    // 상세 화면을 실제로 그린다 (주소 변경은 하지 않음)
+    function renderDetail(id, animate) {
         const data = PLACES[id];
         if (!data) return;
+        if (isMenuOpen) closeMenu();
 
+        currentDetailId = id;
         detailContent.innerHTML = buildDetailHTML(data);
         detailEl.style.display = 'block';
         detailEl.scrollTop = 0;
         document.body.style.overflow = 'hidden';
 
-        gsap.fromTo(detailEl, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" });
+        if (animate) gsap.fromTo(detailEl, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" });
+        else gsap.set(detailEl, { opacity: 1 });
         gsap.fromTo(".detail-hero img, .detail-hero video", { scale: 1.15 }, { scale: 1.06, duration: 1.6, ease: "power2.out" });
         gsap.fromTo(".detail-hero-content .reveal", { opacity: 0, y: 36 }, { opacity: 1, y: 0, duration: 1, stagger: 0.12, ease: "power3.out", delay: 0.2 });
 
@@ -960,13 +965,49 @@
         });
     }
 
-    function closeDetail() {
-        gsap.to(detailEl, { opacity: 0, duration: 0.35, onComplete: () => {
+    function hideDetail(animate) {
+        if (detailEl.style.display !== 'block') return;
+        currentDetailId = null;
+        const done = () => {
             detailEl.style.display = 'none';
             document.body.style.overflow = 'auto';
             detailScrollTriggers.forEach(t => t.kill());
             detailScrollTriggers = [];
-        }});
+            ScrollTrigger.refresh();
+        };
+        if (animate) gsap.to(detailEl, { opacity: 0, duration: 0.35, onComplete: done });
+        else done();
+    }
+
+    /* ===== URL 라우팅 — 주소(?place=id)가 곧 화면 상태 ===== */
+    function getPlaceParam() {
+        return new URLSearchParams(location.search).get('place');
+    }
+    function syncRoute(animate) {
+        const id = getPlaceParam();
+        if (id && PLACES[id]) {
+            if (id !== currentDetailId) renderDetail(id, animate);
+        } else {
+            hideDetail(animate);
+        }
+    }
+    window.addEventListener('popstate', () => syncRoute(true));
+
+    // 카드/메뉴 클릭 → 실제 페이지 이동처럼 주소를 바꾼다
+    function openPlace(id) {
+        if (!PLACES[id]) return;
+        if (getPlaceParam() === id) { renderDetail(id, true); return; }
+        history.pushState({ place: id }, '', '?place=' + encodeURIComponent(id));
+        renderDetail(id, true);
+    }
+
+    function closeDetail() {
+        if (history.state && history.state.place) {
+            history.back();   // 메인으로 복귀 — popstate가 화면을 정리
+        } else {
+            history.replaceState({}, '', location.pathname);
+            hideDetail(true);
+        }
     }
 
     document.getElementById('closeBtn').addEventListener('click', closeDetail);
@@ -1089,6 +1130,7 @@
             renderTimeline();
             applyDynamicAnimations();
             ScrollTrigger.refresh();
+            syncRoute(false);   // ?place=id 로 직접 들어온 경우 해당 상세를 연다
         } catch (e) {
             console.error('places.json 로드 실패:', e);
             const grid = document.getElementById('placeGrid');
