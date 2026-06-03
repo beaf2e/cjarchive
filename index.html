@@ -415,17 +415,17 @@
             .feature-row.reverse .feature-text,
             .feature-row.reverse .feature-media { order: initial; }
         }
-        .feature-media {
+        .feature-media-frame {
             border-radius: 22px;
             overflow: hidden;
             aspect-ratio: 4/3;
             background: var(--apple-bg);
         }
-        .feature-media img {
+        .feature-media-frame img {
             width: 100%; height: 100%; object-fit: cover;
             transition: transform 0.8s ease;
         }
-        .feature-media:hover img { transform: scale(1.04); }
+        .feature-media-frame:hover img { transform: scale(1.04); }
         .feature-credit { display: block; margin-top: 8px; font-size: 11px; line-height: 1.4; color: #86868b; letter-spacing: 0.01em; }
         .feature-text h3 {
             font-size: clamp(1.5rem, 3.5vw, 2.4rem);
@@ -909,7 +909,7 @@
                     <h3>${nl2br(f.h)}</h3>
                     <p>${esc(f.p)}</p>
                 </div>
-                <div class="feature-media reveal"><img src="${esc(f.img)}" alt="${esc(data.title)}" loading="lazy" onerror="this.style.display='none'">${f.credit ? `<span class="feature-credit">${esc(f.credit)}</span>` : ''}</div>
+                <div class="feature-media reveal"><div class="feature-media-frame"><img src="${esc(f.img)}" alt="${esc(data.title)}" loading="lazy" onerror="this.style.display='none'"></div>${f.credit ? `<span class="feature-credit">${esc(f.credit)}</span>` : ''}</div>
             </section>`).join('');
 
         const heroMedia = data.heroVideo
