@@ -261,7 +261,9 @@
             z-index: 2000;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; -ms-overflow-style: none;
         }
+        .detail-page::-webkit-scrollbar { width: 0; height: 0; display: none; }
 
         .back-btn {
             position: fixed; top: clamp(16px, 3vw, 24px); left: clamp(16px, 3vw, 24px);
