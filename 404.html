@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/">
+    <title>페이지를 찾을 수 없습니다 | Cheongju Archive</title>
+
+    <link rel="icon" type="image/png" href="logo2.png">
+    <link rel="apple-touch-icon" href="logo2.png">
+    <meta name="theme-color" content="#211f20">
+    <meta name="robots" content="noindex">
+
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --apple-black: #211f20;
+            --apple-gray: #86868b;
+            --apple-light: #d2d2d7;
+            --apple-bg: #f5f5f7;
+            --apple-divider: #e5e5e7;
+            --apple-blue: #0066cc;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scrollbar-width: none; -ms-overflow-style: none; overscroll-behavior: none; }
+        html::-webkit-scrollbar, body::-webkit-scrollbar { width: 0; height: 0; display: none; }
+
+        body {
+            font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
+            background: #fff;
+            color: var(--apple-black);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            letter-spacing: -0.01em;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        ::selection { background: var(--apple-black); color: #fff; }
+        img { max-width: 100%; display: block; }
+
+        .nav {
+            position: fixed; top: 0; width: 100%;
+            padding: clamp(12px, 3vw, 18px) clamp(20px, 5vw, 40px);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            background: rgba(255, 255, 255, 0.72);
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+            z-index: 1100;
+            display: flex;
+        }
+        .nav a { display: inline-flex; align-items: center; text-decoration: none; }
+        .nav img { height: clamp(26px, 4vw, 32px); width: auto; }
+        .nav .fallback {
+            font-weight: 800; font-size: 1.1rem; color: var(--apple-black);
+            letter-spacing: 0.02em; text-decoration: none;
+        }
+
+        .wrap {
+            flex: 1;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            text-align: center;
+            padding: clamp(120px, 18vw, 200px) clamp(24px, 6vw, 40px) clamp(60px, 10vw, 100px);
+        }
+        .code {
+            font-size: clamp(5rem, 22vw, 13rem);
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            line-height: 0.9;
+            background: linear-gradient(135deg, #211f20 0%, #6e6e73 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .eyebrow {
+            font-size: clamp(0.72rem, 1.6vw, 0.82rem);
+            font-weight: 600;
+            color: var(--apple-gray);
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            margin-bottom: clamp(20px, 4vw, 30px);
+        }
+        h1 {
+            font-size: clamp(1.5rem, 4.5vw, 2.4rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.25;
+            margin-top: clamp(24px, 4vw, 36px);
+            word-break: keep-all;
+        }
+        .sub {
+            font-size: clamp(1rem, 2.4vw, 1.2rem);
+            color: #424245;
+            font-weight: 400;
+            max-width: 480px;
+            margin-top: clamp(14px, 2.5vw, 20px);
+            word-break: keep-all;
+            line-height: 1.65;
+        }
+        .actions {
+            margin-top: clamp(36px, 6vw, 52px);
+            display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;
+        }
+        .btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 14px 28px;
+            border-radius: 980px;
+            font-size: 1rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: 0.3s ease;
+        }
+        .btn-primary { background: var(--apple-black); color: #fff; }
+        .btn-primary:hover { background: #000; transform: translateY(-1px); }
+        .btn-ghost { color: var(--apple-blue); }
+        .btn-ghost::after { content: " →"; transition: transform 0.3s; display: inline-block; }
+        .btn-ghost:hover::after { transform: translateX(4px); }
+
+        .footer {
+            padding: clamp(28px, 5vw, 40px) clamp(20px, 5vw, 40px);
+            border-top: 1px solid var(--apple-divider);
+            text-align: center;
+        }
+        .footer .brand {
+            font-size: clamp(0.85rem, 2vw, 1rem);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--apple-black);
+            margin-bottom: 8px;
+        }
+        .footer .brand .b-heavy { font-weight: 900; }
+        .footer .brand .b-reg { font-weight: 400; }
+        .footer .brand .b-light { font-weight: 300; text-transform: none; }
+        .footer p { font-size: 0.75rem; color: #a1a1a6; }
+    </style>
+</head>
+
+<body>
+
+<nav class="nav">
+    <a href="/" aria-label="Cheongju Archive 홈">
+        <img src="logo.png" alt="Cheongju Archive" onerror="this.outerHTML='<span class=\'fallback\'>Cheongju Archive</span>'">
+    </a>
+</nav>
+
+<main class="wrap">
+    <div class="code">404</div>
+    <div class="eyebrow" style="margin-top: clamp(24px,4vw,36px); margin-bottom:0;">Page Not Found</div>
+    <h1>찾으시는 페이지가 없습니다</h1>
+    <p class="sub">주소가 바뀌었거나 삭제된 기록일 수 있어요.<br>홈에서 청주의 다른 유산들을 둘러보세요.</p>
+    <div class="actions">
+        <a class="btn btn-primary" href="/">홈으로 돌아가기</a>
+        <a class="btn btn-ghost" href="/#heritage">유산 둘러보기</a>
+    </div>
+</main>
+
+<footer class="footer">
+    <div class="brand"><span class="b-heavy">Cheongju</span> <span class="b-reg">Archive</span> <span class="b-light">Project</span></div>
+    <p>&copy; 2026 CHEONGJU ARCHIVE Project. All rights reserved.</p>
+</footer>
+
+</body>
+</html>

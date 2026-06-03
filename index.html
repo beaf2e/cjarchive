@@ -44,7 +44,7 @@
         img { max-width: 100%; display: block; }
 
         /* hide scrollbar (keep scroll functionality) */
-        html { scrollbar-width: none; -ms-overflow-style: none; }
+        html { scrollbar-width: none; -ms-overflow-style: none; overscroll-behavior: none; }
         html::-webkit-scrollbar, body::-webkit-scrollbar { width: 0; height: 0; display: none; }
 
         /* ===== NAV ===== */
@@ -261,6 +261,7 @@
             background: #fff;
             z-index: 2000;
             overflow-y: auto;
+            overscroll-behavior: none;   /* 세게 스크롤해도 뒤(메인) 페이지로 스크롤이 전파되지 않게 */
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none; -ms-overflow-style: none;
         }
@@ -764,7 +765,7 @@
     </div>
 </section>
 
-<section class="section" style="border-top: 1px solid var(--apple-divider); max-width: 1280px;">
+<section class="section" id="heritage" style="border-top: 1px solid var(--apple-divider); max-width: 1280px;">
     <div style="text-align: center; max-width: 720px; margin: 0 auto clamp(40px, 8vw, 70px);">
         <span class="section-eyebrow value-text">Heritage Stories</span>
         <h2 class="value-text" id="heritageHeading" style="font-size: clamp(1.5rem, 4vw, 2.4rem); font-weight: 700; letter-spacing: -0.03em; word-break: keep-all;">네 곳의 시간, 한 도시의 기억</h2>
