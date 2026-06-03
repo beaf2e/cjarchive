@@ -881,7 +881,7 @@
     /* ===== 상세 페이지 ===== */
     const detailEl = document.getElementById('detail');
     const detailContent = document.getElementById('detail-content');
-    let detailScrollTriggers = [];
+    let detailRevealObserver = null;
 
     function esc(s) {
         return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -979,20 +979,19 @@
         gsap.fromTo(".detail-hero img, .detail-hero video", { scale: 1.15 }, { scale: 1.06, duration: 1.6, ease: "power2.out" });
         gsap.fromTo(".detail-hero-content .reveal", { opacity: 0, y: 36 }, { opacity: 1, y: 0, duration: 1, stagger: 0.12, ease: "power3.out", delay: 0.2 });
 
-        // 스크롤 페이드인 (detail 내부 스크롤 컨테이너에 적용)
-        detailScrollTriggers.forEach(t => t.kill());
-        detailScrollTriggers = [];
-        const reveals = detailEl.querySelectorAll(".reveal");
-        reveals.forEach(el => {
-            if (el.closest('.detail-hero')) return;
-            const trig = ScrollTrigger.create({
-                trigger: el,
-                scroller: detailEl,
-                start: "top 88%",
-                onEnter: () => gsap.to(el, { opacity: 1, y: 0, duration: 1, ease: "power3.out" }),
-                onLeaveBack: () => gsap.to(el, { opacity: 0, y: 36, duration: 0.4 })
+        // 스크롤 페이드인 — IntersectionObserver(한 번만, 단방향) → 스크롤 깜빡임 방지
+        if (detailRevealObserver) detailRevealObserver.disconnect();
+        detailRevealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                gsap.to(entry.target, { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" });
+                detailRevealObserver.unobserve(entry.target);   // 한 번 나타나면 다시 숨기지 않음
             });
-            detailScrollTriggers.push(trig);
+        }, { root: detailEl, rootMargin: "0px 0px -10% 0px", threshold: 0.01 });
+
+        detailEl.querySelectorAll(".reveal").forEach(el => {
+            if (el.closest('.detail-hero')) return;   // 히어로는 위에서 따로 처리
+            detailRevealObserver.observe(el);
         });
     }
 
@@ -1002,8 +1001,7 @@
         document.body.style.overflow = 'auto';   // 즉시 복원 → 섹션 이동 스크롤이 막히지 않게
         const done = () => {
             detailEl.style.display = 'none';
-            detailScrollTriggers.forEach(t => t.kill());
-            detailScrollTriggers = [];
+            if (detailRevealObserver) { detailRevealObserver.disconnect(); detailRevealObserver = null; }
             ScrollTrigger.refresh();
         };
         if (animate) gsap.to(detailEl, { opacity: 0, duration: 0.35, onComplete: done });
