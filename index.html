@@ -426,6 +426,7 @@
             transition: transform 0.8s ease;
         }
         .feature-media:hover img { transform: scale(1.04); }
+        .feature-credit { display: block; margin-top: 8px; font-size: 11px; line-height: 1.4; color: #86868b; letter-spacing: 0.01em; }
         .feature-text h3 {
             font-size: clamp(1.5rem, 3.5vw, 2.4rem);
             font-weight: 700;
@@ -908,7 +909,7 @@
                     <h3>${nl2br(f.h)}</h3>
                     <p>${esc(f.p)}</p>
                 </div>
-                <div class="feature-media reveal"><img src="${esc(f.img)}" alt="${esc(data.title)}" loading="lazy" onerror="this.style.display='none'"></div>
+                <div class="feature-media reveal"><img src="${esc(f.img)}" alt="${esc(data.title)}" loading="lazy" onerror="this.style.display='none'">${f.credit ? `<span class="feature-credit">${esc(f.credit)}</span>` : ''}</div>
             </section>`).join('');
 
         const heroMedia = data.heroVideo
