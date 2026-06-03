@@ -42,6 +42,10 @@
         ::selection { background: var(--apple-black); color: #fff; }
         img { max-width: 100%; display: block; }
 
+        /* hide scrollbar (keep scroll functionality) */
+        html { scrollbar-width: none; -ms-overflow-style: none; }
+        html::-webkit-scrollbar, body::-webkit-scrollbar { width: 0; height: 0; display: none; }
+
         /* ===== NAV ===== */
         .nav {
             position: fixed; top: 0; width: 100%;
