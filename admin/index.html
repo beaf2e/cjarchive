@@ -567,6 +567,8 @@ function login() {
     }, 400);
 }
 window.addEventListener('message', async (e) => {
+    // OAuth 콜백은 인증 워커 origin에서 온 것만 신뢰 (토큰 주입 방지)
+    if (e.origin !== new URL(CONFIG.authBase).origin) return;
     if (typeof e.data !== 'string') return;
     const m = e.data.match(/^authorization:github:(success|error):(.+)$/);
     if (!m) return;
@@ -651,6 +653,12 @@ async function loadData() {
 
 async function saveData(message = 'Update content via admin') {
     if (state.saving) return;
+    // 저장 전 id 검증 — id는 URL 경로와 마크업에 들어가므로 안전한 문자만 허용
+    const badId = state.places.find(p => !/^[a-z0-9-]+$/.test(p.id || ''));
+    if (badId) {
+        toast(`잘못된 ID: "${badId.id}" — 영문 소문자·숫자·하이픈만 가능`, 'error');
+        return;
+    }
     state.saving = true;
     render();
     try {

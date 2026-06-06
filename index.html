@@ -955,7 +955,7 @@
                 </div>
                 ${next ? `<div>
                     <div class="next-meta">Next</div>
-                    <div class="next-title" onclick="openPlace('${esc(next.id)}')">${esc(next.title)}</div>
+                    <div class="next-title" data-place="${esc(next.id)}">${esc(next.title)}</div>
                 </div>` : ''}
             </nav>
         `;
@@ -971,6 +971,8 @@
 
         currentDetailId = id;
         detailContent.innerHTML = buildDetailHTML(data);
+        const nextEl = detailContent.querySelector('.next-title[data-place]');
+        if (nextEl) nextEl.addEventListener('click', () => openPlace(nextEl.dataset.place));
         detailEl.style.display = 'block';
         detailEl.scrollTop = 0;
         document.body.style.overflow = 'hidden';
@@ -1095,13 +1097,21 @@
         const ul = document.getElementById('sideMenuList');
         if (!ul) return;
         // 기존 li 모두 제거 후 재구성
-        ul.innerHTML = '';
         const items = [
-            { label: '메인 홈', action: `scrollToSection('hero')` },
-            ...PLACES_LIST.map(p => ({ label: p.title, action: `openPlace('${esc(p.id)}')` })),
-            { label: '타임라인', action: `scrollToSection('timeline')` }
+            { label: '메인 홈', kind: 'section', target: 'hero' },
+            ...PLACES_LIST.map(p => ({ label: p.title, kind: 'place', target: p.id })),
+            { label: '타임라인', kind: 'section', target: 'timeline' }
         ];
-        ul.innerHTML = items.map(it => `<li onclick="${it.action}">${esc(it.label)}</li>`).join('');
+        // 인라인 onclick 대신 data-* + 리스너 (속성값 이스케이프로 인한 XSS 차단)
+        ul.innerHTML = items.map(it =>
+            `<li data-kind="${esc(it.kind)}" data-target="${esc(it.target)}">${esc(it.label)}</li>`
+        ).join('');
+        ul.querySelectorAll('li[data-kind]').forEach(li => {
+            li.addEventListener('click', () => {
+                if (li.dataset.kind === 'place') openPlace(li.dataset.target);
+                else scrollToSection(li.dataset.target);
+            });
+        });
     }
 
     const KOR_COUNT = ['','한','두','세','네','다섯','여섯','일곱','여덟','아홉','열','열한','열두','열세','열네','열다섯'];
@@ -1123,7 +1133,7 @@
         if (!grid) return;
         renderHeritageHeading();
         grid.innerHTML = PLACES_LIST.map(p => `
-            <div class="card" id="card-${esc(p.id)}" onclick="openPlace('${esc(p.id)}')">
+            <div class="card" id="card-${esc(p.id)}" data-place="${esc(p.id)}">
                 <img src="${esc(p.img)}" alt="${esc(p.title)}">
                 <div class="card-overlay">
                     <div class="card-eyebrow">${esc(p.cardEyebrow || '')}</div>
@@ -1132,6 +1142,9 @@
                 </div>
             </div>
         `).join('');
+        grid.querySelectorAll('.card[data-place]').forEach(card => {
+            card.addEventListener('click', () => openPlace(card.dataset.place));
+        });
     }
 
     function renderTimeline() {

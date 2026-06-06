@@ -1,0 +1,11 @@
+# Cloudflare Pages 보안 헤더
+# https://developers.cloudflare.com/pages/configuration/headers/
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+
+# 관리자 페이지는 토큰을 다루므로 프레임 임베드(클릭재킹) 차단
+/admin*
+  X-Frame-Options: DENY
+  Content-Security-Policy: frame-ancestors 'none'
