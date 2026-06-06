@@ -570,6 +570,15 @@ window.addEventListener('message', async (e) => {
     // OAuth 콜백은 인증 워커 origin에서 온 것만 신뢰 (토큰 주입 방지)
     if (e.origin !== new URL(CONFIG.authBase).origin) return;
     if (typeof e.data !== 'string') return;
+
+    // 핸드셰이크 1단계: 워커가 'authorizing:github'를 보내면 같은 메시지로 응답.
+    // 그래야 워커가 우리(opener)의 origin을 알고 다음 단계에서 토큰을 보내준다.
+    if (e.data === 'authorizing:github') {
+        e.source?.postMessage('authorizing:github', e.origin);
+        return;
+    }
+
+    // 핸드셰이크 2단계: 토큰 수신
     const m = e.data.match(/^authorization:github:(success|error):(.+)$/);
     if (!m) return;
     if (m[1] === 'error') { toast('로그인 실패', 'error'); return; }
