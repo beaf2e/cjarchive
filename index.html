@@ -992,7 +992,10 @@
         detailEl.scrollTop = 0;
         document.body.style.overflow = 'hidden';
 
-        gsap.set(detailEl, { opacity: 1 });   // 새 페이지처럼 즉시 표시 (홈 위로 떠오르는 팝업식 페이드 제거)
+        gsap.set(detailEl, { opacity: 1 });
+        // 애플 내비게이션식 페이지 전환 — 오른쪽에서 밀려 들어옴 (홈이 비치는 팝업 페이드 아님)
+        if (animate) gsap.fromTo(detailEl, { xPercent: 100 }, { xPercent: 0, duration: 0.5, ease: "power3.out" });
+        else gsap.set(detailEl, { xPercent: 0 });
         gsap.fromTo(".detail-hero img, .detail-hero video", { scale: 1.15 }, { scale: 1.06, duration: 1.6, ease: "power2.out" });
         gsap.fromTo(".detail-hero-content .reveal", { opacity: 0, y: 36 }, { opacity: 1, y: 0, duration: 1, stagger: 0.12, ease: "power3.out", delay: 0.2 });
 
@@ -1018,10 +1021,13 @@
         document.body.style.overflow = 'auto';   // 즉시 복원 → 섹션 이동 스크롤이 막히지 않게
         const done = () => {
             detailEl.style.display = 'none';
+            gsap.set(detailEl, { xPercent: 0 });   // 다음 진입 위해 위치 초기화
             if (detailRevealObserver) { detailRevealObserver.disconnect(); detailRevealObserver = null; }
             ScrollTrigger.refresh();
         };
-        done();   // 페이지 전환 — 페이드 없이 즉시 목록으로 (팝업 느낌 제거)
+        // 뒤로 갈 때도 오른쪽으로 밀려 나가며 목록이 드러남 (iOS 뒤로가기 느낌)
+        if (animate) gsap.to(detailEl, { xPercent: 100, duration: 0.4, ease: "power3.in", onComplete: done });
+        else done();
     }
 
     /* ===== URL 라우팅 — 주소가 곧 화면 상태 =====
