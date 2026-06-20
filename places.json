@@ -278,6 +278,13 @@
       "quote": {
         "text": "비워진 관청이 그림책으로 다시 채워질 때, 한 건물은 두 번째 삶을 시작한다.",
         "cite": "— Curator's note"
+      },
+      "thenNow": {
+        "then": "cbdc2.jpg",
+        "now": "cbdc.jpg",
+        "thenLabel": "옛 모습",
+        "nowLabel": "현재",
+        "caption": "충청북도청 본관의 과거와 현재"
       }
     }
   ],
