@@ -281,6 +281,9 @@
             scrollbar-width: none; -ms-overflow-style: none;
         }
         .detail-page::-webkit-scrollbar { width: 0; height: 0; display: none; }
+        /* 상세가 열리면 홈을 렌더에서 숨김 → 상세 스크롤 시 뒤 홈이 비쳐 보이는 현상 방지
+           (visibility라 레이아웃·스크롤 위치는 보존됨) */
+        body.detail-open #home { visibility: hidden; }
 
         .back-btn {
             position: fixed; top: clamp(16px, 3vw, 24px); left: clamp(16px, 3vw, 24px);
@@ -991,6 +994,7 @@
         detailEl.style.display = 'block';
         detailEl.scrollTop = 0;
         document.body.style.overflow = 'hidden';
+        document.body.classList.add('detail-open');   // 홈을 렌더에서 숨겨 뒤비침 방지
 
         gsap.set(detailEl, { opacity: 1 });
         // 애플 홈페이지식 등장 — 불투명한 흰 페이지 위로 콘텐츠가 아래에서 부드럽게 떠오르며 페이드인
@@ -1020,6 +1024,7 @@
         if (detailEl.style.display !== 'block') return;
         currentDetailId = null;
         document.body.style.overflow = 'auto';   // 즉시 복원 → 섹션 이동 스크롤이 막히지 않게
+        document.body.classList.remove('detail-open');   // 홈 다시 표시 (스크롤 위치 보존됨)
         const done = () => {
             detailEl.style.display = 'none';
             gsap.set(detailContent, { opacity: 1, y: 0 });   // 다음 진입 위해 초기화
