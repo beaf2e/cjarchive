@@ -217,6 +217,13 @@
       "quote": {
         "text": "기차가 떠난 자리에 사람의 걸음이 다시 쌓일 때, 도시는 비로소 자기 역사를 이어 적기 시작한다.",
         "cite": "— Curator's note"
+      },
+      "thenNow": {
+        "then": "",
+        "now": "",
+        "thenLabel": "옛 모습",
+        "nowLabel": "현재",
+        "caption": ""
       }
     },
     {
@@ -280,8 +287,8 @@
         "cite": "— Curator's note"
       },
       "thenNow": {
-        "then": "cbdc2.jpg",
-        "now": "cbdc.jpg",
+        "then": "",
+        "now": "",
         "thenLabel": "옛 모습",
         "nowLabel": "현재",
         "caption": "충청북도청 본관의 과거와 현재"
