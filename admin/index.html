@@ -727,7 +727,8 @@ function newPlaceTemplate() {
         stats: [],
         intro: { h: '', p: '' },
         features: [],
-        quote: { text: '', cite: "— Curator's note" }
+        quote: { text: '', cite: "— Curator's note" },
+        thenNow: { then: '', now: '', thenLabel: '옛 모습', nowLabel: '현재', caption: '' }
     };
 }
 
@@ -952,6 +953,7 @@ function toMediaUrl(name) {
 function renderEdit(main) {
     const p = state.places.find(x => x.id === state.editingId);
     if (!p) { state.view = 'list'; render(); return; }
+    if (!p.thenNow) p.thenNow = { then: '', now: '', thenLabel: '옛 모습', nowLabel: '현재', caption: '' };
     main.innerHTML = `
         <div class="edit-toolbar">
             <div class="left">
@@ -1041,6 +1043,35 @@ function renderEdit(main) {
             </div>
         </div>
 
+        <div class="section-header">그때와 지금 (Then & Now)</div>
+        <div class="card">
+            <p class="field-hint" style="margin-bottom:16px;">옛 사진을 올리면 상세 페이지에 과거↔현재 드래그 비교 슬라이더가 표시됩니다. 옛 사진을 비우면 슬라이더는 나타나지 않아요.</p>
+            <div class="field-row">
+                <div class="field">
+                    <label class="field-label">옛 사진 (과거)</label>
+                    <div id="then-picker"></div>
+                </div>
+                <div class="field">
+                    <label class="field-label">현재 사진 (비우면 메인 이미지 사용)</label>
+                    <div id="now-picker"></div>
+                </div>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label class="field-label">왼쪽(과거) 라벨</label>
+                    <input class="input" data-bind="thenNow.thenLabel" value="${escapeHTML(p.thenNow.thenLabel || '옛 모습')}">
+                </div>
+                <div class="field">
+                    <label class="field-label">오른쪽(현재) 라벨</label>
+                    <input class="input" data-bind="thenNow.nowLabel" value="${escapeHTML(p.thenNow.nowLabel || '현재')}">
+                </div>
+            </div>
+            <div class="field">
+                <label class="field-label">설명 (선택)</label>
+                <input class="input" data-bind="thenNow.caption" value="${escapeHTML(p.thenNow.caption || '')}" placeholder="예: 1975년의 모습과 현재">
+            </div>
+        </div>
+
         <div class="section-header">피처 섹션</div>
         <div class="card">
             <div id="features-list"></div>
@@ -1066,6 +1097,8 @@ function renderEdit(main) {
     bindBindings(p);
     renderImagePicker('#img-picker', p.img, (newPath) => { p.img = newPath; markDirty(); }, 'image');
     renderImagePicker('#vid-picker', p.heroVideo, (newPath) => { p.heroVideo = newPath; markDirty(); }, 'video');
+    renderImagePicker('#then-picker', p.thenNow.then, (np) => { p.thenNow.then = np; markDirty(); }, 'image');
+    renderImagePicker('#now-picker', p.thenNow.now, (np) => { p.thenNow.now = np; markDirty(); }, 'image');
     renderStats(p);
     renderFeatures(p);
     renderInlineTimeline(p);

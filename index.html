@@ -285,6 +285,42 @@
            (visibility라 레이아웃·스크롤 위치는 보존됨) */
         body.detail-open #home { visibility: hidden; }
 
+        /* ===== Then & Now 비교 슬라이더 ===== */
+        .compare-section { max-width: 1000px; margin: clamp(64px,10vw,130px) auto; padding: 0 clamp(20px,5vw,40px); }
+        .compare-head { text-align: center; margin-bottom: clamp(26px,4vw,44px); }
+        .compare-eyebrow { display:block; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--apple-blue); font-weight:600; margin-bottom:8px; }
+        .compare-head h2 { font-size:clamp(1.6rem,4vw,2.6rem); font-weight:700; letter-spacing:-0.03em; }
+        .compare-head p { margin-top:12px; color:var(--apple-gray); font-size:clamp(.95rem,2vw,1.1rem); line-height:1.6; }
+        .compare {
+            position:relative; width:100%; aspect-ratio:16/10;
+            border-radius:clamp(14px,2vw,22px); overflow:hidden;
+            user-select:none; touch-action:pan-y; cursor:ew-resize;
+            box-shadow:0 20px 60px rgba(0,0,0,0.12);
+        }
+        .compare img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; -webkit-user-drag:none; pointer-events:none; }
+        .compare-front { clip-path: inset(0 calc(100% - var(--p,50%)) 0 0); }
+        .compare-handle {
+            position:absolute; top:0; bottom:0; left:var(--p,50%);
+            width:2px; background:#fff; transform:translateX(-1px);
+            box-shadow:0 0 12px rgba(0,0,0,0.35); pointer-events:none; z-index:3;
+        }
+        .compare-handle::after {
+            content:'⇄'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+            width:44px; height:44px; border-radius:50%;
+            background:#fff; color:var(--apple-black); font-size:18px;
+            display:flex; align-items:center; justify-content:center;
+            box-shadow:0 4px 16px rgba(0,0,0,0.25);
+        }
+        .compare-tag {
+            position:absolute; bottom:14px; z-index:2;
+            background:rgba(0,0,0,0.5); color:#fff;
+            padding:5px 12px; border-radius:980px;
+            font-size:12px; font-weight:500; letter-spacing:-0.01em;
+            backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); pointer-events:none;
+        }
+        .compare-tag.l { left:14px; }
+        .compare-tag.r { right:14px; }
+
         .back-btn {
             position: fixed; top: clamp(16px, 3vw, 24px); left: clamp(16px, 3vw, 24px);
             width: clamp(44px, 5vw, 50px); height: clamp(44px, 5vw, 50px);
@@ -937,6 +973,24 @@
         const next = getNextPlace(data.id);
         const total = PLACES_LIST.length;
 
+        // Then & Now 비교 슬라이더 — 옛 사진(thenNow.then)이 있을 때만 표시
+        const tn = data.thenNow || {};
+        const compareHTML = tn.then ? `
+            <section class="compare-section reveal">
+                <div class="compare-head">
+                    <span class="compare-eyebrow">Then &amp; Now</span>
+                    <h2>그때, 그리고 지금</h2>
+                    ${tn.caption ? `<p>${esc(tn.caption)}</p>` : ''}
+                </div>
+                <div class="compare" data-compare style="--p:50%">
+                    <img class="compare-base" src="${esc(tn.now || data.img)}" alt="${esc(tn.nowLabel || '현재')}" draggable="false" onerror="this.style.opacity=0.3">
+                    <img class="compare-front" src="${esc(tn.then)}" alt="${esc(tn.thenLabel || '옛 모습')}" draggable="false" onerror="this.style.opacity=0.3">
+                    <div class="compare-handle" aria-hidden="true"></div>
+                    <span class="compare-tag l">${esc(tn.thenLabel || '옛 모습')}</span>
+                    <span class="compare-tag r">${esc(tn.nowLabel || '현재')}</span>
+                </div>
+            </section>` : '';
+
         return `
             <section class="detail-hero">
                 ${heroMedia}
@@ -953,6 +1007,8 @@
                 <h2 class="reveal">${esc(data.intro?.h || '')}</h2>
                 <p class="reveal">${esc(data.intro?.p || '')}</p>
             </section>
+
+            ${compareHTML}
 
             ${featuresHTML}
 
@@ -981,6 +1037,26 @@
 
     let currentDetailId = null;
 
+    // Then & Now 비교 슬라이더 — 드래그(마우스/터치)로 과거↔현재 경계 이동
+    function initCompare(root) {
+        const setP = (clientX) => {
+            const r = root.getBoundingClientRect();
+            let p = ((clientX - r.left) / r.width) * 100;
+            p = Math.max(0, Math.min(100, p));
+            root.style.setProperty('--p', p + '%');
+        };
+        let dragging = false;
+        root.addEventListener('pointerdown', (e) => {
+            dragging = true;
+            root.setPointerCapture(e.pointerId);
+            setP(e.clientX);
+        });
+        root.addEventListener('pointermove', (e) => { if (dragging) setP(e.clientX); });
+        const stop = () => { dragging = false; };
+        root.addEventListener('pointerup', stop);
+        root.addEventListener('pointercancel', stop);
+    }
+
     // 상세 화면을 실제로 그린다 (주소 변경은 하지 않음)
     function renderDetail(id, animate) {
         const data = PLACES[id];
@@ -991,6 +1067,7 @@
         detailContent.innerHTML = buildDetailHTML(data);
         const nextEl = detailContent.querySelector('.next-title[data-place]');
         if (nextEl) nextEl.addEventListener('click', () => openPlace(nextEl.dataset.place));
+        detailContent.querySelectorAll('[data-compare]').forEach(initCompare);
         detailEl.style.display = 'block';
         detailEl.scrollTop = 0;
         document.body.style.overflow = 'hidden';
