@@ -52,6 +52,64 @@
         .nav-title img { height: clamp(24px, 3.6vw, 34px); width: auto; display: block; }
         .nav-title .fallback { font-weight: 600; font-size: clamp(0.95rem, 2vw, 1.05rem); letter-spacing: -0.02em; color: var(--apple-black); }
 
+        /* ===== 햄버거 메뉴 (홈과 동일 톤, CSS 트랜지션) ===== */
+        .menu-btn {
+            position: fixed;
+            top: calc(clamp(12px, 3vw, 18px) + clamp(24px, 3.6vw, 34px) / 2 - 18px);
+            right: clamp(20px, 5vw, 40px);
+            cursor: pointer; border: none; outline: none;
+            -webkit-tap-highlight-color: transparent;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            gap: 5px; width: 36px; height: 36px; border-radius: 50%;
+            background: transparent; z-index: 1300;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+        .menu-btn:hover { background: rgba(0,0,0,0.05); }
+        .menu-btn.open { background: rgba(255,255,255,0.9); box-shadow: 0 4px 18px rgba(0,0,0,0.08); }
+        .menu-btn.open:hover { background: #fff; }
+        .menu-btn span {
+            width: 22px; height: 1.5px; background: var(--apple-black);
+            border-radius: 2px; transform-origin: center;
+            transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.25s ease, background 0.3s ease;
+        }
+        .menu-btn.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+        .menu-btn.open span:nth-child(2) { opacity: 0; transform: scaleX(0); transition: transform 0.2s ease, opacity 0.18s ease; }
+        .menu-btn.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+        .side-menu {
+            position: fixed; top: 0; right: 0;
+            width: min(340px, 82vw); height: 100vh;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: saturate(180%) blur(24px);
+            -webkit-backdrop-filter: saturate(180%) blur(24px);
+            z-index: 1200;
+            padding: clamp(90px, 16vw, 120px) clamp(28px, 5vw, 44px);
+            box-shadow: -16px 0 60px rgba(0,0,0,0.10);
+            display: flex; flex-direction: column; gap: 28px;
+            transform: translateX(106%);
+            transition: transform 0.55s cubic-bezier(0.2, 0.7, 0.2, 1);
+        }
+        .side-menu.open { transform: translateX(0); }
+        .side-menu h2 {
+            font-size: 0.75rem; font-weight: 600; color: var(--apple-gray);
+            letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px;
+        }
+        .side-menu ul { list-style: none; }
+        .side-menu ul li { margin-bottom: 22px; }
+        .side-menu ul li a {
+            font-size: clamp(1.15rem, 3vw, 1.3rem); font-weight: 600;
+            color: var(--apple-black); text-decoration: none; letter-spacing: -0.02em;
+            display: inline-block; transition: color 0.3s ease, transform 0.3s ease;
+        }
+        .side-menu ul li a:hover { color: var(--apple-blue); transform: translateX(-4px); }
+
+        .menu-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.25);
+            z-index: 1040; opacity: 0; visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .menu-overlay.open { opacity: 1; visibility: visible; }
+
         /* ===== PAGE / CONTACT ===== */
         .page {
             flex: 1;
@@ -129,11 +187,28 @@
 
 <body>
 
+<div class="menu-overlay" id="menuOverlay"></div>
+
 <nav class="nav">
     <a class="nav-title" href="/" aria-label="Cheongju Archive 홈">
         <img src="logo.png" alt="Cheongju Archive" onerror="this.outerHTML='<span class=\'fallback\'>Cheongju Archive</span>'">
     </a>
 </nav>
+
+<button class="menu-btn" id="menuBtn" aria-label="메뉴 열기">
+    <span></span><span></span><span></span>
+</button>
+
+<div class="side-menu" id="sideMenu">
+    <h2>Navigation</h2>
+    <ul>
+        <li><a href="/">홈</a></li>
+        <li><a href="/about">소개</a></li>
+        <li><a href="/heritage">유산 이야기</a></li>
+        <li><a href="/timeline">연표</a></li>
+        <li><a href="/contact">문의</a></li>
+    </ul>
+</div>
 
 <main class="page">
     <section class="contact-section" id="contact">
@@ -198,6 +273,25 @@
 </footer>
 
 <script>
+    // 햄버거 메뉴 토글 (CSS 트랜지션 기반)
+    (function () {
+        var btn = document.getElementById('menuBtn');
+        var menu = document.getElementById('sideMenu');
+        var overlay = document.getElementById('menuOverlay');
+        if (!btn || !menu || !overlay) return;
+        var open = false;
+        function set(v) {
+            open = v;
+            btn.classList.toggle('open', open);
+            menu.classList.toggle('open', open);
+            overlay.classList.toggle('open', open);
+            btn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+        }
+        btn.addEventListener('click', function () { set(!open); });
+        overlay.addEventListener('click', function () { set(false); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && open) set(false); });
+    })();
+
     // 문의 폼 → Web3Forms 로 AJAX 전송 (페이지 이동 없이 인라인 결과 표시)
     (function () {
         var form = document.getElementById('contactForm');
