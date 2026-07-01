@@ -19,10 +19,10 @@ export async function onRequest(context) {
     return serveWithPlaceMeta(decodeURIComponent(placeMatch[1]), url, request, env);
   }
 
-  // SPA 라우트: /heritage(목록), /timeline → index.html이 처리(클라이언트 라우팅)
+  // SPA 라우트: /heritage(목록), /timeline → 홈 HTML을 서빙(클라이언트 라우팅이 처리)
+  // 주의: "/index.html"은 Cloudflare Pages가 "/"로 308 정규화하므로 홈("/")을 직접 서빙해야 함
   if (p === "/heritage" || p === "/heritage/" || p === "/timeline") {
-    const indexUrl = new URL("/index.html", url);
-    return env.ASSETS.fetch(new Request(indexUrl, request));
+    return env.ASSETS.fetch(new Request(new URL("/", url), request));
   }
 
   // 루트 직접 진입 단축주소: /<장소ID> 또는 /<순번> → 해당 장소 상세로 (canonical /heritage/<id>)
@@ -61,7 +61,8 @@ async function findPlaceBySlug(seg, url, env) {
 // index.html을 장소별 OG/공유 메타로 다시 써서 서빙
 async function serveWithPlaceMeta(id, url, request, env) {
   const origin = url.origin;
-  const indexReq = new Request(new URL("/index.html", url), request);
+  // "/index.html"은 "/"로 308 정규화되므로 홈("/")을 서빙 (그 HTML에 OG 태그를 주입)
+  const indexReq = new Request(new URL("/", url), request);
   let indexRes;
   try {
     indexRes = await env.ASSETS.fetch(indexReq);
