@@ -232,6 +232,53 @@
         }
         .value-text { opacity: 0; transform: translateY(30px); word-break: keep-all; }
 
+        /* ===== 문의 폼 (Contact) ===== */
+        .contact-section { border-top: 1px solid var(--apple-divider); max-width: 720px; }
+        .contact-head { text-align: center; margin-bottom: clamp(32px, 6vw, 48px); }
+        .contact-head h2 {
+            font-size: clamp(1.5rem, 4vw, 2.4rem);
+            font-weight: 700; letter-spacing: -0.03em; word-break: keep-all;
+        }
+        .contact-head p {
+            color: var(--apple-gray); margin-top: 14px;
+            font-size: clamp(0.95rem, 2vw, 1.05rem); word-break: keep-all;
+        }
+        .contact-form { display: flex; flex-direction: column; gap: 16px; position: relative; }
+        .contact-form .row { display: flex; gap: 16px; }
+        .contact-form .row > * { flex: 1; min-width: 0; }
+        .contact-form label {
+            display: block; font-size: 0.8rem; font-weight: 600;
+            color: var(--apple-black); margin-bottom: 7px; letter-spacing: -0.01em;
+        }
+        .contact-form input[type="text"],
+        .contact-form input[type="email"],
+        .contact-form textarea {
+            width: 100%; font-family: inherit; font-size: 0.98rem; color: var(--apple-black);
+            background: #fff; border: 1px solid var(--apple-light); border-radius: 10px;
+            padding: 13px 15px; transition: border-color 0.2s, box-shadow 0.2s; -webkit-appearance: none;
+        }
+        .contact-form input::placeholder, .contact-form textarea::placeholder { color: #b0b0b5; }
+        .contact-form input:focus, .contact-form textarea:focus {
+            outline: none; border-color: var(--apple-blue); box-shadow: 0 0 0 3px rgba(0,102,204,0.12);
+        }
+        .contact-form textarea { resize: vertical; min-height: 130px; line-height: 1.6; }
+        .contact-submit {
+            align-self: center; margin-top: 6px; border: none; cursor: pointer;
+            background: var(--apple-black); color: #fff; font-family: inherit;
+            font-size: 1rem; font-weight: 500; padding: 14px 42px; border-radius: 980px;
+            transition: transform 0.2s, background 0.3s, opacity 0.2s;
+        }
+        .contact-submit:hover { background: #000; transform: translateY(-1px); }
+        .contact-submit:disabled { opacity: 0.5; cursor: default; transform: none; }
+        .contact-hp { position: absolute; left: -9999px; top: 0; width: 1px; height: 1px; opacity: 0; overflow: hidden; }
+        .contact-status {
+            text-align: center; margin-top: 8px; font-size: 0.95rem;
+            min-height: 1.4em; word-break: keep-all; line-height: 1.5;
+        }
+        .contact-status.ok  { color: #1a7f37; }
+        .contact-status.err { color: #c0362c; }
+        @media (max-width: 560px) { .contact-form .row { flex-direction: column; } }
+
         /* ===== GRID ===== */
         .grid {
             display: grid;
@@ -841,6 +888,86 @@
         <!-- 타임라인 항목은 places.json에서 자동 생성됨 -->
     </div>
 </section>
+
+<!-- ===== CONTACT (문의 폼) ===== -->
+<section class="section contact-section" id="contact">
+    <div class="contact-head">
+        <span class="section-eyebrow">Contact</span>
+        <h2>문의하기</h2>
+        <p>청주 아카이브에 대한 궁금한 점이나 제안을 남겨 주세요.<br>확인 후 이메일로 답변드리겠습니다.</p>
+    </div>
+    <form class="contact-form" id="contactForm" novalidate>
+        <!-- Web3Forms 설정: 아래 access_key 값을 발급받은 키로 교체하세요 (https://web3forms.com) -->
+        <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE">
+        <input type="hidden" name="subject" value="[청주 아카이브] 새 문의가 도착했습니다">
+        <input type="hidden" name="from_name" value="Cheongju Archive 문의폼">
+        <!-- 스팸 방지 허니팟 (사람에겐 안 보임) -->
+        <input type="checkbox" name="botcheck" class="contact-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="row">
+            <div>
+                <label for="cf-name">이름</label>
+                <input id="cf-name" type="text" name="name" placeholder="이름 또는 단체명" required>
+            </div>
+            <div>
+                <label for="cf-email">이메일</label>
+                <input id="cf-email" type="email" name="email" placeholder="답변받을 이메일 주소" required>
+            </div>
+        </div>
+        <div>
+            <label for="cf-msg">내용</label>
+            <textarea id="cf-msg" name="message" placeholder="문의 내용을 적어 주세요" required></textarea>
+        </div>
+        <button type="submit" class="contact-submit" id="cfSubmit">보내기</button>
+        <p class="contact-status" id="cfStatus" role="status" aria-live="polite"></p>
+    </form>
+</section>
+
+<script>
+    // 문의 폼 → Web3Forms 로 AJAX 전송 (페이지 이동 없이 인라인 결과 표시)
+    (function () {
+        var form = document.getElementById('contactForm');
+        if (!form) return;
+        var statusEl = document.getElementById('cfStatus');
+        var btn = document.getElementById('cfSubmit');
+        var CONTACT_EMAIL = 'info.cjarchive@gmail.com';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            var key = form.querySelector('input[name="access_key"]');
+            if (!key || key.value.indexOf('YOUR_ACCESS_KEY') === 0) {
+                statusEl.className = 'contact-status err';
+                statusEl.textContent = '폼이 아직 설정되지 않았습니다. (Web3Forms access_key 필요)';
+                return;
+            }
+            if (!form.checkValidity()) {
+                statusEl.className = 'contact-status err';
+                statusEl.textContent = '이름·이메일·내용을 모두 올바르게 입력해 주세요.';
+                return;
+            }
+            statusEl.className = 'contact-status';
+            statusEl.textContent = '보내는 중…';
+            btn.disabled = true;
+
+            fetch('https://api.web3forms.com/submit', { method: 'POST', body: new FormData(form) })
+                .then(function (r) { return r.json(); })
+                .then(function (j) {
+                    if (j.success) {
+                        form.reset();
+                        statusEl.className = 'contact-status ok';
+                        statusEl.textContent = '문의가 접수되었습니다. 확인 후 이메일로 답변드리겠습니다. 감사합니다.';
+                    } else {
+                        statusEl.className = 'contact-status err';
+                        statusEl.textContent = '전송에 실패했습니다. 잠시 후 다시 시도하거나 ' + CONTACT_EMAIL + ' 으로 보내 주세요.';
+                    }
+                })
+                .catch(function () {
+                    statusEl.className = 'contact-status err';
+                    statusEl.textContent = '네트워크 오류로 전송하지 못했습니다. ' + CONTACT_EMAIL + ' 으로 보내 주세요.';
+                })
+                .finally(function () { btn.disabled = false; });
+        });
+    })();
+</script>
 
 <footer class="footer">
     <div class="footer-grid">
