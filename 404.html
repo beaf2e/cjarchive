@@ -135,74 +135,6 @@
         .footer .brand .b-reg { font-weight: 400; }
         .footer .brand .b-light { font-weight: 300; text-transform: none; }
         .footer p { font-size: 0.75rem; color: #6e6e73; }
-
-        /* ===== 추천 썸네일 카드 ===== */
-        .suggest {
-            width: 100%;
-            max-width: 660px;
-            margin: clamp(46px, 8vw, 72px) auto 0;
-            opacity: 0;
-            transform: translateY(12px);
-            transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2,0.7,0.2,1);
-        }
-        .suggest.show { opacity: 1; transform: none; }
-        .suggest-label {
-            font-size: clamp(0.68rem, 1.6vw, 0.76rem);
-            font-weight: 600;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            color: var(--apple-gray);
-            margin-bottom: clamp(16px, 3vw, 22px);
-        }
-        .suggest-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: clamp(10px, 2vw, 16px);
-        }
-        .s-card {
-            display: block;
-            border-radius: 16px;
-            overflow: hidden;
-            background: var(--apple-bg);
-            box-shadow: 0 4px 18px rgba(0,0,0,0.05);
-            text-decoration: none;
-            color: inherit;
-            text-align: left;
-            transition: transform 0.35s cubic-bezier(0.2,0.7,0.2,1), box-shadow 0.35s ease;
-        }
-        .s-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 14px 34px rgba(0,0,0,0.12);
-        }
-        .s-thumb {
-            width: 100%;
-            aspect-ratio: 4 / 3;
-            background: var(--apple-light) center / cover no-repeat;
-            transition: transform 0.55s cubic-bezier(0.2,0.7,0.2,1);
-        }
-        .s-card:hover .s-thumb { transform: scale(1.06); }
-        .s-body {
-            padding: 11px 13px 14px;
-            display: flex; flex-direction: column; gap: 3px;
-        }
-        .s-eyebrow {
-            font-size: 0.6rem; font-weight: 600; letter-spacing: 0.1em;
-            text-transform: uppercase; color: var(--apple-blue);
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        .s-title {
-            font-size: clamp(0.86rem, 2vw, 0.98rem); font-weight: 600;
-            letter-spacing: -0.02em; color: var(--apple-black);
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        @media (max-width: 460px) {
-            .s-body { padding: 9px 10px 11px; }
-            .s-title { font-size: 0.8rem; }
-            .s-eyebrow { display: none; }
-        }
-        @media (prefers-reduced-motion: reduce) {
-            .suggest, .s-card, .s-thumb { transition: none; }
-        }
     </style>
 </head>
 
@@ -223,49 +155,12 @@
         <a class="btn btn-primary" href="/" onclick="location.replace('/'); return false;">홈으로 돌아가기</a>
         <a class="btn btn-ghost" href="/heritage">유산 둘러보기</a>
     </div>
-
-    <section class="suggest" id="suggest" hidden>
-        <div class="suggest-label">이런 기록은 어떠세요</div>
-        <div class="suggest-grid" id="suggestGrid"></div>
-    </section>
 </main>
 
 <footer class="footer">
     <div class="brand"><span class="b-heavy">Cheongju</span> <span class="b-reg">Archive</span> <span class="b-light">Project</span></div>
     <p>&copy; 2026 CHEONGJU ARCHIVE Project. All rights reserved.</p>
 </footer>
-
-<script>
-    // 길 잃은 방문자에게 청주의 다른 기록을 제안 — places.json에서 랜덤 3곳
-    (async () => {
-        const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-        try {
-            const res = await fetch('/places.json?v=' + Date.now(), { cache: 'no-cache' });
-            if (!res.ok) return;
-            const data = await res.json();
-            let places = (data.places || []).filter(p => p && p.id && p.img && p.title);
-            if (!places.length) return;
-            // 셔플 후 최대 3곳
-            for (let i = places.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [places[i], places[j]] = [places[j], places[i]];
-            }
-            places = places.slice(0, 3);
-            document.getElementById('suggestGrid').innerHTML = places.map(p => `
-                <a class="s-card" href="/heritage/${encodeURIComponent(p.id)}">
-                    <div class="s-thumb" style="background-image:url('${esc(p.img)}')"></div>
-                    <div class="s-body">
-                        ${p.cardEyebrow ? `<span class="s-eyebrow">${esc(p.cardEyebrow)}</span>` : ''}
-                        <span class="s-title">${esc(p.title)}</span>
-                    </div>
-                </a>
-            `).join('');
-            const sec = document.getElementById('suggest');
-            sec.hidden = false;
-            requestAnimationFrame(() => sec.classList.add('show'));
-        } catch (_) { /* 조용히 무시 — 카드 없이도 페이지는 정상 */ }
-    })();
-</script>
 
 </body>
 </html>
