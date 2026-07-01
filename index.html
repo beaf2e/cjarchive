@@ -96,6 +96,36 @@
             letter-spacing: -0.02em;
         }
 
+        /* ===== 상단 가로 내비게이션 (데스크톱) ===== */
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: clamp(20px, 3vw, 38px);
+            list-style: none;
+        }
+        .nav-links li {
+            position: relative;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--apple-black);
+            letter-spacing: -0.01em;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        .nav-links li::after {
+            content: "";
+            position: absolute; left: 0; right: 0; bottom: -6px;
+            height: 1.5px; background: var(--apple-blue);
+            transform: scaleX(0); transform-origin: center;
+            transition: transform 0.25s ease;
+        }
+        .nav-links li:hover { color: var(--apple-blue); }
+        .nav-links li:hover::after { transform: scaleX(1); }
+
+        /* 데스크톱: 가로 메뉴 표시 · 햄버거 숨김 / 모바일: 반대 */
+        @media (max-width: 767px) { .nav-links { display: none; } }
+        @media (min-width: 768px) { .menu-btn { display: none; } }
+
         .menu-btn {
             position: fixed;
             top: calc(clamp(12px, 3vw, 18px) + clamp(24px, 3.6vw, 34px) / 2 - 18px);
@@ -822,6 +852,12 @@
     <div class="nav-title" onclick="goHome()">
         <img src="logo.png" alt="Cheongju Archive" onerror="this.outerHTML='<span class=\'fallback\'>Cheongju Archive</span>'">
     </div>
+    <ul class="nav-links">
+        <li onclick="scrollToSection('about')">소개</li>
+        <li onclick="scrollToSection('heritage')">유산</li>
+        <li onclick="scrollToSection('timeline')">연표</li>
+        <li onclick="scrollToSection('contact')">문의</li>
+    </ul>
 </nav>
 
 <button class="menu-btn" id="menuBtn" aria-label="메뉴 열기">
@@ -856,9 +892,9 @@
     </div>
 </section>
 
-<section class="section">
+<section class="section" id="about">
     <div style="text-align: center; max-width: 800px; margin: 0 auto;">
-        <span class="section-eyebrow value-text">Why We Archive</span>
+        <span class="section-eyebrow value-text">About · 소개</span>
         <h2 class="value-text" style="font-size: clamp(1.7rem, 4.5vw, 2.8rem); margin-bottom: clamp(20px, 5vw, 36px); font-weight: 700; letter-spacing: -0.03em; word-break: keep-all; line-height: 1.25;">기록은 시간을 이기는<br>유일한 방법입니다</h2>
         <p class="value-text" style="font-size: clamp(1.05rem, 2.4vw, 1.25rem); color: #424245; line-height: 1.75; word-break: keep-all;">
             우리가 살아가는 청주의 풍경 속에는 수백 년의 시간이 겹겹이 쌓여 있습니다.
@@ -1044,6 +1080,8 @@
         if (isMenuOpen) closeMenu();
         if (id === 'timeline') return navigate('/timeline');
         if (id === 'heritage') return navigate('/heritage');
+        if (id === 'about') return navigate('/about');
+        if (id === 'contact') return navigate('/contact');
         return navigate('/');   // hero / home
     }
     function goHome() {
@@ -1246,8 +1284,10 @@
     function getRoute() {
         const p = (location.pathname.replace(/\/+$/, '') || '/');
         if (p === '/') return { type: 'home' };
+        if (p === '/about') return { type: 'about' };
         if (p === '/heritage') return { type: 'heritage' };
         if (p === '/timeline') return { type: 'timeline' };
+        if (p === '/contact') return { type: 'contact' };
         const m = p.match(/^\/heritage\/([^\/?#]+)/);
         if (m) return { type: 'place', id: decodeURIComponent(m[1]) };
         return { type: 'home' };
@@ -1267,6 +1307,8 @@
         hideDetail(animate);
         if (r.type === 'timeline') scrollToId('timeline', animate);
         else if (r.type === 'heritage') scrollToId('heritage', animate);
+        else if (r.type === 'about') scrollToId('about', animate);
+        else if (r.type === 'contact') scrollToId('contact', animate);
         else scrollToTop(animate);   // home
     }
     window.addEventListener('popstate', () => syncRoute(true));
@@ -1325,9 +1367,12 @@
         if (!ul) return;
         // 기존 li 모두 제거 후 재구성
         const items = [
-            { label: '메인 홈', kind: 'section', target: 'hero' },
+            { label: '홈', kind: 'section', target: 'hero' },
+            { label: '소개', kind: 'section', target: 'about' },
+            { label: '유산 이야기', kind: 'section', target: 'heritage' },
             ...PLACES_LIST.map(p => ({ label: p.title, kind: 'place', target: p.id })),
-            { label: '타임라인', kind: 'section', target: 'timeline' }
+            { label: '연표', kind: 'section', target: 'timeline' },
+            { label: '문의', kind: 'section', target: 'contact' }
         ];
         // 인라인 onclick 대신 data-* + 리스너 (속성값 이스케이프로 인한 XSS 차단)
         ul.innerHTML = items.map(it =>

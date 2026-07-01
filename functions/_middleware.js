@@ -21,7 +21,7 @@ export async function onRequest(context) {
 
   // SPA 라우트: /heritage(목록), /timeline → 홈 HTML을 서빙(클라이언트 라우팅이 처리)
   // 주의: "/index.html"은 Cloudflare Pages가 "/"로 308 정규화하므로 홈("/")을 직접 서빙해야 함
-  if (p === "/heritage" || p === "/heritage/" || p === "/timeline") {
+  if (p === "/heritage" || p === "/heritage/" || p === "/timeline" || p === "/about" || p === "/contact") {
     return env.ASSETS.fetch(new Request(new URL("/", url), request));
   }
 
