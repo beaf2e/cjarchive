@@ -1205,8 +1205,7 @@
             { label: '홈', kind: 'section', target: 'hero' },
             { label: '소개', kind: 'section', target: 'about' },
             { label: '유산 이야기', kind: 'section', target: 'heritage' },
-            { label: '연표', kind: 'section', target: 'timeline' },
-            { label: '문의', kind: 'link', target: '/contact' }
+            { label: '연표', kind: 'section', target: 'timeline' }
         ];
         // 인라인 onclick 대신 data-* + 리스너 (속성값 이스케이프로 인한 XSS 차단)
         ul.innerHTML = items.map(it =>
