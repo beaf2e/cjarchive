@@ -62,7 +62,8 @@ async function findPlaceBySlug(seg, url, env) {
 async function serveWithPlaceMeta(id, url, request, env) {
   const origin = url.origin;
   // "/index.html"은 "/"로 308 정규화되므로 홈("/")을 서빙 (그 HTML에 OG 태그를 주입)
-  const indexReq = new Request(new URL("/", url), request);
+  // 원본 request 헤더를 복사하지 않음 → 압축(br) 응답을 피해 HTMLRewriter가 HTML을 파싱 가능
+  const indexReq = new Request(new URL("/", url));
   let indexRes;
   try {
     indexRes = await env.ASSETS.fetch(indexReq);
