@@ -52,10 +52,13 @@
             display: flex;
         }
         .nav a { display: inline-flex; align-items: center; text-decoration: none; }
-        .nav img { height: clamp(26px, 4vw, 32px); width: auto; }
+        .nav img { height: clamp(24px, 3.6vw, 34px); width: auto; display: block; }
         .nav .fallback {
-            font-weight: 800; font-size: 1.1rem; color: var(--apple-black);
-            letter-spacing: 0.02em; text-decoration: none;
+            font-weight: 600;
+            font-size: clamp(0.95rem, 2vw, 1.05rem);
+            letter-spacing: -0.02em;
+            color: var(--apple-black);
+            text-decoration: none;
         }
 
         .wrap {
