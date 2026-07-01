@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Cheongju Chronicle · 청주 아카이브</title>
+<meta name="description" content="청주의 유산을 기록하는 신문형 아카이브 — The Cheongju Chronicle." />
+<link rel="icon" type="image/png" href="logo2.png" />
+<meta property="og:title" content="The Cheongju Chronicle · 청주 아카이브" />
+<meta property="og:description" content="청주의 시간을 한 장의 신문으로 읽다." />
+<meta property="og:image" content="og-image.jpg" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Noto+Serif+KR:wght@200;300;400;500;600;700;900&family=UnifrakturCook:wght@700&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --ink:#1c1712;
+    --ink-soft:#4b453c;
+    --ink-faint:#7a7062;
+    --paper:#f4efe4;
+    --paper-2:#efe9db;
+    --line:#1c1712;
+    --hair:#c8bfa9;
+    --red:#8a1710;
+    --serif-kr:"Noto Serif KR","Nanum Myeongjo",Georgia,serif;
+    --serif-en:"Playfair Display","Noto Serif KR",Georgia,serif;
+    --black:"UnifrakturCook","Playfair Display",serif;
+  }
+
+  *{box-sizing:border-box;}
+  html{ -webkit-text-size-adjust:100%; }
+  body{
+    margin:0;
+    background:
+      radial-gradient(120% 90% at 50% -10%, #faf6ec 0%, var(--paper) 55%, var(--paper-2) 100%)
+      fixed;
+    color:var(--ink);
+    font-family:var(--serif-kr);
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  /* faint newsprint grain */
+  body::before{
+    content:"";
+    position:fixed; inset:0; z-index:9999; pointer-events:none;
+    opacity:.035; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .sheet{
+    max-width:1180px;
+    margin:0 auto;
+    padding:26px clamp(14px,3.4vw,46px) 90px;
+  }
+
+  a{color:inherit;}
+
+  /* ---------- rules ---------- */
+  .rule{border:0;border-top:1px solid var(--line);margin:0;}
+  .rule-thin{border:0;border-top:1px solid var(--hair);margin:0;}
+  .rule-double{border:0;border-top:3px solid var(--line);position:relative;margin:0;}
+  .rule-double::after{content:"";position:absolute;left:0;right:0;top:2px;border-top:1px solid var(--line);}
+
+  /* ---------- masthead ---------- */
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;gap:14px;
+    font-family:var(--serif-en);
+    font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink-soft);
+    padding:7px 2px;
+  }
+  .topbar .mid{ font-style:italic; letter-spacing:.06em; text-transform:none; color:var(--red); font-weight:700; }
+  .topbar .r{ text-align:right; }
+
+  .nameplate{
+    text-align:center;
+    padding:16px 0 6px;
+  }
+  .nameplate h1{
+    font-family:var(--black);
+    font-weight:700;
+    font-size:clamp(2.9rem,9.2vw,6.6rem);
+    line-height:.92;
+    margin:0;
+    letter-spacing:.01em;
+  }
+  .nameplate .sub{
+    font-family:var(--serif-en);
+    font-style:italic;
+    font-size:clamp(.82rem,2.2vw,1.05rem);
+    letter-spacing:.05em;
+    color:var(--ink-soft);
+    margin-top:12px;
+  }
+  .nameplate .sub b{ font-weight:700; font-style:normal; letter-spacing:.16em; text-transform:uppercase; font-size:.86em;}
+
+  .colophon{
+    display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;
+    font-family:var(--serif-en);
+    font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);
+    padding:7px 2px;
+  }
+  .colophon span{white-space:nowrap;}
+
+  /* section nav */
+  nav.sections{
+    display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;
+    padding:9px 0;
+  }
+  nav.sections a{
+    font-family:var(--serif-en);
+    font-size:12.5px;letter-spacing:.2em;text-transform:uppercase;
+    text-decoration:none;color:var(--ink);
+    padding:2px 15px;position:relative;font-weight:700;
+    transition:color .18s;
+  }
+  nav.sections a + a::before{
+    content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);
+    height:12px;border-left:1px solid var(--hair);
+  }
+  nav.sections a:hover{color:var(--red);}
+
+  /* ---------- front page grid ---------- */
+  .frontpage{
+    display:grid;
+    grid-template-columns:1.05fr 2.15fr 1.15fr;
+    margin-top:22px;
+  }
+  .frontpage > *{ padding:0 26px; }
+  .frontpage > *:first-child{ padding-left:0; }
+  .frontpage > *:last-child{ padding-right:0; }
+  .col-mid{ border-left:1px solid var(--hair); border-right:1px solid var(--hair); }
+
+  /* generic article bits */
+  .kicker{
+    font-family:var(--serif-en);
+    font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--red);font-weight:700;
+    display:flex;align-items:baseline;gap:9px;margin-bottom:9px;
+  }
+  .kicker .yr{ color:var(--ink-faint); letter-spacing:.14em; }
+  .kicker .yr::before{ content:"·"; margin-right:9px; color:var(--hair);}
+
+  .headline{
+    font-family:var(--serif-kr);
+    font-weight:900;
+    color:var(--ink);
+    margin:0 0 10px;
+    letter-spacing:-.01em;
+    text-wrap:balance;
+  }
+  .headline a{ text-decoration:none; }
+  .headline a:hover{ color:var(--red); }
+
+  .deck{
+    color:var(--ink-soft);
+    font-size:1.02rem;
+    font-style:italic;
+    margin:0 0 14px;
+    line-height:1.5;
+  }
+
+  figure{ margin:0 0 14px; }
+  figure img{
+    display:block;width:100%;height:auto;
+    filter:grayscale(.28) contrast(1.06) sepia(.05);
+    transition:filter .6s ease;
+    background:var(--paper-2);
+  }
+  figure img:hover{ filter:grayscale(0) contrast(1) sepia(0); }
+  figcaption{
+    font-family:var(--serif-en);
+    font-size:11px;letter-spacing:.05em;color:var(--ink-faint);
+    padding-top:6px;line-height:1.4;
+    border-bottom:1px solid var(--hair);padding-bottom:10px;
+  }
+  figcaption b{ color:var(--ink-soft); font-style:italic; font-weight:400; }
+
+  .byline{
+    font-family:var(--serif-en);
+    font-size:12px;letter-spacing:.06em;color:var(--ink-soft);
+    margin:12px 0 14px;
+    padding-bottom:12px;border-bottom:1px solid var(--hair);
+  }
+  .byline b{ text-transform:uppercase;letter-spacing:.14em;font-size:.9em;font-weight:700;color:var(--ink);}
+
+  .body p{ margin:0 0 1.05em; }
+  .body p a{color:var(--red);}
+  .crosshead{
+    font-weight:700;color:var(--ink);
+  }
+  .crosshead::after{ content:" — "; color:var(--ink-faint); font-weight:400;}
+
+  .dropcap{
+    float:left;
+    font-family:var(--serif-en);
+    font-weight:900;
+    font-size:3.9em;
+    line-height:.74;
+    padding:6px 10px 0 0;
+    color:var(--ink);
+  }
+
+  /* lead story */
+  .lead .headline{ font-size:clamp(2rem,3.6vw,2.9rem); line-height:1.08; }
+  .lead .deck{ font-size:1.14rem; }
+  .lead .body{
+    columns:2;
+    column-gap:30px;
+    column-rule:1px solid var(--hair);
+    font-size:1.005rem;
+    text-align:justify;
+    hyphens:auto;
+  }
+  .lead .body > *{ break-inside:avoid-column; }
+  .lead .body p{ break-inside:auto; }
+
+  blockquote.pull{
+    margin:6px 0 18px;
+    padding:14px 0;
+    border-top:3px solid var(--line);
+    border-bottom:1px solid var(--line);
+    break-inside:avoid;
+    text-align:left;
+  }
+  blockquote.pull p{
+    font-family:var(--serif-en);
+    font-style:italic;font-weight:700;
+    font-size:1.28rem;line-height:1.32;margin:0 0 8px;color:var(--ink);
+  }
+  blockquote.pull cite{
+    font-style:normal;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--red);
+  }
+
+  .factbox{
+    break-inside:avoid;
+    border:1px solid var(--line);
+    padding:14px 16px 4px;
+    margin:4px 0 16px;
+    background:rgba(255,255,255,.28);
+  }
+  .factbox h4{
+    font-family:var(--serif-en);
+    margin:0 0 10px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+    text-align:center;color:var(--ink);
+    border-bottom:1px solid var(--hair);padding-bottom:9px;
+  }
+  .factbox dl{ margin:0; display:grid; grid-template-columns:auto 1fr; gap:0; }
+  .factbox dt{
+    font-family:var(--serif-en);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink-faint);padding:7px 12px 7px 0;border-bottom:1px dotted var(--hair);
+    white-space:nowrap;
+  }
+  .factbox dd{
+    margin:0;padding:7px 0;border-bottom:1px dotted var(--hair);
+    font-weight:600;text-align:right;font-size:.94rem;
+  }
+  .factbox dl > dt:last-of-type, .factbox dl > dd:last-of-type{ border-bottom:0; }
+
+  /* rail / secondary stories */
+  .story{ padding-bottom:20px;margin-bottom:20px;border-bottom:1px solid var(--hair); }
+  .story:last-child{ border-bottom:0; }
+  .story .headline{ font-size:clamp(1.3rem,2.3vw,1.66rem); line-height:1.14; }
+  .story .deck{ font-size:.97rem; }
+  .story figcaption{ border-bottom:0; padding-bottom:0; }
+  .more{
+    display:inline-block;margin-top:6px;
+    font-family:var(--serif-en);font-size:12px;letter-spacing:.08em;
+    color:var(--red);text-decoration:none;font-weight:700;
+  }
+  .more:hover{ text-decoration:underline; }
+
+  /* timeline box */
+  .timeline-box{
+    border:1px solid var(--line);
+    padding:16px 16px 6px;
+    margin-top:6px;
+    background:rgba(255,255,255,.3);
+  }
+  .box-title{
+    font-family:var(--serif-en);
+    text-align:center;margin:0 0 4px;
+    font-size:13px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+  }
+  .box-sub{
+    text-align:center;font-family:var(--serif-en);font-style:italic;
+    font-size:11px;color:var(--ink-faint);margin:0 0 12px;
+    padding-bottom:11px;border-bottom:3px double var(--line);letter-spacing:.04em;
+  }
+  .tl-item{ display:flex;gap:12px;padding:11px 0;border-bottom:1px dotted var(--hair); }
+  .tl-item:last-child{ border-bottom:0; }
+  .tl-year{
+    font-family:var(--serif-en);font-weight:900;font-size:1.32rem;line-height:1;
+    color:var(--red);min-width:46px;
+  }
+  .tl-body b{ display:block;font-weight:700;font-size:.98rem;line-height:1.25;margin-bottom:2px; }
+  .tl-body p{ margin:0;font-size:.86rem;color:var(--ink-soft);line-height:1.4; }
+
+  /* ---------- below the fold ---------- */
+  .band{
+    margin-top:40px;padding-top:8px;
+    border-top:3px double var(--line);
+  }
+  .band-title{
+    font-family:var(--serif-en);
+    text-align:center;
+    font-size:13px;letter-spacing:.28em;text-transform:uppercase;font-weight:700;
+    padding:14px 0 20px;color:var(--ink);
+  }
+  .band-title span{ color:var(--red); }
+  .more-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:0;
+  }
+  .more-grid > .story{
+    padding:0 26px 4px;border-bottom:0;margin-bottom:0;
+    border-left:1px solid var(--hair);
+  }
+  .more-grid > .story:first-child{ border-left:0;padding-left:0; }
+  .more-grid > .story:last-child{ padding-right:0; }
+  .more-grid .headline{ font-size:clamp(1.4rem,2vw,1.8rem); }
+  .more-grid .body{ font-size:.97rem; text-align:justify; }
+
+  /* ---------- footer colophon ---------- */
+  footer{
+    margin-top:56px;padding-top:20px;
+    border-top:3px double var(--line);
+    text-align:center;
+  }
+  footer .fp{
+    font-family:var(--black);font-size:clamp(1.6rem,4vw,2.3rem);margin:6px 0 2px;line-height:1;
+  }
+  footer .cred{
+    font-family:var(--serif-en);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink-soft);margin:10px 0;
+  }
+  footer .motto{
+    font-style:italic;color:var(--ink-soft);font-size:1.02rem;margin:14px auto 6px;max-width:520px;
+  }
+  footer .links{ margin:16px 0 4px; }
+  footer .links a{
+    font-family:var(--serif-en);font-size:12px;letter-spacing:.1em;color:var(--red);
+    text-decoration:none;font-weight:700;margin:0 12px;
+  }
+  footer .links a:hover{ text-decoration:underline; }
+
+  /* loading / error */
+  .status{ text-align:center;padding:60px 20px;color:var(--ink-faint);font-style:italic; }
+
+  /* ---------- responsive ---------- */
+  @media (max-width:900px){
+    .frontpage{ grid-template-columns:1fr; }
+    .frontpage > *{ padding:0 !important; }
+    .col-mid{ border:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+              margin:22px 0;padding:22px 0 !important; }
+    .lead .body{ columns:1; }
+    .more-grid > .story{ border-left:0;padding:0 0 4px !important;border-top:1px solid var(--hair);
+                         margin-top:22px;padding-top:22px !important; }
+    .more-grid > .story:first-child{ border-top:0;margin-top:0;padding-top:0 !important; }
+  }
+  @media (max-width:560px){
+    .topbar{ font-size:10px;letter-spacing:.08em; }
+    .topbar .mid{ display:none; }
+    nav.sections a{ padding:2px 9px;font-size:11px;letter-spacing:.12em; }
+  }
+
+  /* ---------- print ---------- */
+  @media print{
+    body{ background:#fff;color:#000; }
+    body::before{ display:none; }
+    nav.sections,.more,footer .links{ display:none; }
+    figure img{ filter:grayscale(1) contrast(1.1); }
+    .sheet{ max-width:none;padding:0; }
+    a{ color:#000; }
+  }
+</style>
+</head>
+<body>
+<div class="sheet" id="top">
+
+  <!-- ================= MASTHEAD ================= -->
+  <header>
+    <hr class="rule" />
+    <div class="topbar">
+      <div class="l">제1권 · 다섯 곳의 기록</div>
+      <div class="mid">Cheongju Heritage · Special Edition</div>
+      <div class="r" id="dateline">청주, 대한민국</div>
+    </div>
+    <hr class="rule" />
+
+    <div class="nameplate">
+      <h1>The Cheongju Chronicle</h1>
+      <div class="sub"><b>청주 아카이브</b> &nbsp;·&nbsp; 도시가 자기 자신을 다시 쓰는 방식을 기록하다</div>
+    </div>
+
+    <hr class="rule-double" />
+    <div class="colophon">
+      <span>Est. 2026</span>
+      <span>·</span>
+      <span>기록은 시간을 이기는 유일한 방법입니다</span>
+      <span>·</span>
+      <span>무료 온라인판</span>
+    </div>
+    <hr class="rule" />
+
+    <nav class="sections" id="sections" aria-label="섹션"></nav>
+    <hr class="rule-double" />
+  </header>
+
+  <!-- ================= FRONT PAGE ================= -->
+  <main>
+    <div id="frontpage" class="frontpage">
+      <div class="status">지면을 인쇄하는 중…</div>
+    </div>
+
+    <section class="band" id="more">
+      <div class="band-title">아카이브 더 보기 &nbsp;<span>·</span>&nbsp; More From the Archive</div>
+      <div id="moregrid" class="more-grid"></div>
+    </section>
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer>
+    <div class="fp">The Cheongju Chronicle</div>
+    <div class="cred">발행 · 청주 아카이브 편집부 &nbsp;|&nbsp; 청주, 대한민국 &nbsp;|&nbsp; 2026</div>
+    <p class="motto">“도시는 끊임없이 자기 자신을 다시 쓴다. 우리는 다만, 지워지기 전의 문장을 옮겨 적을 뿐이다.”</p>
+    <div class="links">
+      <a href="index.html">아카이브 홈</a>
+      <a href="report.html">연구 리포트</a>
+      <a href="presentation.html">프레젠테이션</a>
+    </div>
+    <div class="cred" style="margin-top:14px;color:var(--ink-faint);">© 2026 Cheongju Archive Project</div>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var CAT_KR = {
+    "Education":"교육","Faith":"신앙","National Treasure":"국보",
+    "Modernity":"근대","Administration":"행정","Heritage":"유산"
+  };
+  var WEEKDAYS = ["일","월","화","수","목","금","토"];
+
+  function esc(s){ return String(s==null?"":s); }
+  function oneline(s){ return esc(s).replace(/\s*\n\s*/g," ").trim(); }
+
+  // "Education · 987" -> {cat:"Education", yr:"987"}
+  function parseEyebrow(p){
+    var raw = p.cardEyebrow || p.detailEyebrow || "";
+    var parts = raw.split("·");
+    return { cat: (parts[0]||"").trim(), yr: (parts[1]||"").trim() };
+  }
+  function kickerHTML(p){
+    var e = parseEyebrow(p);
+    var yr = e.yr ? '<span class="yr">'+esc(e.yr)+'</span>' : '';
+    return '<div class="kicker">'+esc(e.cat.toUpperCase())+yr+'</div>';
+  }
+  function headlineText(p){
+    return oneline((p.intro && p.intro.h) || p.tagline || p.title);
+  }
+  function deckText(p){
+    return oneline(p.tagline && (!p.intro || p.intro.h !== p.tagline) ? p.tagline : (p.cardTagline||""));
+  }
+  function truncate(s,n){
+    s = oneline(s);
+    if(s.length<=n) return s;
+    var cut = s.slice(0,n);
+    var sp = cut.lastIndexOf(" ");
+    if(sp>n*0.6) cut = cut.slice(0,sp);
+    return cut.replace(/[\s,·—-]+$/,"") + "…";
+  }
+  function dropcap(text){
+    text = oneline(text);
+    var first = text.slice(0,1);
+    return '<span class="dropcap">'+esc(first)+'</span>'+esc(text.slice(1));
+  }
+  function factboxHTML(p){
+    if(!p.stats || !p.stats.length) return "";
+    var rows = p.stats.map(function(s){
+      return '<dt>'+esc(s.label)+'</dt><dd>'+esc(s.value)+'</dd>';
+    }).join("");
+    return '<aside class="factbox"><h4>'+esc(p.title)+' · 한눈에</h4><dl>'+rows+'</dl></aside>';
+  }
+  function figureHTML(src, cap, sub){
+    if(!src) return "";
+    return '<figure><img src="'+esc(src)+'" alt="'+esc(cap||"")+'" loading="lazy" />'
+      + '<figcaption>'+esc(cap||"")+(sub?' <b>'+esc(sub)+'</b>':'')+'</figcaption></figure>';
+  }
+
+  function leadHTML(p){
+    var body = "";
+    // opening paragraph with drop cap
+    if(p.intro && p.intro.p) body += '<p>'+dropcap(p.intro.p)+'</p>';
+    // pull quote after the opening
+    if(p.quote && p.quote.text){
+      body += '<blockquote class="pull"><p>“'+oneline(p.quote.text)+'”</p>'
+            + '<cite>'+esc(p.quote.cite||"청주 아카이브")+'</cite></blockquote>';
+    }
+    // fact box floats within the columns
+    body += factboxHTML(p);
+    // features as crossheads + paragraphs
+    (p.features||[]).forEach(function(f){
+      var head = oneline(f.h);
+      body += '<p>'+(head?'<span class="crosshead">'+esc(head)+'</span>':'')+esc(oneline(f.p))+'</p>';
+    });
+
+    return '<article class="lead" id="'+esc(p.id)+'">'
+      + kickerHTML(p)
+      + '<h1 class="headline"><a href="index.html">'+esc(headlineText(p))+'</a></h1>'
+      + '<p class="deck">'+esc(deckText(p) || oneline((p.intro&&p.intro.p)||"").slice(0,90))+'</p>'
+      + figureHTML(p.img, p.title, oneline(p.detailEyebrow))
+      + '<div class="byline"><b>글 · 청주 아카이브 편집부</b> &nbsp;|&nbsp; 사진 청주 아카이브</div>'
+      + '<div class="body">'+body+'</div>'
+      + '<a class="more" href="index.html#'+esc(p.id)+'">아카이브에서 전체 보기 →</a>'
+      + '</article>';
+  }
+
+  function storyHTML(p, opts){
+    opts = opts || {};
+    var withImg = opts.img !== false;
+    var deckLen = opts.deckLen || 150;
+    return '<article class="story" id="'+esc(p.id)+'">'
+      + kickerHTML(p)
+      + '<h2 class="headline"><a href="index.html#'+esc(p.id)+'">'+esc(headlineText(p))+'</a></h2>'
+      + (withImg ? figureHTML(p.img, p.title, "") : "")
+      + '<div class="body"><p>'+esc(truncate((p.intro&&p.intro.p)||p.cardTagline||"", deckLen))+'</p></div>'
+      + '<a class="more" href="index.html#'+esc(p.id)+'">계속 읽기 →</a>'
+      + '</article>';
+  }
+
+  function timelineHTML(timeline){
+    if(!timeline || !timeline.length) return "";
+    var items = timeline.map(function(t){
+      return '<div class="tl-item"><span class="tl-year">'+esc(t.year)+'</span>'
+        + '<div class="tl-body"><b>'+esc(t.place)+'</b><p>'+oneline(t.desc)+'</p></div></div>';
+    }).join("");
+    return '<aside class="timeline-box" id="timeline">'
+      + '<div class="box-title">청주의 연표</div>'
+      + '<div class="box-sub">A Cheongju Timeline · 962 — 2026</div>'
+      + items + '</aside>';
+  }
+
+  function buildNav(places){
+    var nav = document.getElementById("sections");
+    var html = '<a href="#top">1면</a>';
+    places.forEach(function(p){
+      var e = parseEyebrow(p);
+      var label = CAT_KR[e.cat] || e.cat || p.title;
+      html += '<a href="#'+esc(p.id)+'">'+esc(label)+'</a>';
+    });
+    html += '<a href="#timeline">연표</a>';
+    nav.innerHTML = html;
+  }
+
+  function setDate(){
+    var el = document.getElementById("dateline");
+    try{
+      var d = new Date();
+      el.textContent = d.getFullYear()+"년 "+(d.getMonth()+1)+"월 "+d.getDate()+"일 "+WEEKDAYS[d.getDay()]+"요일";
+    }catch(e){ /* keep fallback text */ }
+  }
+
+  function render(data){
+    var places = (data.places||[]).slice().sort(function(a,b){return (a.order||0)-(b.order||0);});
+    if(!places.length){
+      document.getElementById("frontpage").innerHTML =
+        '<div class="status">아직 등록된 기록이 없습니다.</div>';
+      return;
+    }
+
+    // editorial rule: the National Treasure leads the front page
+    var leadIdx = places.findIndex(function(p){
+      return /국보|national treasure/i.test((p.detailEyebrow||"")+" "+(p.cardEyebrow||""));
+    });
+    if(leadIdx < 0) leadIdx = 0;
+    var lead = places[leadIdx];
+    var rest = places.filter(function(p){ return p !== lead; });
+
+    var left  = rest[0];
+    var right = rest[1];
+    var below = rest.slice(2);
+
+    buildNav(places);
+
+    var fp = "";
+    fp += '<div class="col-left">' + (left ? storyHTML(left,{deckLen:200}) : "") + '</div>';
+    fp += '<div class="col-mid">'  + leadHTML(lead) + '</div>';
+    fp += '<div class="col-right">'
+        + (right ? storyHTML(right,{deckLen:170}) : "")
+        + timelineHTML(data.timeline)
+        + '</div>';
+    document.getElementById("frontpage").innerHTML = fp;
+
+    document.getElementById("moregrid").innerHTML =
+      below.length
+        ? below.map(function(p){ return storyHTML(p,{deckLen:260}); }).join("")
+        : '<div class="status">이 판에 실린 모든 기록이 위에 담겼습니다.</div>';
+  }
+
+  setDate();
+  fetch("places.json", {cache:"no-store"})
+    .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+    .then(render)
+    .catch(function(err){
+      document.getElementById("frontpage").innerHTML =
+        '<div class="status">지면을 불러오지 못했습니다.<br/>'
+        + '이 페이지는 <b>places.json</b>을 불러오므로 로컬 서버(예: <code>python3 -m http.server</code>)로 열거나<br/>'
+        + '배포된 사이트에서 확인해 주세요.<br/><small>('+esc(err.message)+')</small></div>';
+    });
+})();
+</script>
+</body>
+</html>
