@@ -1074,12 +1074,11 @@
         document.body.classList.add('detail-open');   // 홈을 렌더에서 숨겨 뒤비침 방지
 
         gsap.set(detailEl, { opacity: 1 });
-        // 애플 홈페이지식 등장 — 불투명한 흰 페이지 위로 콘텐츠가 아래에서 부드럽게 떠오르며 페이드인
-        // (홈이 비치는 팝업 페이드 아님 / 옆으로 미는 iOS 슬라이드도 아님)
-        if (animate) gsap.fromTo(detailContent, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.9, ease: "power2.out" });
-        else gsap.set(detailContent, { opacity: 1, y: 0 });
-        gsap.fromTo(".detail-hero img, .detail-hero video", { scale: 1.15 }, { scale: 1.06, duration: 1.6, ease: "power2.out" });
-        gsap.fromTo(".detail-hero-content .reveal", { opacity: 0, y: 36 }, { opacity: 1, y: 0, duration: 1, stagger: 0.12, ease: "power3.out", delay: 0.2 });
+        // 등장 효과 — 수직 이동(올라오는 모션) 없이 부드러운 페이드인만
+        gsap.set(".detail-hero-content .reveal", { opacity: 1, y: 0 });
+        if (animate) gsap.fromTo(detailContent, { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power2.out" });
+        else gsap.set(detailContent, { opacity: 1 });
+        gsap.fromTo(".detail-hero img, .detail-hero video", { scale: 1.12 }, { scale: 1.04, duration: 1.6, ease: "power2.out" });
 
         // 스크롤 페이드인 — IntersectionObserver(한 번만, 단방향) → 스크롤 깜빡임 방지
         if (detailRevealObserver) detailRevealObserver.disconnect();
@@ -1108,8 +1107,8 @@
             if (detailRevealObserver) { detailRevealObserver.disconnect(); detailRevealObserver = null; }
             ScrollTrigger.refresh();
         };
-        // 닫을 때: 콘텐츠가 살짝 가라앉으며 페이드아웃 → 페이지가 사라지며 목록이 드러남
-        if (animate) gsap.to(detailContent, { opacity: 0, y: 16, duration: 0.32, ease: "power2.in", onComplete: done });
+        // 닫을 때: 수직 이동 없이 페이드아웃만 → 페이지가 사라지며 목록이 드러남
+        if (animate) gsap.to(detailContent, { opacity: 0, duration: 0.3, ease: "power2.in", onComplete: done });
         else done();
     }
 
