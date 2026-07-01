@@ -25,9 +25,11 @@ export async function onRequest(context) {
     return env.ASSETS.fetch(new Request(new URL("/", url), request));
   }
 
-  // 문의는 별도 페이지: /contact → contact.html
+  // 문의는 별도 페이지(contact.html). Pages 기본 클린URL이 /contact → contact.html 로
+  // 서빙하므로 그대로 통과시킨다. (env.ASSETS로 /contact.html 을 가져오면 Pages가 /contact 로
+  // 308 정규화 → 무한 리다이렉트가 되므로 절대 가로채지 말 것)
   if (p === "/contact" || p === "/contact/") {
-    return env.ASSETS.fetch(new Request(new URL("/contact.html", url), request));
+    return next();
   }
 
   // 루트 직접 진입 단축주소: /<장소ID> 또는 /<순번> → 해당 장소 상세로 (canonical /heritage/<id>)
