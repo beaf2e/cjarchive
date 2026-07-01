@@ -25,8 +25,37 @@ export async function onRequest(context) {
     return env.ASSETS.fetch(new Request(indexUrl, request));
   }
 
+  // 루트 직접 진입 단축주소: /<장소ID> 또는 /<순번> → 해당 장소 상세로 (canonical /heritage/<id>)
+  // 예) /cbdc, /1 → /heritage/cbdc  (실제 파일/폴더는 확장자·슬래시가 있어 여기 안 걸림)
+  const rootSeg = p.match(/^\/([^\/.]+)\/?$/);
+  if (rootSeg) {
+    const place = await findPlaceBySlug(decodeURIComponent(rootSeg[1]), url, env);
+    if (place) {
+      url.pathname = "/heritage/" + encodeURIComponent(place.id);
+      return Response.redirect(url.toString(), 301);
+    }
+  }
+
   // 그 외(실제 파일, /, /admin, /404.html 등)는 기본 정적 서빙으로
   return next();
+}
+
+// 루트 세그먼트를 장소로 해석 — 장소 id(대소문자 무시) 또는 순번(order) 일치 시 그 장소 반환
+async function findPlaceBySlug(seg, url, env) {
+  try {
+    const res = await env.ASSETS.fetch(new Request(new URL("/places.json", url)));
+    if (!res.ok) return null;
+    const data = await res.json();
+    const places = data.places || [];
+    const low = seg.toLowerCase();
+    const isNum = /^\d+$/.test(seg);
+    return places.find((p) =>
+      String(p.id).toLowerCase() === low ||
+      (isNum && Number(p.order) === Number(seg))
+    ) || null;
+  } catch {
+    return null;
+  }
 }
 
 // index.html을 장소별 OG/공유 메타로 다시 써서 서빙
