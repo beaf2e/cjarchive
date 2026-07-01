@@ -96,35 +96,6 @@
             letter-spacing: -0.02em;
         }
 
-        /* ===== 상단 가로 내비게이션 (데스크톱) ===== */
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: clamp(20px, 3vw, 38px);
-            list-style: none;
-        }
-        .nav-links li {
-            position: relative;
-            font-size: 0.95rem;
-            font-weight: 500;
-            color: var(--apple-black);
-            letter-spacing: -0.01em;
-            cursor: pointer;
-            transition: color 0.2s ease;
-        }
-        .nav-links li::after {
-            content: "";
-            position: absolute; left: 0; right: 0; bottom: -6px;
-            height: 1.5px; background: var(--apple-blue);
-            transform: scaleX(0); transform-origin: center;
-            transition: transform 0.25s ease;
-        }
-        .nav-links li:hover { color: var(--apple-blue); }
-        .nav-links li:hover::after { transform: scaleX(1); }
-
-        /* 데스크톱: 가로 메뉴 표시 · 햄버거 숨김 / 모바일: 반대 */
-        @media (max-width: 767px) { .nav-links { display: none; } }
-        @media (min-width: 768px) { .menu-btn { display: none; } }
 
         .menu-btn {
             position: fixed;
@@ -812,6 +783,18 @@
             line-height: 1.8;
             word-break: keep-all;
         }
+        .footer-nav {
+            max-width: 1200px; margin: 0 auto 28px;
+            display: flex; flex-wrap: wrap; justify-content: center;
+            gap: clamp(16px, 3vw, 34px);
+            list-style: none;
+        }
+        .footer-nav li {
+            font-size: 0.9rem; font-weight: 500; color: var(--apple-black);
+            letter-spacing: -0.01em; cursor: pointer; transition: color 0.2s ease;
+        }
+        .footer-nav li:hover { color: var(--apple-blue); }
+
         .footer-bottom {
             border-top: 1px solid var(--apple-divider);
             padding-top: 26px;
@@ -852,12 +835,6 @@
     <div class="nav-title" onclick="goHome()">
         <img src="logo.png" alt="Cheongju Archive" onerror="this.outerHTML='<span class=\'fallback\'>Cheongju Archive</span>'">
     </div>
-    <ul class="nav-links">
-        <li onclick="scrollToSection('about')">소개</li>
-        <li onclick="scrollToSection('heritage')">유산</li>
-        <li onclick="scrollToSection('timeline')">연표</li>
-        <li onclick="scrollToSection('contact')">문의</li>
-    </ul>
 </nav>
 
 <button class="menu-btn" id="menuBtn" aria-label="메뉴 열기">
@@ -1027,6 +1004,12 @@
             </ul>
         </div>
     </div>
+    <ul class="footer-nav">
+        <li onclick="scrollToSection('about')">소개</li>
+        <li onclick="scrollToSection('heritage')">유산</li>
+        <li onclick="scrollToSection('timeline')">연표</li>
+        <li onclick="scrollToSection('contact')">문의</li>
+    </ul>
     <div class="footer-bottom" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
         <p style="font-size: 0.75rem; color: #a1a1a6;">&copy; 2026 CHEONGJU ARCHIVE Project. All rights reserved.</p>
         <a href="/admin/" style="font-size: 0.72rem; color: #a1a1a6; text-decoration: none; letter-spacing: 0.06em; transition: color 0.3s;" onmouseover="this.style.color='var(--apple-black)'" onmouseout="this.style.color='#a1a1a6'">관리 →</a>
