@@ -774,42 +774,98 @@
         body.archive-open .archive-page,
         html.boot-archive .archive-page { display: block; }
         body.archive-open #home { visibility: hidden; }
-        .archive-inner { max-width: 1200px; margin: 0 auto; padding: clamp(110px, 16vw, 150px) clamp(20px, 5vw, 40px) clamp(60px, 10vw, 110px); }
-        .archive-head { margin-bottom: clamp(28px, 5vw, 44px); }
-        .archive-head h1 { font-size: clamp(1.9rem, 5vw, 3rem); font-weight: 700; letter-spacing: -0.035em; line-height: 1.2; word-break: keep-all; }
-        .archive-head p { margin-top: 10px; color: var(--apple-gray); font-size: clamp(0.95rem, 2vw, 1.1rem); }
-        .archive-tools { display: flex; flex-direction: column; gap: 14px; margin-bottom: clamp(32px, 5vw, 48px); }
-        .archive-search {
-            width: 100%; max-width: 420px;
-            padding: 12px 16px; border-radius: 12px;
-            border: 1px solid var(--apple-light); background: #fff;
-            font: inherit; font-size: 0.95rem; color: var(--apple-black);
-            outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+        .archive-inner { max-width: 1200px; margin: 0 auto; padding: clamp(96px, 12vw, 124px) clamp(16px, 4vw, 40px) clamp(56px, 8vw, 96px); }
+        .archive-head { margin-bottom: clamp(20px, 3vw, 28px); }
+        .archive-head h1 { font-size: clamp(1.8rem, 4.4vw, 2.8rem); font-weight: 700; letter-spacing: -0.035em; line-height: 1.2; word-break: keep-all; }
+        .archive-head p { margin-top: 8px; color: #424245; font-size: clamp(0.95rem, 1.8vw, 1.05rem); font-weight: 500; }
+
+        /* 검색과 필터를 한 막대로, 스크롤해도 내비 바로 아래에 붙어 있음 */
+        .archive-bar {
+            position: sticky; top: 70px; z-index: 5;
+            display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px;
+            padding: 12px 0;
+            margin-bottom: clamp(24px, 4vw, 36px);
+            background: rgba(255,255,255,0.88);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            border-bottom: 1px solid var(--apple-divider);
         }
-        .archive-search:focus { border-color: var(--apple-blue); box-shadow: 0 0 0 4px rgba(0,102,204,0.12); }
-        .chip-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-        .chip-row .chip-label { font-size: 0.75rem; font-weight: 600; color: var(--apple-gray); letter-spacing: 0.08em; width: 40px; }
+        .search-box {
+            flex: 1 1 260px; max-width: 360px;
+            display: flex; align-items: center; gap: 8px;
+            padding: 0 14px; height: 42px; border-radius: 12px;
+            background: var(--apple-bg); border: 1px solid transparent;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        }
+        .search-box:focus-within { background: #fff; border-color: var(--apple-blue); box-shadow: 0 0 0 4px rgba(0,102,204,0.12); }
+        .search-box svg { width: 17px; height: 17px; flex-shrink: 0; stroke: var(--apple-gray); fill: none; stroke-width: 2; }
+        .archive-search {
+            flex: 1; min-width: 0; height: 100%;
+            border: 0; background: transparent; outline: none;
+            font: inherit; font-size: 0.95rem; color: var(--apple-black);
+        }
+        .archive-search::-webkit-search-cancel-button { cursor: pointer; }
+        .chip-row { display: flex; gap: 6px; align-items: center; flex-wrap: nowrap; }
+        .chip-row .chip-label { font-size: 0.78rem; font-weight: 600; color: var(--apple-gray); margin-right: 4px; white-space: nowrap; }
         .chip {
+            flex-shrink: 0; white-space: nowrap;
             border: 1px solid var(--apple-divider); background: #fff; color: #424245;
             padding: 7px 14px; border-radius: 980px; font: inherit; font-size: 0.85rem;
-            cursor: pointer; transition: 0.2s;
+            cursor: pointer; transition: background 0.2s, border-color 0.2s, color 0.2s;
         }
-        .chip:hover { border-color: var(--apple-light); color: var(--apple-black); }
+        .chip:hover { border-color: #b0b0b5; color: var(--apple-black); }
+        .chip:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(0,102,204,0.25); }
         .chip.on { background: var(--apple-black); border-color: var(--apple-black); color: #fff; }
+        @media (max-width: 768px) {
+            .archive-bar { position: static; gap: 10px; background: #fff; }   /* 좁은 화면에선 고정하면 너무 많이 가려서 풂 */
+            .search-box { flex-basis: 100%; max-width: none; }
+            /* 필터는 줄바꿈 대신 옆으로 밀어서 봄 */
+            .chip-row {
+                width: calc(100% + 2 * clamp(16px, 4vw, 40px));
+                margin: 0 calc(-1 * clamp(16px, 4vw, 40px));
+                padding: 0 clamp(16px, 4vw, 40px);
+                overflow-x: auto; scrollbar-width: none;
+            }
+            .chip-row::-webkit-scrollbar { display: none; }
+        }
+
         .archive-grid {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: clamp(28px, 4vw, 44px) clamp(20px, 3vw, 32px);
+            gap: clamp(28px, 3.5vw, 40px) clamp(18px, 2.5vw, 28px);
         }
         @media (max-width: 960px) { .archive-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-        @media (max-width: 560px) { .archive-grid { grid-template-columns: minmax(0, 1fr); } }
+        @media (max-width: 560px) { .archive-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; } }
         .a-item { display: block; color: inherit; text-decoration: none; }
-        .a-thumb { aspect-ratio: 4 / 3; border-radius: 16px; overflow: hidden; background: var(--apple-bg); }
-        .a-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s cubic-bezier(0.2, 0, 0.2, 1); }
-        .a-item:hover .a-thumb img { transform: scale(1.05); }
-        .a-meta { margin-top: 14px; font-size: 0.78rem; color: var(--apple-gray); letter-spacing: 0.02em; }
-        .a-item h3 { margin-top: 4px; font-size: clamp(1.1rem, 2.2vw, 1.25rem); font-weight: 700; letter-spacing: -0.02em; }
-        .a-item p { margin-top: 4px; font-size: 0.9rem; color: #424245; word-break: keep-all; }
+        .a-thumb {
+            position: relative; aspect-ratio: 4 / 3; border-radius: 18px; overflow: hidden; background: var(--apple-bg);
+            transition: box-shadow 0.4s ease, transform 0.4s ease;
+        }
+        .a-thumb::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.22), transparent 38%);
+            pointer-events: none;
+        }
+        .a-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s cubic-bezier(0.2, 0, 0.2, 1), filter 0.4s ease; }
+        .a-badge {
+            position: absolute; top: 12px; left: 12px; z-index: 1;
+            padding: 4px 10px; border-radius: 980px;
+            background: rgba(255,255,255,0.88); color: var(--apple-black);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            font-size: 0.75rem; font-weight: 600;
+        }
+        .a-item:hover .a-thumb { box-shadow: 0 18px 40px rgba(0,0,0,0.14); transform: translateY(-3px); }
+        .a-item:hover .a-thumb img { transform: scale(1.05); filter: brightness(1.04); }
+        .a-item:focus-visible { outline: none; }
+        .a-item:focus-visible .a-thumb { box-shadow: 0 0 0 3px var(--apple-blue); }
+        .a-meta { margin-top: 14px; font-size: 0.84rem; font-weight: 500; color: #6e6e73; font-variant-numeric: tabular-nums; }
+        .a-item h3 { margin-top: 3px; font-size: clamp(1.15rem, 2vw, 1.3rem); font-weight: 700; letter-spacing: -0.02em; transition: color 0.2s; }
+        .a-item:hover h3 { color: var(--apple-blue); }
+        .a-item p { margin-top: 4px; font-size: 0.93rem; color: #424245; line-height: 1.5; word-break: keep-all; }
+        @media (max-width: 560px) {
+            .a-thumb { aspect-ratio: 16 / 10; border-radius: 14px; }
+            .a-meta { margin-top: 10px; }
+        }
         .archive-empty { color: var(--apple-gray); padding: 40px 0; text-align: center; }
 
         .bleed-credit { display: block; padding: 8px clamp(20px, 5vw, 40px) 0; font-size: 11px; color: #86868b; text-align: right; background: #fff; }
@@ -958,8 +1014,11 @@
             <h1>청주의 기록, 전체 보기</h1>
             <p id="archiveCount"></p>
         </header>
-        <div class="archive-tools">
-            <input class="archive-search" id="archiveSearch" type="search" placeholder="이름이나 내용으로 찾기" aria-label="기록 검색">
+        <div class="archive-bar">
+            <label class="search-box">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5" stroke-linecap="round"/></svg>
+                <input class="archive-search" id="archiveSearch" type="search" placeholder="이름이나 내용으로 찾기" aria-label="기록 검색">
+            </label>
             <div class="chip-row" id="eraChips"></div>
             <div class="chip-row" id="catChips"></div>
         </div>
@@ -1339,12 +1398,16 @@
         });
         document.getElementById('archiveGrid').innerHTML = list.map(p => `
             <a class="a-item" href="/heritage/${encodeURIComponent(p.id)}" data-place="${esc(p.id)}">
-                <div class="a-thumb"><img src="${esc(p.img)}" alt="${esc(p.title)}" loading="lazy"></div>
-                <div class="a-meta">${[p.year, p.category, eraOf(p.year)].filter(Boolean).map(esc).join(' | ')}</div>
+                <div class="a-thumb">
+                    <img src="${esc(p.img)}" alt="${esc(p.title)}" loading="lazy">
+                    ${p.category ? `<span class="a-badge">${esc(p.category)}</span>` : ''}
+                </div>
+                <div class="a-meta">${[p.year && p.year + '년', eraOf(p.year)].filter(Boolean).map(esc).join(' | ')}</div>
                 <h3>${esc(p.title)}</h3>
                 <p>${esc(p.cardTagline || '')}</p>
             </a>`).join('');
         document.getElementById('archiveEmpty').hidden = list.length > 0;
+        gsap.fromTo('#archiveGrid .a-item', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, stagger: 0.04, ease: "power2.out" });
         document.getElementById('archiveCount').textContent =
             list.length === PLACES_LIST.length ? `모두 ${PLACES_LIST.length}곳` : `${PLACES_LIST.length}곳 중 ${list.length}곳`;
         document.querySelectorAll('#archiveGrid .a-item').forEach(a => a.addEventListener('click', (e) => {
