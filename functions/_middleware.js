@@ -90,7 +90,8 @@ async function serveWithPlaceMeta(id, url, request, env) {
         .slice(0, 160)
     );
     const image = esc(toAbsolute(place.img, origin));
-    const pageUrl = esc(`${origin}/heritage/${encodeURIComponent(id)}`);
+    // 미리보기 배포 주소에서도 대표 주소는 항상 본 사이트
+    const pageUrl = esc(`https://cjarchive.pages.dev/heritage/${encodeURIComponent(id)}`);
 
     html = html
       .replace(/<title>[\s\S]*?<\/title>/, `<title>${title}</title>`)
@@ -102,7 +103,11 @@ async function serveWithPlaceMeta(id, url, request, env) {
       .replace(/(<meta property="og:type" content=")[^"]*"/, `$1article"`)
       .replace(/(<meta name="twitter:title" content=")[^"]*"/, `$1${title}"`)
       .replace(/(<meta name="twitter:description" content=")[^"]*"/, `$1${desc}"`)
-      .replace(/(<meta name="twitter:image" content=")[^"]*"/, `$1${image}"`);
+      .replace(/(<meta name="twitter:image" content=")[^"]*"/, `$1${image}"`)
+      .replace(/(<link rel="canonical" href=")[^"]*"/, `$1${pageUrl}"`)
+      // 본문을 HTML에 미리 넣어 둠 — JS를 실행하지 않는 수집봇(네이버 등)도 내용을 읽도록.
+      // 상세 화면은 처음에 숨겨져 있고, JS가 열 때 renderDetail()이 이 자리를 통째로 덮어씀.
+      .replace('<div id="detail-content"></div>', `<div id="detail-content">${placeArticle(place, esc)}</div>`);
 
     return new Response(html, {
       headers: {
@@ -113,6 +118,28 @@ async function serveWithPlaceMeta(id, url, request, env) {
   } catch (e) {
     return serveHome();
   }
+}
+
+// 수집봇용 장소 본문 — 제목, 개요, 수치, 소개, 특징, 인용을 의미 있는 태그로
+function placeArticle(place, esc) {
+  const text = (s) => esc(s).replace(/\n/g, " ");
+  const stats = (place.stats || [])
+    .map((s) => `<li>${esc(s.label)}: ${esc(s.value)}</li>`)
+    .join("");
+  const features = (place.features || [])
+    .map((f) => `<section><h3>${text(f.h)}</h3><p>${esc(f.p)}</p></section>`)
+    .join("");
+  return (
+    `<article>` +
+    `<h1>${esc(place.title)}</h1>` +
+    (place.detailEyebrow ? `<p>${esc(place.detailEyebrow)}</p>` : "") +
+    (place.tagline ? `<p>${esc(place.tagline)}</p>` : "") +
+    (stats ? `<ul>${stats}</ul>` : "") +
+    (place.intro ? `<section><h2>${text(place.intro.h)}</h2><p>${esc(place.intro.p)}</p></section>` : "") +
+    features +
+    (place.quote?.text ? `<blockquote>${esc(place.quote.text)}</blockquote>` : "") +
+    `</article>`
+  );
 }
 
 function toAbsolute(src, origin) {

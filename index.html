@@ -8,6 +8,7 @@
     <title>Cheongju Archive | 디지털 유산</title>
 
     <!-- 공유 카드 (Open Graph / Twitter) — 장소 상세 페이지는 functions/_middleware.js가 장소별로 덮어씀 -->
+    <link rel="canonical" href="https://cjarchive.pages.dev/">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Cheongju Archive">
     <meta property="og:locale" content="ko_KR">
@@ -144,7 +145,7 @@
         /* ===== SIDE MENU ===== */
         .side-menu {
             position: fixed;
-            top: 0; right: -340px;
+            top: 0; right: -420px;   /* 닫힌 상태에서 그림자가 화면 오른쪽 끝에 비치지 않도록 넉넉히 */
             width: min(340px, 82vw);
             height: 100vh;
             background: rgba(255, 255, 255, 0.98);
@@ -758,6 +759,7 @@
         }
         #boot-cover.show { display: block; }
     </style>
+    <script src="/hit.js"></script>
 </head>
 
 <body>
@@ -854,14 +856,14 @@
         </div>
         <div style="flex: 1; min-width: 200px;">
             <h4>Contributors</h4>
-            <p style="font-weight: 500; color: var(--apple-black);">제작 · 청석고등학교 2학년 이민수</p>
-            <p>문의 · <a href="mailto:info.cjarchive@gmail.com" style="color: inherit; text-decoration: none;">info.cjarchive@gmail.com</a></p>
+            <p style="font-weight: 500; color: var(--apple-black);">제작 | 청석고등학교 2학년 이민수</p>
+            <p>문의 | <a href="mailto:info.cjarchive@gmail.com" style="color: inherit; text-decoration: none;">info.cjarchive@gmail.com</a></p>
         </div>
         <div style="flex: 1; min-width: 180px;">
             <h4>Information</h4>
             <ul style="list-style: none;">
-                <li id="lastUpdated">Last Updated · ...</li>
-                <li>Data Source · 직접 촬영, 국가유산청</li>
+                <li id="lastUpdated">Last Updated | ...</li>
+                <li>Data Source | 직접 촬영, 국가유산청</li>
             </ul>
         </div>
     </div>
@@ -905,7 +907,7 @@
     function closeMenu() {
         menuBtn.classList.remove('open');
         menuBtn.setAttribute('aria-label', '메뉴 열기');
-        gsap.to(sideMenu, { right: -340, duration: 0.5, ease: "power3.in" });
+        gsap.to(sideMenu, { right: -420, duration: 0.5, ease: "power3.in" });
         gsap.to(menuOverlay, { opacity: 0, duration: 0.3, onComplete: () => { menuOverlay.style.display = 'none'; }});
         isMenuOpen = false;
     }
@@ -1332,10 +1334,10 @@
             const yyyy = d.getFullYear();
             const mm = String(d.getMonth() + 1).padStart(2, '0');
             const dd = String(d.getDate()).padStart(2, '0');
-            el.textContent = `Last Updated · ${yyyy}. ${mm}. ${dd}`;
+            el.textContent = `Last Updated | ${yyyy}. ${mm}. ${dd}`;
         } catch (e) {
             // API 실패 시 기본값
-            el.textContent = 'Last Updated · 2026. 05. 02';
+            el.textContent = 'Last Updated | 2026. 05. 02';
         }
     })();
 </script>
