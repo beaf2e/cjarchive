@@ -4,11 +4,13 @@
       "id": "cjhg",
       "order": 1,
       "title": "청주향교",
-      "cardEyebrow": "Education · 987",
+      "cardEyebrow": "Education | 987",
       "cardTagline": "전통 교육의 발자취",
+      "year": "987",
+      "category": "교육",
       "img": "cjhg1.jpg",
       "heroVideo": "",
-      "detailEyebrow": "Heritage · 충청북도 유형문화유산 39호",
+      "detailEyebrow": "Heritage | 충청북도 유형문화유산 39호",
       "tagline": "조선 지방 교육의 마루를 걷다.",
       "stats": [
         {
@@ -57,11 +59,13 @@
       "id": "sdsd",
       "order": 2,
       "title": "수동성당",
-      "cardEyebrow": "Faith · 1935",
+      "cardEyebrow": "Faith | 1935",
       "cardTagline": "한옥과 성공회의 만남",
+      "year": "1935",
+      "category": "종교",
       "img": "sdsd1.jpg",
       "heroVideo": "",
-      "detailEyebrow": "Heritage · 충청북도 유형문화유산 149호",
+      "detailEyebrow": "Heritage | 충청북도 유형문화유산 149호",
       "tagline": "한옥의 처마 아래로,\n서양의 종소리가 내려앉다.",
       "stats": [
         {
@@ -78,7 +82,7 @@
         },
         {
           "label": "Scale",
-          "value": "32칸 · 팔작지붕"
+          "value": "32칸, 팔작지붕"
         }
       ],
       "intro": {
@@ -110,11 +114,13 @@
       "id": "cdg",
       "order": 3,
       "title": "용두사지 철당간",
-      "cardEyebrow": "National Treasure · 962",
+      "cardEyebrow": "National Treasure | 962",
       "cardTagline": "천년을 견딘 쇠기둥",
+      "year": "962",
+      "category": "종교",
       "img": "cdg1.jpg",
       "heroVideo": "cdg.mp4",
-      "detailEyebrow": "Heritage No.3 · 대한민국 국보 제41호",
+      "detailEyebrow": "Heritage No.3 | 대한민국 국보 제41호",
       "tagline": "962년부터, 지금 이 거리에.",
       "stats": [
         {
@@ -131,7 +137,7 @@
         },
         {
           "label": "Height",
-          "value": "13.1m · 철통 20개"
+          "value": "13.1m, 철통 20개"
         }
       ],
       "intro": {
@@ -163,11 +169,13 @@
       "id": "cjst",
       "order": 4,
       "title": "옛 청주역",
-      "cardEyebrow": "Modernity · 1921",
+      "cardEyebrow": "Modernity | 1921",
       "cardTagline": "사라진 철길의 자리",
+      "year": "1921",
+      "category": "교통",
       "img": "cjst1.jpg",
       "heroVideo": "cjst.mp4",
-      "detailEyebrow": "Heritage No.4 · 근대 교통의 기억",
+      "detailEyebrow": "Heritage No.4 | 근대 교통의 기억",
       "tagline": "사라진 철길 위에 다시 세운 풍경.",
       "stats": [
         {
@@ -176,7 +184,7 @@
         },
         {
           "label": "Relocated",
-          "value": "1968 · 1980년"
+          "value": "1968, 1980년"
         },
         {
           "label": "Restored",
@@ -230,11 +238,13 @@
       "id": "cbdc",
       "order": 5,
       "title": "충청북도청 본관",
-      "cardEyebrow": "Administration · 1937",
+      "cardEyebrow": "Administration | 1937",
       "cardTagline": "관청에서 그림책정원으로",
+      "year": "1937",
+      "category": "행정",
       "img": "cbdc.jpg",
       "heroVideo": "",
-      "detailEyebrow": "Heritage · 국가등록문화유산 제55호",
+      "detailEyebrow": "Heritage | 국가등록문화유산 제55호",
       "tagline": "좌우 대칭의 정면 뒤로,\n한 도(道)의 시간이 흐른다.",
       "stats": [
         {
@@ -271,7 +281,7 @@
           "h": "두 층에서 세 층으로,\n변하며 남은 건물.",
           "p": "본래 2층 평슬래브였던 건물은 1959년 증축으로 3층 함석지붕이 되었습니다. 연면적 3,365제곱미터의 이 청사는 시대의 필요에 따라 조금씩 달라지면서도, 오랜 세월 충북 행정의 한가운데를 지켰습니다.",
           "img": "cbdc2.jpg",
-          "credit": "출처: 충청북도",
+          "credit": "충청북도",
           "reverse": true
         },
         {

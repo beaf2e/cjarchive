@@ -19,9 +19,14 @@ export async function onRequest(context) {
     return serveWithPlaceMeta(decodeURIComponent(placeMatch[1]), url, request, env);
   }
 
-  // SPA 라우트: /heritage(목록), /timeline → 홈 HTML을 서빙(클라이언트 라우팅이 처리)
+  // 전체 기록: 홈 HTML에 제목, canonical, 장소 목록(링크)을 넣어 서빙
+  if (p === "/heritage" || p === "/heritage/") {
+    return serveArchive(url, env);
+  }
+
+  // SPA 라우트: /timeline, /about → 홈 HTML을 서빙(클라이언트 라우팅이 처리)
   // 주의: "/index.html"은 Cloudflare Pages가 "/"로 308 정규화하므로 홈("/")을 직접 서빙해야 함
-  if (p === "/heritage" || p === "/heritage/" || p === "/timeline" || p === "/about") {
+  if (p === "/timeline" || p === "/about") {
     return env.ASSETS.fetch(new Request(new URL("/", url), request));
   }
 
@@ -114,6 +119,48 @@ async function serveWithPlaceMeta(id, url, request, env) {
         "content-type": "text/html; charset=utf-8",
         "cache-control": "public, max-age=60",
       },
+    });
+  } catch (e) {
+    return serveHome();
+  }
+}
+
+async function serveArchive(url, env) {
+  const serveHome = () => env.ASSETS.fetch(new Request(new URL("/", url)));
+  try {
+    const dataRes = await env.ASSETS.fetch(new Request(new URL("/places.json", url)));
+    const places = ((dataRes.ok ? await dataRes.json() : {}).places || [])
+      .slice()
+      .sort((a, b) => (a.order || 0) - (b.order || 0));
+    let html = await (await serveHome()).text();
+    if (!html || !html.includes("<title>")) return serveHome();
+
+    const esc = (s) =>
+      String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    const title = "전체 기록 | Cheongju Archive";
+    const desc = esc(`청주의 문화유산 ${places.length}곳의 기록: ${places.map((p) => p.title).join(", ")}`.slice(0, 160));
+    const pageUrl = "https://cjarchive.pages.dev/heritage";
+    // JS가 같은 자리를 다시 그리므로, 여기서는 수집봇이 읽을 링크 목록만
+    const list = places
+      .map(
+        (p) =>
+          `<a class="a-item" href="/heritage/${encodeURIComponent(p.id)}"><h3>${esc(p.title)}</h3><p>${esc(p.cardTagline || "")}</p></a>`
+      )
+      .join("");
+
+    html = html
+      .replace(/<title>[\s\S]*?<\/title>/, `<title>${title}</title>`)
+      .replace(/(<meta name="description" content=")[^"]*"/, `$1${desc}"`)
+      .replace(/(<meta property="og:title" content=")[^"]*"/, `$1${title}"`)
+      .replace(/(<meta property="og:description" content=")[^"]*"/, `$1${desc}"`)
+      .replace(/(<meta property="og:url" content=")[^"]*"/, `$1${pageUrl}"`)
+      .replace(/(<meta name="twitter:title" content=")[^"]*"/, `$1${title}"`)
+      .replace(/(<meta name="twitter:description" content=")[^"]*"/, `$1${desc}"`)
+      .replace(/(<link rel="canonical" href=")[^"]*"/, `$1${pageUrl}"`)
+      .replace('<div class="archive-grid" id="archiveGrid"></div>', `<div class="archive-grid" id="archiveGrid">${list}</div>`);
+
+    return new Response(html, {
+      headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=60" },
     });
   } catch (e) {
     return serveHome();

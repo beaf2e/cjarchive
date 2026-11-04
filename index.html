@@ -747,6 +747,75 @@
 
         .reveal { opacity: 0; transform: translateY(36px); }
 
+        /* ===== 홈: 전체 기록 보기 버튼 ===== */
+        .more-wrap { text-align: center; margin-top: clamp(40px, 7vw, 64px); }
+        .more-btn {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 14px 26px; border-radius: 980px;
+            background: var(--apple-black); color: #fff; text-decoration: none;
+            font-size: 0.95rem; font-weight: 600; letter-spacing: -0.01em;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+        .more-btn:hover { background: #000; transform: translateY(-2px); }
+        .more-btn .count { font-weight: 400; opacity: 0.6; }
+
+        /* ===== 전체 기록 (/heritage) — 홈 위에 겹치는 목록 화면, 상세보다는 아래 ===== */
+        .archive-page {
+            display: none;
+            position: fixed; inset: 0;
+            background: #fff;
+            z-index: 1030;
+            overflow-y: auto;
+            overscroll-behavior: none;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .archive-page::-webkit-scrollbar { width: 0; height: 0; display: none; }
+        body.archive-open .archive-page,
+        html.boot-archive .archive-page { display: block; }
+        body.archive-open #home { visibility: hidden; }
+        .archive-inner { max-width: 1200px; margin: 0 auto; padding: clamp(110px, 16vw, 150px) clamp(20px, 5vw, 40px) clamp(60px, 10vw, 110px); }
+        .archive-head { margin-bottom: clamp(28px, 5vw, 44px); }
+        .archive-head h1 { font-size: clamp(1.9rem, 5vw, 3rem); font-weight: 700; letter-spacing: -0.035em; line-height: 1.2; word-break: keep-all; }
+        .archive-head p { margin-top: 10px; color: var(--apple-gray); font-size: clamp(0.95rem, 2vw, 1.1rem); }
+        .archive-tools { display: flex; flex-direction: column; gap: 14px; margin-bottom: clamp(32px, 5vw, 48px); }
+        .archive-search {
+            width: 100%; max-width: 420px;
+            padding: 12px 16px; border-radius: 12px;
+            border: 1px solid var(--apple-light); background: #fff;
+            font: inherit; font-size: 0.95rem; color: var(--apple-black);
+            outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .archive-search:focus { border-color: var(--apple-blue); box-shadow: 0 0 0 4px rgba(0,102,204,0.12); }
+        .chip-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        .chip-row .chip-label { font-size: 0.75rem; font-weight: 600; color: var(--apple-gray); letter-spacing: 0.08em; width: 40px; }
+        .chip {
+            border: 1px solid var(--apple-divider); background: #fff; color: #424245;
+            padding: 7px 14px; border-radius: 980px; font: inherit; font-size: 0.85rem;
+            cursor: pointer; transition: 0.2s;
+        }
+        .chip:hover { border-color: var(--apple-light); color: var(--apple-black); }
+        .chip.on { background: var(--apple-black); border-color: var(--apple-black); color: #fff; }
+        .archive-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: clamp(28px, 4vw, 44px) clamp(20px, 3vw, 32px);
+        }
+        @media (max-width: 960px) { .archive-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 560px) { .archive-grid { grid-template-columns: minmax(0, 1fr); } }
+        .a-item { display: block; color: inherit; text-decoration: none; }
+        .a-thumb { aspect-ratio: 4 / 3; border-radius: 16px; overflow: hidden; background: var(--apple-bg); }
+        .a-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s cubic-bezier(0.2, 0, 0.2, 1); }
+        .a-item:hover .a-thumb img { transform: scale(1.05); }
+        .a-meta { margin-top: 14px; font-size: 0.78rem; color: var(--apple-gray); letter-spacing: 0.02em; }
+        .a-item h3 { margin-top: 4px; font-size: clamp(1.1rem, 2.2vw, 1.25rem); font-weight: 700; letter-spacing: -0.02em; }
+        .a-item p { margin-top: 4px; font-size: 0.9rem; color: #424245; word-break: keep-all; }
+        .archive-empty { color: var(--apple-gray); padding: 40px 0; text-align: center; }
+
+        .bleed-credit { display: block; padding: 8px clamp(20px, 5vw, 40px) 0; font-size: 11px; color: #86868b; text-align: right; background: #fff; }
+        .footer-grid a { color: inherit; text-decoration: none; }
+        .footer-grid a:hover { color: var(--apple-black); }
+
         /* ?place=id 로 직접 진입 시 메인이 깜빡이지 않도록 덮는 가림막 */
         #boot-cover {
             position: fixed; inset: 0;
@@ -769,6 +838,8 @@
     // 첫 페인트부터 가려야 하므로 즉시 실행 (/heritage/id 상세로 직접 진입 시)
     if (/^\/heritage\/[^\/?#]+/.test(location.pathname)) {
         document.getElementById('boot-cover').classList.add('show');
+    } else if (/^\/heritage\/?$/.test(location.pathname)) {
+        document.documentElement.classList.add('boot-archive');
     }
 </script>
 
@@ -798,8 +869,9 @@
 
 <section class="hero" id="hero">
     <div class="video-wrap">
-        <video autoplay muted loop playsinline>
-            <source src="drone.mp4" type="video/mp4">
+        <video autoplay muted loop playsinline poster="drone-poster.jpg">
+            <source src="drone.mp4" type='video/mp4; codecs="hvc1"'>
+            <source src="drone-h264.mp4" type="video/mp4">
         </video>
         <div class="hero-content" id="heroText">
             <h1 id="mainTitle">유산, 디지털로 다시 태어나다.</h1>
@@ -814,7 +886,7 @@
 
 <section class="section" id="about">
     <div style="text-align: center; max-width: 800px; margin: 0 auto;">
-        <span class="section-eyebrow value-text">About · 소개</span>
+        <span class="section-eyebrow value-text">About | 소개</span>
         <h2 class="value-text" style="font-size: clamp(1.7rem, 4.5vw, 2.8rem); margin-bottom: clamp(20px, 5vw, 36px); font-weight: 700; letter-spacing: -0.03em; word-break: keep-all; line-height: 1.25;">기록은 시간을 이기는<br>유일한 방법입니다</h2>
         <p class="value-text" style="font-size: clamp(1.05rem, 2.4vw, 1.25rem); color: #424245; line-height: 1.75; word-break: keep-all;">
             우리가 살아가는 청주의 풍경 속에는 수백 년의 시간이 겹겹이 쌓여 있습니다.
@@ -829,7 +901,10 @@
         <h2 class="value-text" id="heritageHeading" style="font-size: clamp(1.5rem, 4vw, 2.4rem); font-weight: 700; letter-spacing: -0.03em; word-break: keep-all;">네 곳의 시간, 한 도시의 기억</h2>
     </div>
     <div class="grid" id="placeGrid">
-        <!-- 카드는 places.json에서 자동 생성됨 -->
+        <!-- 카드는 places.json에서 자동 생성됨 (순서 1~4번만 홈에, 전체는 /heritage) -->
+    </div>
+    <div class="more-wrap value-text">
+        <a class="more-btn" href="/heritage" id="moreBtn">전체 기록 보기 <span class="count" id="moreCount"></span></a>
     </div>
 </section>
 
@@ -857,13 +932,13 @@
         <div style="flex: 1; min-width: 200px;">
             <h4>Contributors</h4>
             <p style="font-weight: 500; color: var(--apple-black);">제작 | 청석고등학교</p>
-            <p>문의 | <a href="mailto:info.cjarchive@gmail.com" style="color: inherit; text-decoration: none;">info.cjarchive@gmail.com</a></p>
+            <p>문의 | <a href="/contact">문의하기</a>, <a href="mailto:info.cjarchive@gmail.com">info.cjarchive@gmail.com</a></p>
         </div>
         <div style="flex: 1; min-width: 180px;">
             <h4>Information</h4>
             <ul style="list-style: none;">
                 <li id="lastUpdated">Last Updated | ...</li>
-                <li>Data Source | 직접 촬영, 국가유산청</li>
+                <li>출처 | <a href="/sources">자료와 사진 출처 모아 보기</a></li>
             </ul>
         </div>
     </div>
@@ -874,6 +949,24 @@
 </footer>
 
 </main>
+
+<!-- ===== 전체 기록 (/heritage) ===== -->
+<section class="archive-page" id="archive" aria-label="전체 기록">
+    <div class="archive-inner">
+        <header class="archive-head">
+            <span class="section-eyebrow">Archive</span>
+            <h1>청주의 기록, 전체 보기</h1>
+            <p id="archiveCount"></p>
+        </header>
+        <div class="archive-tools">
+            <input class="archive-search" id="archiveSearch" type="search" placeholder="이름이나 내용으로 찾기" aria-label="기록 검색">
+            <div class="chip-row" id="eraChips"></div>
+            <div class="chip-row" id="catChips"></div>
+        </div>
+        <div class="archive-grid" id="archiveGrid"></div>
+        <p class="archive-empty" id="archiveEmpty" hidden>조건에 맞는 기록이 없어요.</p>
+    </div>
+</section>
 
 <!-- ===== DETAIL PAGE TEMPLATE ===== -->
 <section class="detail-page" id="detail">
@@ -966,11 +1059,16 @@
                     <h3>${nl2br(f.h)}</h3>
                     <p>${esc(f.p)}</p>
                 </div>
-                <div class="feature-media reveal"><div class="feature-media-frame"><img src="${esc(f.img)}" alt="${esc(data.title)}" loading="lazy" onerror="this.style.display='none'"></div>${f.credit ? `<span class="feature-credit">${esc(f.credit)}</span>` : ''}</div>
+                <div class="feature-media reveal"><div class="feature-media-frame"><img src="${esc(f.img)}" alt="${esc(data.title)}" loading="lazy" onerror="this.style.display='none'"></div>${f.credit ? `<span class="feature-credit">출처: ${esc(f.credit)}</span>` : ''}</div>
             </section>`).join('');
 
+        // 영상 X.mp4(HEVC) 옆에 X-h264.mp4(예비), X-poster.jpg(대체 이미지)를 둔다
+        const vbase = String(data.heroVideo || '').replace(/\.mp4$/i, '');
         const heroMedia = data.heroVideo
-            ? `<video autoplay muted loop playsinline><source src="${esc(data.heroVideo)}" type="video/mp4"></video>`
+            ? `<video autoplay muted loop playsinline poster="${esc(vbase)}-poster.jpg">
+                   <source src="${esc(data.heroVideo)}" type='video/mp4; codecs="hvc1"'>
+                   <source src="${esc(vbase)}-h264.mp4" type="video/mp4">
+               </video>`
             : `<img src="${esc(data.img)}" alt="${esc(data.title)}" onerror="this.style.display='none'">`;
 
         const next = getNextPlace(data.id);
@@ -1017,6 +1115,7 @@
 
             <section class="full-bleed reveal">
                 <img src="${esc(data.img)}" alt="${esc(data.title)}" loading="lazy" onerror="this.parentElement.style.display='none'">
+                ${data.imgCredit ? `<span class="bleed-credit">출처: ${esc(data.imgCredit)}</span>` : ''}
             </section>
 
             ${data.quote ? `
@@ -1073,6 +1172,7 @@
         detailContent.querySelectorAll('[data-compare]').forEach(initCompare);
         detailEl.style.display = 'block';
         detailEl.scrollTop = 0;
+        returnTo = returnTo || '/heritage';   // 주소로 바로 들어온 경우 닫으면 전체 기록으로
         document.body.style.overflow = 'hidden';
         document.body.classList.add('detail-open');   // 홈을 렌더에서 숨겨 뒤비침 방지
 
@@ -1102,7 +1202,8 @@
     function hideDetail(animate) {
         if (detailEl.style.display !== 'block') return;
         currentDetailId = null;
-        document.body.style.overflow = 'auto';   // 즉시 복원 → 섹션 이동 스크롤이 막히지 않게
+        // 즉시 복원 → 섹션 이동 스크롤이 막히지 않게 (전체 기록이 떠 있으면 계속 잠금)
+        document.body.style.overflow = document.body.classList.contains('archive-open') ? 'hidden' : 'auto';
         document.body.classList.remove('detail-open');   // 홈 다시 표시 (스크롤 위치 보존됨)
         const done = () => {
             detailEl.style.display = 'none';
@@ -1117,7 +1218,7 @@
 
     /* ===== URL 라우팅 — 주소가 곧 화면 상태 =====
        /                → 홈(상단)
-       /heritage        → Heritage Stories(카드 목록)
+       /heritage        → 전체 기록(검색, 필터 목록)
        /heritage/<id>   → 해당 장소 상세 (없는 id면 404)
        /timeline        → 타임라인                                     */
     function getRoute() {
@@ -1142,9 +1243,14 @@
             return;
         }
         // 섹션 라우트: 상세가 떠 있으면 닫고 해당 위치로 이동
+        if (r.type === 'heritage') {
+            showArchive();
+            hideDetail(animate);
+            return;
+        }
+        hideArchive();
         hideDetail(animate);
         if (r.type === 'timeline') scrollToId('timeline', animate);
-        else if (r.type === 'heritage') scrollToId('heritage', animate);
         else if (r.type === 'about') scrollToId('about', animate);
         else scrollToTop(animate);   // home
     }
@@ -1156,18 +1262,106 @@
         syncRoute(true);
     }
 
-    // 카드/사이드바 장소 클릭 → /heritage/<id> 로 이동
+    // 카드, 목록 클릭 → /heritage/<id> 로 이동. 닫으면 연 곳(홈 카드 또는 전체 기록)으로 돌아감
+    let returnTo = null;
     function openPlace(id) {
         if (!PLACES[id]) return;
+        if (!currentDetailId) returnTo = document.body.classList.contains('archive-open') ? '/heritage' : '/';
         navigate('/heritage/' + encodeURIComponent(id));
     }
 
-    // 닫기(X·Esc) → 항상 Heritage Stories 목록으로 복귀
     function closeDetail() {
-        history.replaceState({ path: '/heritage' }, '', '/heritage');
-        hideDetail(true);
-        scrollToId('heritage', false);
+        const to = returnTo || '/heritage';
+        returnTo = null;
+        history.replaceState({ path: to }, '', to);
+        if (to === '/') {
+            hideDetail(true);   // 홈은 스크롤 위치가 보존돼 있으니 그대로 드러냄
+            return;
+        }
+        syncRoute(true);
     }
+
+    /* ===== 전체 기록 ===== */
+    const archiveEl = document.getElementById('archive');
+    function showArchive() {
+        document.documentElement.classList.remove('boot-archive');
+        if (document.body.classList.contains('archive-open')) return;
+        document.body.classList.add('archive-open');
+        document.body.style.overflow = 'hidden';
+        archiveEl.scrollTop = 0;
+        gsap.fromTo(archiveEl, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" });
+    }
+    function hideArchive() {
+        document.documentElement.classList.remove('boot-archive');
+        if (!document.body.classList.contains('archive-open')) return;
+        document.body.classList.remove('archive-open');
+        if (!currentDetailId) document.body.style.overflow = 'auto';
+        ScrollTrigger.refresh();
+    }
+
+    // 시대는 연도로 자동 분류
+    function eraOf(year) {
+        const y = parseInt(year, 10);
+        if (!y) return '';
+        if (y < 918) return '고려 이전';
+        if (y < 1392) return '고려';
+        if (y < 1897) return '조선';
+        if (y < 1945) return '근대';
+        return '현대';
+    }
+    const ERA_ORDER = ['고려 이전', '고려', '조선', '근대', '현대'];
+    const archiveFilter = { q: '', era: '', cat: '' };
+
+    function renderArchiveChips() {
+        const eras = ERA_ORDER.filter(e => PLACES_LIST.some(p => eraOf(p.year) === e));
+        const cats = [...new Set(PLACES_LIST.map(p => p.category).filter(Boolean))];
+        const row = (el, label, key, values) => {
+            el.innerHTML = `<span class="chip-label">${label}</span>` +
+                ['', ...values].map(v => `<button class="chip ${archiveFilter[key] === v ? 'on' : ''}" data-v="${esc(v)}">${esc(v || '전체')}</button>`).join('');
+            el.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => {
+                archiveFilter[key] = b.dataset.v;
+                renderArchiveChips();
+                renderArchiveGrid();
+            }));
+        };
+        row(document.getElementById('eraChips'), '시대', 'era', eras);
+        row(document.getElementById('catChips'), '분류', 'cat', cats);
+    }
+
+    function renderArchiveGrid() {
+        const q = archiveFilter.q.trim().toLowerCase();
+        const list = PLACES_LIST.filter(p => {
+            if (archiveFilter.era && eraOf(p.year) !== archiveFilter.era) return false;
+            if (archiveFilter.cat && p.category !== archiveFilter.cat) return false;
+            if (!q) return true;
+            return [p.title, p.cardTagline, p.tagline, p.detailEyebrow, p.category, p.intro?.p]
+                .some(t => String(t || '').toLowerCase().includes(q));
+        });
+        document.getElementById('archiveGrid').innerHTML = list.map(p => `
+            <a class="a-item" href="/heritage/${encodeURIComponent(p.id)}" data-place="${esc(p.id)}">
+                <div class="a-thumb"><img src="${esc(p.img)}" alt="${esc(p.title)}" loading="lazy"></div>
+                <div class="a-meta">${[p.year, p.category, eraOf(p.year)].filter(Boolean).map(esc).join(' | ')}</div>
+                <h3>${esc(p.title)}</h3>
+                <p>${esc(p.cardTagline || '')}</p>
+            </a>`).join('');
+        document.getElementById('archiveEmpty').hidden = list.length > 0;
+        document.getElementById('archiveCount').textContent =
+            list.length === PLACES_LIST.length ? `모두 ${PLACES_LIST.length}곳` : `${PLACES_LIST.length}곳 중 ${list.length}곳`;
+        document.querySelectorAll('#archiveGrid .a-item').forEach(a => a.addEventListener('click', (e) => {
+            if (e.metaKey || e.ctrlKey || e.shiftKey) return;   // 새 탭으로 열기는 그대로 둠
+            e.preventDefault();
+            openPlace(a.dataset.place);
+        }));
+    }
+
+    document.getElementById('archiveSearch').addEventListener('input', (e) => {
+        archiveFilter.q = e.target.value;
+        renderArchiveGrid();
+    });
+    document.getElementById('moreBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        navigate('/heritage');
+    });
 
     document.getElementById('closeBtn').addEventListener('click', closeDetail);
     document.addEventListener('keydown', (e) => {
@@ -1206,7 +1400,7 @@
         const items = [
             { label: '홈', kind: 'section', target: 'hero' },
             { label: '소개', kind: 'section', target: 'about' },
-            { label: '유산 이야기', kind: 'section', target: 'heritage' },
+            { label: '전체 기록', kind: 'section', target: 'heritage' },
             { label: '연표', kind: 'section', target: 'timeline' }
         ];
         // 인라인 onclick 대신 data-* + 리스너 (속성값 이스케이프로 인한 XSS 차단)
@@ -1240,7 +1434,9 @@
         const grid = document.getElementById('placeGrid');
         if (!grid) return;
         renderHeritageHeading();
-        grid.innerHTML = PLACES_LIST.map(p => `
+        const more = document.getElementById('moreCount');
+        if (more) more.textContent = `${PLACES_LIST.length}곳`;
+        grid.innerHTML = PLACES_LIST.slice(0, 4).map(p => `
             <div class="card" id="card-${esc(p.id)}" data-place="${esc(p.id)}">
                 <img src="${esc(p.img)}" alt="${esc(p.title)}">
                 <div class="card-overlay">
@@ -1299,6 +1495,8 @@
 
             renderSideMenu();
             renderCards();
+            renderArchiveChips();
+            renderArchiveGrid();
             renderTimeline();
             applyDynamicAnimations();
             ScrollTrigger.refresh();

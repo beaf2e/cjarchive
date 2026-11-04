@@ -16,9 +16,11 @@ export async function onRequest(context) {
   }
 
   const entries = [
-    // /heritage, /timeline은 홈과 같은 HTML(canonical이 /)이라 넣지 않음
+    // /timeline은 홈과 같은 HTML(canonical이 /)이라 넣지 않음
     { loc: `${origin}/`, priority: "1.0" },
+    { loc: `${origin}/heritage`, priority: "0.8" },
     { loc: `${origin}/report.html`, priority: "0.5" },
+    { loc: `${origin}/sources`, priority: "0.4" },
     ...places.map((p) => ({
       loc: `${origin}/heritage/${encodeURIComponent(p.id)}`,
       priority: "0.7",

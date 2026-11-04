@@ -86,7 +86,7 @@
             padding: clamp(90px, 16vw, 120px) clamp(28px, 5vw, 44px);
             box-shadow: -16px 0 60px rgba(0,0,0,0.10);
             display: flex; flex-direction: column; gap: 28px;
-            transform: translateX(106%);
+            transform: translateX(calc(100% + 80px));   /* 닫힌 상태에서 그림자가 화면 끝에 비치지 않도록 */
             transition: transform 0.55s cubic-bezier(0.2, 0.7, 0.2, 1);
         }
         .side-menu.open { transform: translateX(0); }
@@ -109,6 +109,9 @@
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
         .menu-overlay.open { opacity: 1; visibility: visible; }
+
+        .footer-grid a { color: inherit; text-decoration: none; }
+        .footer-grid a:hover { color: var(--apple-black); }
 
         /* ===== PAGE / CONTACT ===== */
         .page {
@@ -205,7 +208,7 @@
     <ul>
         <li><a href="/">홈</a></li>
         <li><a href="/about">소개</a></li>
-        <li><a href="/heritage">유산 이야기</a></li>
+        <li><a href="/heritage">전체 기록</a></li>
         <li><a href="/timeline">연표</a></li>
         <li><a href="/contact">문의</a></li>
     </ul>
@@ -263,7 +266,7 @@
             <h4>Information</h4>
             <ul style="list-style: none;">
                 <li id="lastUpdated">Last Updated | ...</li>
-                <li>Data Source | 직접 촬영, 국가유산청</li>
+                <li>출처 | <a href="/sources">자료와 사진 출처 모아 보기</a></li>
             </ul>
         </div>
     </div>
@@ -311,7 +314,7 @@
             }
             if (!form.checkValidity()) {
                 statusEl.className = 'contact-status err';
-                statusEl.textContent = '이름·이메일·내용을 모두 올바르게 입력해 주세요.';
+                statusEl.textContent = '이름, 이메일, 내용을 모두 올바르게 입력해 주세요.';
                 return;
             }
             statusEl.className = 'contact-status';

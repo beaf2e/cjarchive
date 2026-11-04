@@ -435,6 +435,49 @@
             .edit-toolbar { margin: -20px -20px 20px; padding: 14px 20px; }
             main { padding: 20px; }
         }
+
+        /* ─── 방문 통계 ─── */
+        .vs-controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .vs-seg { display: inline-flex; background: #e8e8ed; border-radius: 10px; padding: 3px; }
+        .vs-seg button { border: 0; background: transparent; padding: 6px 14px; border-radius: 8px; font-size: 13px; color: #424245; cursor: pointer; }
+        .vs-seg button.on { background: #fff; color: var(--black); font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .vs-toggle { font-size: 12.5px; color: #424245; display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
+        .vs-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 12px; }
+        .vs-card { background: #fff; border-radius: 18px; padding: 22px; box-shadow: var(--card-shadow); min-width: 0; }
+        .vs-tile .label { font-size: 12.5px; color: var(--gray); margin-bottom: 6px; }
+        .vs-tile .num { font-size: 30px; font-weight: 700; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+        .vs-tile .sub { font-size: 12px; color: var(--gray); margin-top: 2px; }
+        .vs-card h2 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+        .vs-card .hint { font-size: 12px; color: var(--gray); margin-bottom: 16px; min-height: 1em; }
+        .vs-grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+        .vs-grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+        .vs-chart { position: relative; height: 200px; display: flex; align-items: flex-end; gap: 2px; border-bottom: 1px solid var(--divider); }
+        .vs-chart.hours { height: 90px; }
+        .vs-chart .col { flex: 1; height: 100%; display: flex; align-items: flex-end; min-width: 0; }
+        .vs-chart .col span { display: block; width: 100%; background: #0071e3; border-radius: 4px 4px 0 0; }
+        .vs-chart .col:hover span { background: #004f9e; }
+        .vs-axis { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--gray); margin-top: 6px; font-variant-numeric: tabular-nums; }
+        .vs-tip { position: fixed; pointer-events: none; background: var(--black); color: #fff; padding: 8px 10px; border-radius: 8px; font-size: 12.5px; line-height: 1.5; opacity: 0; transition: opacity 0.1s; z-index: 5000; white-space: nowrap; }
+        .vs-rank { list-style: none; }
+        .vs-rank li { position: relative; padding: 7px 10px; border-radius: 8px; display: flex; justify-content: space-between; gap: 12px; font-size: 14px; }
+        .vs-rank li + li { margin-top: 4px; }
+        .vs-rank li i { position: absolute; inset: 0 auto 0 0; background: #e8f1fc; border-radius: 8px; }
+        .vs-rank li b, .vs-rank li em { position: relative; }
+        .vs-rank li b { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .vs-rank li em { font-style: normal; color: #424245; font-variant-numeric: tabular-nums; flex-shrink: 0; }
+        .vs-rank li em small { color: var(--gray); font-size: 12px; margin-left: 4px; }
+        .vs-empty { font-size: 13.5px; color: var(--gray); padding: 8px 0; }
+        .vs-table-wrap { overflow-x: auto; }
+        .vs-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+        .vs-table th { text-align: left; font-weight: 500; color: var(--gray); font-size: 12px; padding: 0 10px 8px; white-space: nowrap; }
+        .vs-table td { padding: 9px 10px; border-top: 1px solid var(--divider); white-space: nowrap; }
+        .vs-table td.vid { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; }
+        .vs-table td.vid span { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+        .vs-note { font-size: 12.5px; color: var(--gray); margin-top: 20px; line-height: 1.6; }
+        @media (max-width: 1000px) {
+            .vs-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .vs-grid2, .vs-grid3 { grid-template-columns: minmax(0, 1fr); }
+        }
     </style>
 </head>
 <body>
@@ -470,7 +513,7 @@ const state = {
     places: [],
     timeline: [],
     sha: null,
-    view: 'login',          // 'login' | 'list' | 'edit' | 'timeline'
+    view: 'login',          // 'login' | 'list' | 'edit' | 'timeline' | 'stats'
     editingId: null,
     saving: false,
     dirty: false,
@@ -588,7 +631,7 @@ window.addEventListener('message', async (e) => {
         sessionStorage.setItem('cja_token', data.token);
         await fetchUser();
         await loadData();
-        state.view = 'list';
+        state.view = startView();
         render();
         toast('로그인 성공', 'success');
     } catch (err) {
@@ -603,6 +646,7 @@ async function fetchUser() {
     if (!res.ok) throw new Error('user fetch failed');
     state.user = await res.json();
     sessionStorage.setItem('cja_user', JSON.stringify(state.user));
+    try { localStorage.setItem('cja_notrack', '1'); } catch (e) {}   // 관리자 브라우저는 방문 통계에서 제외
 }
 function logout() {
     state.token = null;
@@ -720,7 +764,10 @@ function newPlaceTemplate() {
         title: '새 장소',
         cardEyebrow: '',
         cardTagline: '',
+        year: '',
+        category: '',
         img: '',
+        imgCredit: '',
         heroVideo: '',
         detailEyebrow: '',
         tagline: '',
@@ -807,7 +854,7 @@ async function loginWithPAT() {
         await fetchUser();
         sessionStorage.setItem('cja_token', token);
         await loadData();
-        state.view = 'list';
+        state.view = startView();
         render();
         toast('로그인 성공', 'success');
     } catch (e) {
@@ -846,9 +893,9 @@ function renderSidebar() {
                 <div class="nav-item ${state.view === 'timeline' ? 'active' : ''}" data-nav="timeline">
                     ${ICONS.timeline}<span>타임라인</span>
                 </div>
-                <a class="nav-item" href="/admin/stats" style="text-decoration: none;">
+                <div class="nav-item ${state.view === 'stats' ? 'active' : ''}" data-nav="stats">
                     ${ICONS.stats}<span>방문 통계</span>
-                </a>
+                </div>
                 <div class="nav-divider"></div>
                 <a class="nav-item" href="${CONFIG.siteUrl}" target="_blank" style="text-decoration: none;">
                     ${ICONS.external}<span>사이트 보기</span>
@@ -873,6 +920,7 @@ function bindSidebar() {
                 state.view = nav;
                 state.editingId = null;
                 state.dirty = false;
+                history.replaceState(null, '', nav === 'stats' ? '#stats' : location.pathname);
                 render();
             }
         };
@@ -891,6 +939,7 @@ function renderMain() {
     if (state.view === 'list') renderList(main);
     else if (state.view === 'edit') renderEdit(main);
     else if (state.view === 'timeline') renderTimeline(main);
+    else if (state.view === 'stats') renderVisitStats(main);
 }
 
 // ─── 장소 리스트 ───
@@ -1001,10 +1050,25 @@ function renderEdit(main) {
                 <label class="field-label">메인 이미지</label>
                 <div id="img-picker"></div>
             </div>
+            <div class="field">
+                <label class="field-label">메인 이미지 출처 (직접 찍은 사진이면 비워 두기)</label>
+                <input class="input" data-bind="imgCredit" value="${escapeHTML(p.imgCredit || '')}" placeholder="예: 국가유산청">
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label class="field-label">건립 연도 (전체 기록의 시대 필터에 쓰임)</label>
+                    <input class="input" data-bind="year" value="${escapeHTML(p.year || '')}" placeholder="예: 1935">
+                </div>
+                <div class="field">
+                    <label class="field-label">분류</label>
+                    <input class="input" data-bind="category" list="category-list" value="${escapeHTML(p.category || '')}" placeholder="예: 종교">
+                    <datalist id="category-list"><option value="교육"><option value="종교"><option value="교통"><option value="행정"><option value="주거"><option value="산업"></datalist>
+                </div>
+            </div>
             <div class="field-row">
                 <div class="field">
                     <label class="field-label">카드 위 라벨 (영문 권장)</label>
-                    <input class="input" data-bind="cardEyebrow" value="${escapeHTML(p.cardEyebrow || '')}" placeholder="예: Faith · 1935">
+                    <input class="input" data-bind="cardEyebrow" value="${escapeHTML(p.cardEyebrow || '')}" placeholder="예: Faith | 1935">
                 </div>
                 <div class="field">
                     <label class="field-label">카드 한 줄 태그라인</label>
@@ -1223,6 +1287,10 @@ function renderFeatures(p) {
             <div class="field">
                 <label class="field-label">이미지</label>
                 <div id="feat-img-${i}"></div>
+            </div>
+            <div class="field">
+                <label class="field-label">이미지 출처 (직접 찍은 사진이면 비워 두기)</label>
+                <input class="input" data-feat="credit" data-key="credit" value="${escapeHTML(f.credit || '')}" placeholder="예: 충청북도">
             </div>
             <label class="toggle">
                 <input type="checkbox" data-feat="rev" data-key="reverse" ${f.reverse ? 'checked' : ''}>
@@ -1470,15 +1538,185 @@ function updateToolbar() {
     }
 }
 
+// ─── 방문 통계 (/api/stats, 같은 GitHub 토큰으로 인증) ───
+const visit = { days: 30, titles: null };
+const VS_COUNTRY = { KR: '대한민국', US: '미국', JP: '일본', CN: '중국', TW: '대만', HK: '홍콩', SG: '싱가포르', VN: '베트남', CA: '캐나다', AU: '호주', GB: '영국', DE: '독일', FR: '프랑스' };
+const VS_CITY = {
+    Cheongju: '청주', Seoul: '서울', Busan: '부산', Incheon: '인천', Daegu: '대구', Daejeon: '대전', Gwangju: '광주',
+    Ulsan: '울산', Sejong: '세종', Suwon: '수원', Seongnam: '성남', Goyang: '고양', Yongin: '용인', Cheonan: '천안',
+    Chungju: '충주', Jecheon: '제천', Jincheon: '진천', Eumseong: '음성', Okcheon: '옥천', Boeun: '보은', Goesan: '괴산',
+    Jeungpyeong: '증평', Yeongdong: '영동', Danyang: '단양', Ochang: '오창', Osong: '오송', Asan: '아산', Gongju: '공주',
+    Jeonju: '전주', Changwon: '창원', Pohang: '포항', Hwaseong: '화성', Bucheon: '부천', Ansan: '안산', Anyang: '안양'
+};
+function vsRegion(r) {
+    if (!r) return '';
+    const n = /north|buk/i.test(r), s = /south|nam/i.test(r);
+    if (/chungcheong/i.test(r)) return n ? '충북' : s ? '충남' : '충청';
+    if (/gyeongsang/i.test(r)) return n ? '경북' : s ? '경남' : '경상';
+    if (/jeolla/i.test(r)) return n ? '전북' : s ? '전남' : '전라';
+    if (/gyeonggi/i.test(r)) return '경기';
+    if (/gangwon/i.test(r)) return '강원';
+    if (/jeju/i.test(r)) return '제주';
+    if (/seoul/i.test(r)) return '서울';
+    return r;
+}
+function vsPlace(p) {
+    if (!p.country) return '알 수 없음';
+    if (p.country !== 'KR') return [VS_COUNTRY[p.country] || p.country, p.city].filter(Boolean).join(' ');
+    const base = String(p.city || '').replace(/-(si|gun|gu)$/i, '');   // Cheongju-si → Cheongju
+    const reg = vsRegion(p.region), city = VS_CITY[base] || p.city || '';
+    return [reg, city !== reg ? city : ''].filter(Boolean).join(' ') || '대한민국';
+}
+function vsPage(path) {
+    if (path === '/') return '홈';
+    const m = path.match(/^\/heritage\/([^\/]+)/);
+    if (m) { const pl = state.places.find(p => p.id === decodeURIComponent(m[1])); return pl ? pl.title : path; }
+    return { '/heritage': '전체 기록', '/timeline': '홈 (연표)', '/about': '홈 (소개)', '/contact': '문의', '/sources': '출처', '/report.html': '보고서', '/report': '보고서' }[path] || path;
+}
+function vsRef(r) {
+    if (!r) return '직접 입력, 북마크, 앱';
+    if (/google\./.test(r)) return '구글 (' + r + ')';
+    if (/naver\./.test(r)) return '네이버 (' + r + ')';
+    if (/daum\.|kakao/.test(r)) return '다음, 카카오 (' + r + ')';
+    if (/instagram/.test(r)) return '인스타그램';
+    return r;
+}
+// 익명 ID마다 고정 색 점 — 같은 사람의 연속 조회를 눈으로 묶어 보도록
+function vsColor(v) { return `hsl(${parseInt(v.slice(0, 4), 16) % 360} 60% 55%)`; }
+function vsTime(ts) {
+    const d = new Date(ts);
+    const hm = d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false });
+    return new Date().toDateString() === d.toDateString() ? hm : `${d.getMonth() + 1}/${d.getDate()} ${hm}`;
+}
+function vsRank(rows, nameFn) {
+    if (!rows.length) return '<div class="vs-empty">아직 기록이 없어요.</div>';
+    const max = Math.max(...rows.map(r => r.visitors));
+    return '<ul class="vs-rank">' + rows.map(r => `
+        <li><i style="width:${(r.visitors / max * 100).toFixed(1)}%"></i>
+            <b title="${escapeHTML(nameFn(r))}">${escapeHTML(nameFn(r))}</b>
+            <em>${r.visitors}명<small>${r.views}회</small></em></li>`).join('') + '</ul>';
+}
+
+async function renderVisitStats(main) {
+    try { localStorage.setItem('cja_notrack', '1'); } catch (e) {}   // 통계를 보는 브라우저는 관리자 → 제외
+    main.innerHTML = `<div class="page-header"><h1>방문 통계</h1></div><div class="center-loading"><span class="spinner spinner-large"></span></div>`;
+    let d;
+    try {
+        const res = await fetch(`/api/stats?days=${visit.days}`, { headers: { Authorization: `Bearer ${state.token}` } });
+        if (res.status === 401) throw new Error('이 토큰에는 저장소 쓰기 권한이 없어요');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        d = await res.json();
+    } catch (e) {
+        main.innerHTML = `<div class="page-header"><h1>방문 통계</h1></div><div class="empty-state"><h2>불러오지 못했어요</h2><p>${escapeHTML(e.message)}</p></div>`;
+        return;
+    }
+    if (state.view !== 'stats') return;   // 불러오는 사이 다른 메뉴로 옮겨 갔으면 그리지 않음
+
+    // 기간 안의 모든 날짜를 채움 (기록 없는 날도 0으로 보이게)
+    const byDay = Object.fromEntries(d.daily.map(r => [r.day, r]));
+    const series = [];
+    for (let i = d.days - 1; i >= 0; i--) {
+        const day = new Date(Date.now() + 9 * 3600e3 - i * 86400e3).toISOString().slice(0, 10);
+        series.push(byDay[day] || { day, views: 0, visitors: 0 });
+    }
+    const maxV = Math.max(1, ...series.map(s => s.visitors));
+    const hours = Array.from({ length: 24 }, (_, h) => (d.hours.find(r => r.h === h) || { views: 0 }).views);
+    const maxH = Math.max(1, ...hours);
+    const md = (day) => day.slice(5).replace('-', '/');
+
+    main.innerHTML = `
+        <div class="page-header">
+            <h1>방문 통계</h1>
+            <div class="vs-controls">
+                <div class="vs-seg">${[7, 30, 90].map(n => `<button data-days="${n}" class="${n === d.days ? 'on' : ''}">${n}일</button>`).join('')}</div>
+            </div>
+        </div>
+
+        <div class="vs-tiles">
+            <div class="vs-card vs-tile"><div class="label">오늘 방문자</div><div class="num">${d.todayRow.visitors}</div><div class="sub">명</div></div>
+            <div class="vs-card vs-tile"><div class="label">오늘 조회</div><div class="num">${d.todayRow.views}</div><div class="sub">페이지</div></div>
+            <div class="vs-card vs-tile"><div class="label">최근 ${d.days}일 방문자</div><div class="num">${d.totals.visitors}</div><div class="sub">명 (하루 기준으로 센 합)</div></div>
+            <div class="vs-card vs-tile"><div class="label">최근 ${d.days}일 조회</div><div class="num">${d.totals.views}</div><div class="sub">페이지</div></div>
+        </div>
+
+        <div class="vs-card">
+            <h2>날짜별 방문자</h2>
+            <div class="hint">막대에 마우스를 올리면 조회 수도 보여요.</div>
+            <div class="vs-chart">${series.map(s => `
+                <div class="col" data-tip="${md(s.day)}<br>방문자 ${s.visitors}명<br>조회 ${s.views}회"><span style="height:${(s.visitors / maxV * 100).toFixed(1)}%"></span></div>`).join('')}
+            </div>
+            <div class="vs-axis"><span>${md(series[0].day)}</span><span>최대 ${maxV}명</span><span>오늘</span></div>
+        </div>
+
+        <div class="vs-grid2">
+            <div class="vs-card"><h2>어디서 왔나</h2><div class="hint">유입 경로 (방문자 수, 조회 수)</div>${vsRank(d.refs, r => vsRef(r.k))}</div>
+            <div class="vs-card"><h2>어느 지역에서</h2><div class="hint">접속한 통신망 기준이라 시, 도 정도까지만 정확해요.</div>${vsRank(d.places, vsPlace)}</div>
+        </div>
+
+        <div class="vs-grid3">
+            <div class="vs-card"><h2>많이 본 페이지</h2><div class="hint"></div>${vsRank(d.pages, r => vsPage(r.k))}</div>
+            <div class="vs-card"><h2>기기</h2><div class="hint"></div>${vsRank(d.devices, r => r.k)}</div>
+            <div class="vs-card"><h2>브라우저, 앱</h2><div class="hint">카카오톡, 인스타그램은 그 앱 안에서 링크를 연 경우</div>${vsRank(d.browsers, r => r.k)}</div>
+        </div>
+
+        <div class="vs-card" style="margin-top: 12px;">
+            <h2>시간대</h2>
+            <div class="hint">최근 ${d.days}일 조회를 한국 시간 기준으로 모은 것</div>
+            <div class="vs-chart hours">${hours.map((v, h) => `
+                <div class="col" data-tip="${h}시<br>조회 ${v}회"><span style="height:${(v / maxH * 100).toFixed(1)}%"></span></div>`).join('')}
+            </div>
+            <div class="vs-axis"><span>0시</span><span>6시</span><span>12시</span><span>18시</span><span>23시</span></div>
+        </div>
+
+        <div class="vs-card" style="margin-top: 12px;">
+            <h2>최근 방문</h2>
+            <div class="hint">같은 색 점은 같은 날 같은 방문자예요.</div>
+            <div class="vs-table-wrap">
+                ${d.recent.length ? `<table class="vs-table">
+                    <tr><th>시각</th><th>방문자</th><th>지역</th><th>기기</th><th>브라우저</th><th>출처</th><th>페이지</th></tr>
+                    ${d.recent.map(r => `<tr>
+                        <td>${vsTime(r.ts)}</td>
+                        <td class="vid"><span style="background:${vsColor(r.vid)}"></span>${escapeHTML(r.vid.slice(0, 6))}</td>
+                        <td>${escapeHTML(vsPlace(r))}</td>
+                        <td>${escapeHTML(r.device)}</td>
+                        <td>${escapeHTML(r.browser)}</td>
+                        <td>${escapeHTML(r.ref || '')}</td>
+                        <td>${escapeHTML(vsPage(r.path))}</td></tr>`).join('')}
+                </table>` : '<div class="vs-empty">아직 기록이 없어요.</div>'}
+            </div>
+        </div>
+
+        <p class="vs-note">
+            IP 주소나 이름처럼 사람을 알아볼 수 있는 정보는 저장하지 않아요. 방문자 ID는 접속 정보로 만든 익명 값이고 날마다 바뀝니다.<br>
+            검색 로봇, 관리 화면, 그리고 관리자 브라우저(이 화면을 연 브라우저)의 방문은 세지 않아요.
+            휴대폰처럼 관리 화면에 들어가지 않는 기기는 사이트 주소 뒤에 ?notrack=1 을 붙여 한 번 열면 빠집니다. 기록은 400일이 지나면 지워져요.
+        </p>`;
+
+    $$('.vs-seg button', main).forEach(b => b.onclick = () => { visit.days = +b.dataset.days; renderVisitStats(main); });
+    let tip = $('.vs-tip');
+    if (!tip) { tip = document.createElement('div'); tip.className = 'vs-tip'; document.body.appendChild(tip); }
+    $$('[data-tip]', main).forEach(el => {
+        el.onmousemove = (e) => {
+            tip.innerHTML = el.dataset.tip;
+            tip.style.opacity = 1;
+            tip.style.left = Math.min(e.clientX + 12, innerWidth - tip.offsetWidth - 8) + 'px';
+            tip.style.top = (e.clientY - tip.offsetHeight - 12) + 'px';
+        };
+        el.onmouseleave = () => { tip.style.opacity = 0; };
+    });
+}
+
 // ═══════════════════════════════════════════════
 // 부트
 // ═══════════════════════════════════════════════
+function startView() { return location.hash === '#stats' ? 'stats' : 'list'; }
+
 (async function init() {
     if (state.token) {
         try {
             await fetchUser();
             await loadData();
-            state.view = 'list';
+            state.view = startView();
         } catch {
             // 토큰 만료 등
             logout();
