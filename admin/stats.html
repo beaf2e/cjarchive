@@ -141,7 +141,8 @@ function regionKo(r) {
 function placeName(p) {
     if (!p.country) return '알 수 없음';
     if (p.country !== 'KR') return [COUNTRY[p.country] || p.country, p.city].filter(Boolean).join(' ');
-    const reg = regionKo(p.region), city = CITY[p.city] || p.city || '';
+    const base = String(p.city || '').replace(/-(si|gun|gu)$/i, '');   // Cheongju-si → Cheongju
+    const reg = regionKo(p.region), city = CITY[base] || p.city || '';
     return [reg, city !== reg ? city : ''].filter(Boolean).join(' ') || '대한민국';
 }
 function pageName(path) {
