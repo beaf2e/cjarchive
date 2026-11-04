@@ -256,14 +256,14 @@
         </div>
         <div style="flex: 1; min-width: 200px;">
             <h4>Contributors</h4>
-            <p style="font-weight: 500; color: var(--apple-black);">제작 · 청석고등학교 2학년 이민수</p>
-            <p>문의 · <a href="mailto:info.cjarchive@gmail.com" style="color: inherit; text-decoration: none;">info.cjarchive@gmail.com</a></p>
+            <p style="font-weight: 500; color: var(--apple-black);">제작 | 청석고등학교</p>
+            <p>문의 | <a href="mailto:info.cjarchive@gmail.com" style="color: inherit; text-decoration: none;">info.cjarchive@gmail.com</a></p>
         </div>
         <div style="flex: 1; min-width: 180px;">
             <h4>Information</h4>
             <ul style="list-style: none;">
-                <li id="lastUpdated">Last Updated · ...</li>
-                <li>Data Source · 직접 촬영, 국가유산청</li>
+                <li id="lastUpdated">Last Updated | ...</li>
+                <li>Data Source | 직접 촬영, 국가유산청</li>
             </ul>
         </div>
     </div>
@@ -349,9 +349,9 @@
             var d = new Date(commits[0].commit.author.date);
             var mm = String(d.getMonth() + 1).padStart(2, '0');
             var dd = String(d.getDate()).padStart(2, '0');
-            el.textContent = 'Last Updated · ' + d.getFullYear() + '. ' + mm + '. ' + dd;
+            el.textContent = 'Last Updated | ' + d.getFullYear() + '. ' + mm + '. ' + dd;
         } catch (e) {
-            el.textContent = 'Last Updated · 2026';
+            el.textContent = 'Last Updated | 2026';
         }
     })();
 </script>
