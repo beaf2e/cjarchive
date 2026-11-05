@@ -6,6 +6,13 @@ export async function onRequest(context) {
   const url = new URL(request.url);
   const p = url.pathname;
 
+  // 구글 서치콘솔 소유 확인 파일 — Pages가 .html을 확장자 없는 주소로 308 넘기므로 여기서 직접 응답
+  if (p === "/googled19b34fdf65d4108.html") {
+    return new Response("google-site-verification: googled19b34fdf65d4108.html", {
+      headers: { "content-type": "text/html; charset=utf-8" },
+    });
+  }
+
   // 옛 주소 호환: /place/<id> → /heritage/<id> (301)
   if (p.startsWith("/place/")) {
     url.pathname = "/heritage/" + p.slice("/place/".length);
