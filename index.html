@@ -389,16 +389,18 @@
         }
 
         /* ===== 해설: 이 유산이 무엇인지 (해설 글 + 기본 정보 + 용어 풀이) ===== */
-        /* 해설은 가운데 한 단, 그 아래 기본 정보와 용어 풀이를 같은 높이로 나란히 — 글 길이와 상관없이 균형 */
+        /* 왼쪽: 해설과 그 아래 용어 풀이, 오른쪽: 기본 정보 */
         .explain {
-            max-width: 960px; margin: 0 auto;
+            max-width: 1080px; margin: 0 auto;
             padding: clamp(24px, 4vw, 40px) clamp(20px, 5vw, 40px) clamp(56px, 9vw, 100px);
+            display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 64px);
+            align-items: start;
         }
-        .explain-text { max-width: 720px; margin: 0 auto clamp(32px, 5vw, 48px); }
+        @media (max-width: 800px) { .explain { grid-template-columns: minmax(0, 1fr); } }
         .explain-label { display: block; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-accent); margin-bottom: 14px; }
         .explain-text p { font-size: var(--fs-body); line-height: 1.75; color: var(--c-text); word-break: keep-all; }
         .explain-text p + p { margin-top: 1em; }
-        .explain-side { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; align-items: stretch; }
+        .explain-text .term-box { margin-top: clamp(24px, 3vw, 32px); }
         .info-box { background: var(--c-bg-subtle); border-radius: var(--radius-card); padding: clamp(20px, 2.4vw, 28px); }
         .info-box dl { display: grid; grid-template-columns: auto 1fr; gap: 10px 18px; font-size: 0.9rem; }
         .info-box dt { color: var(--c-text-3); white-space: nowrap; }
@@ -963,11 +965,9 @@
                     <span class="explain-label">해설</span>
                     ${paras.map(t => `<p>${esc(t)}</p>`).join('')}
                     ${data.refs ? `<p class="explain-src">참고: ${esc(data.refs)}</p>` : ''}
-                </div>
-                <aside class="explain-side reveal">
-                    ${info.length ? `<div class="info-box"><span class="explain-label">기본 정보</span><dl>${info.map(r => `<dt>${esc(r.label)}</dt><dd>${esc(r.value)}</dd>`).join('')}</dl></div>` : ''}
                     ${term ? `<div class="term-box"><span class="explain-label">용어 풀이</span><b>${esc(term.word)}</b><p>${esc(term.desc)}</p></div>` : ''}
-                </aside>
+                </div>
+                ${info.length ? `<aside class="info-box reveal"><span class="explain-label">기본 정보</span><dl>${info.map(r => `<dt>${esc(r.label)}</dt><dd>${esc(r.value)}</dd>`).join('')}</dl></aside>` : ''}
             </section>`;
     }
 
