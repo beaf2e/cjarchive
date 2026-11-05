@@ -91,6 +91,18 @@
             user-select: none;
             -webkit-user-drag: none;
         }
+        /* 데스크톱 가로 메뉴 (좁은 화면은 햄버거) */
+        .nav-links { display: none; gap: clamp(20px, 2.4vw, 32px); align-items: center; }
+        .nav-links a {
+            font-size: 0.9rem; color: #424245; text-decoration: none; letter-spacing: -0.01em;
+            padding: 6px 0; border-bottom: 1.5px solid transparent; transition: color 0.2s, border-color 0.2s;
+        }
+        .nav-links a:hover { color: var(--apple-black); }
+        .nav-links a.active { color: var(--apple-black); font-weight: 600; border-bottom-color: var(--apple-black); }
+        @media (min-width: 900px) {
+            .nav-links { display: flex; margin-left: auto; }
+            body .menu-btn { display: none; }   /* 뒤에 오는 .menu-btn 규칙보다 우선 */
+        }
         /* 로고 파일이 없을 때 폴백 텍스트 */
         .nav-title .fallback {
             font-weight: 600;
@@ -182,7 +194,7 @@
         }
 
         /* ===== HERO ===== */
-        .hero { height: 250vh; position: relative; background: #000; }
+        .hero { height: 170vh; position: relative; background: #000; }
         .video-wrap {
             position: sticky; top: 0;
             width: 100%; height: 100vh;
@@ -243,7 +255,7 @@
         }
         @media (max-width: 768px) {
             .grid { grid-template-columns: 1fr; gap: clamp(28px, 6vw, 48px); }
-            .hero { height: 200vh; }
+            .hero { height: 150vh; }
         }
 
         .card {
@@ -552,155 +564,58 @@
             object-fit: cover;
         }
 
-        /* ===== NEXT NAV ===== */
+        /* ===== 상세 하단: 이전, 다음, 진행 ===== */
         .next-nav {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: clamp(60px, 10vw, 100px) clamp(20px, 5vw, 40px);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
+            max-width: 1200px; margin: 0 auto;
+            padding: clamp(48px, 8vw, 84px) clamp(20px, 5vw, 40px);
             border-top: 1px solid var(--apple-divider);
         }
-        .next-nav .next-meta { font-size: 0.85rem; color: var(--apple-gray); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
-        .next-nav .next-title {
-            font-size: clamp(1.4rem, 3vw, 1.9rem);
-            font-weight: 600;
-            letter-spacing: -0.02em;
-            color: var(--apple-blue);
-            cursor: pointer;
-            transition: 0.3s;
+        .next-progress { display: flex; align-items: center; gap: 14px; margin-bottom: clamp(28px, 5vw, 40px); }
+        .next-progress .count { font-size: 0.85rem; font-weight: 600; color: var(--apple-black); font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .next-progress .bar { flex: 1; height: 2px; background: var(--apple-divider); border-radius: 2px; overflow: hidden; }
+        .next-progress .bar span { display: block; height: 100%; background: var(--apple-black); }
+        .next-progress a { font-size: 0.85rem; color: var(--apple-gray); text-decoration: none; white-space: nowrap; }
+        .next-progress a:hover { color: var(--apple-black); }
+        .next-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .next-link {
+            display: flex; align-items: center; gap: 16px;
+            padding: 14px; border-radius: 18px; background: var(--apple-bg);
+            cursor: pointer; transition: background 0.3s, transform 0.3s;
+            min-width: 0;
         }
-        .next-nav .next-title:hover { color: #004599; }
-        .next-nav .next-title::after {
-            content: " →";
-            transition: transform 0.3s;
-            display: inline-block;
-        }
-        .next-nav .next-title:hover::after { transform: translateX(4px); }
-
-        /* ===== TIMELINE ===== */
-        .timeline-section {
-            padding: clamp(44px, 8vw, 90px) clamp(20px, 5vw, 40px);
-            max-width: 1280px;
-            margin: 0 auto;
-            border-top: 1px solid var(--apple-divider);
-        }
-        .timeline-header { text-align: center; margin-bottom: clamp(50px, 8vw, 90px); max-width: 720px; margin-left: auto; margin-right: auto; }
-        .timeline-header h2 {
-            font-size: clamp(1.7rem, 4.5vw, 2.8rem);
-            font-weight: 700;
-            letter-spacing: -0.03em;
-            line-height: 1.25;
-            margin-bottom: 16px;
-            word-break: keep-all;
-        }
-        .timeline-header p {
-            font-size: clamp(1rem, 2.2vw, 1.15rem);
-            color: var(--apple-gray);
-            word-break: keep-all;
-            line-height: 1.7;
+        .next-link:hover { background: #ebebef; transform: translateY(-2px); }
+        .next-link.next { flex-direction: row-reverse; text-align: right; }
+        .next-link img { width: clamp(64px, 9vw, 96px); aspect-ratio: 1; object-fit: cover; border-radius: 12px; flex-shrink: 0; }
+        .next-link .meta { font-size: 0.78rem; font-weight: 600; color: var(--apple-gray); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+        .next-link .title { font-size: clamp(1.05rem, 2.2vw, 1.4rem); font-weight: 700; letter-spacing: -0.02em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .next-link:hover .title { color: var(--apple-blue); }
+        @media (max-width: 600px) {
+            .next-pair { grid-template-columns: 1fr; }
+            .next-link.next { flex-direction: row; text-align: left; }
         }
 
-        .timeline {
-            position: relative;
-            display: grid;
-            grid-template-columns: repeat(var(--tl-cols, 5), minmax(0, 1fr));
-            gap: clamp(16px, 2vw, 28px);
+        /* ===== 홈: 더 둘러보기 (독립 페이지로 가는 입구) ===== */
+        .explore { max-width: 1200px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 40px) clamp(64px, 10vw, 110px); }
+        .explore-head { text-align: center; margin-bottom: clamp(28px, 5vw, 44px); }
+        .explore-head h2 { font-size: clamp(1.5rem, 4vw, 2.2rem); font-weight: 700; letter-spacing: -0.03em; word-break: keep-all; }
+        .explore-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 2vw, 24px); }
+        @media (max-width: 860px) { .explore-grid { grid-template-columns: minmax(0, 1fr); } }
+        .explore-tile {
+            position: relative; display: block; overflow: hidden; border-radius: 22px;
+            aspect-ratio: 4 / 5; color: #fff; text-decoration: none; background: #222;
+            transition: box-shadow 0.4s ease, transform 0.4s ease;
         }
-        .timeline::before {
-            content: "";
-            position: absolute;
-            top: clamp(38px, 5vw, 54px);
-            left: 8%; right: 8%;
-            height: 1px;
-            background: linear-gradient(to right, transparent, var(--apple-light) 12%, var(--apple-light) 88%, transparent);
-            z-index: 0;
-        }
-
-        .timeline-item {
-            position: relative;
-            text-align: center;
-            padding-top: 0;
-            opacity: 0; transform: translateY(30px);
-        }
-        .timeline-item .year {
-            font-size: clamp(1.3rem, 3.4vw, 2.1rem);
-            font-weight: 700;
-            letter-spacing: -0.03em;
-            line-height: 1;
-            background: linear-gradient(135deg, #211f20 0%, #525258 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: clamp(14px, 2.4vw, 22px);
-        }
-        .timeline-item .dot {
-            width: 10px; height: 10px;
-            border-radius: 50%;
-            background: #fff;
-            border: 2px solid var(--apple-black);
-            margin: 0 auto clamp(16px, 2.4vw, 22px);
-            position: relative;
-            z-index: 2;
-            transition: transform 0.4s ease, background 0.4s ease;
-        }
-        .timeline-item:hover .dot { transform: scale(1.4); background: var(--apple-blue); border-color: var(--apple-blue); }
-        .timeline-item .place {
-            font-size: clamp(0.95rem, 2vw, 1.1rem);
-            font-weight: 600;
-            letter-spacing: -0.02em;
-            margin-bottom: 6px;
-            word-break: keep-all;
-        }
-        .timeline-item .desc {
-            font-size: clamp(0.78rem, 1.6vw, 0.88rem);
-            color: var(--apple-gray);
-            line-height: 1.6;
-            word-break: keep-all;
-        }
-
-        @media (max-width: 768px) {
-            .timeline {
-                grid-template-columns: 1fr;
-                gap: clamp(28px, 6vw, 40px);
-                padding-left: clamp(20px, 6vw, 40px);
-            }
-            .timeline::before {
-                top: 0; bottom: 0;
-                left: clamp(8px, 2vw, 16px); right: auto;
-                width: 1px; height: auto;
-                background: linear-gradient(to bottom, transparent, var(--apple-light) 8%, var(--apple-light) 92%, transparent);
-            }
-            .timeline-item {
-                text-align: left;
-                display: grid;
-                grid-template-columns: auto 1fr;
-                grid-template-rows: auto auto;
-                column-gap: clamp(16px, 4vw, 24px);
-                row-gap: 4px;
-                align-items: start;
-            }
-            .timeline-item .dot {
-                grid-row: 1 / 3;
-                grid-column: 1;
-                margin: 6px 0 0;
-            }
-            .timeline-item .year {
-                grid-column: 2;
-                margin-bottom: 6px;
-                font-size: clamp(1.4rem, 5vw, 1.7rem);
-            }
-            .timeline-item .place {
-                grid-column: 2;
-            }
-            .timeline-item .desc {
-                grid-column: 2;
-                margin-top: 4px;
-            }
-        }
+        @media (max-width: 860px) { .explore-tile { aspect-ratio: 16 / 9; } }
+        .explore-tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1s cubic-bezier(0.2, 0, 0.2, 1); }
+        .explore-tile::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0.05) 60%); }
+        .explore-tile .txt { position: absolute; left: 0; right: 0; bottom: 0; padding: clamp(20px, 3vw, 28px); z-index: 1; }
+        .explore-tile .eyebrow { font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.85; }
+        .explore-tile h3 { margin-top: 8px; font-size: clamp(1.3rem, 2.6vw, 1.7rem); font-weight: 700; letter-spacing: -0.02em; }
+        .explore-tile h3::after { content: " →"; display: inline-block; transition: transform 0.3s; }
+        .explore-tile p { margin-top: 6px; font-size: 0.92rem; opacity: 0.88; word-break: keep-all; }
+        .explore-tile:hover { box-shadow: 0 20px 50px rgba(0,0,0,0.16); transform: translateY(-3px); }
+        .explore-tile:hover img { transform: scale(1.06); }
+        .explore-tile:hover h3::after { transform: translateX(4px); }
 
         /* ===== FOOTER ===== */
         .footer { padding: clamp(32px, 5vw, 54px) clamp(20px, 5vw, 40px) 34px; background: var(--apple-bg); color: var(--apple-gray); font-size: 0.9rem; }
@@ -906,6 +821,13 @@
     <div class="nav-title" onclick="goHome()">
         <img src="logo.png" alt="Cheongju Archive" onerror="this.outerHTML='<span class=\'fallback\'>Cheongju Archive</span>'">
     </div>
+    <div class="nav-links">
+        <a href="/heritage" id="navArchive">전체 기록</a>
+        <a href="/timeline">연표</a>
+        <a href="/about">소개</a>
+        <a href="/sources">출처</a>
+        <a href="/contact">문의</a>
+    </div>
 </nav>
 
 <button class="menu-btn" id="menuBtn" aria-label="메뉴 열기">
@@ -917,7 +839,6 @@
     <ul id="sideMenuList">
         <li onclick="scrollToSection('hero')">메인 홈</li>
         <!-- 장소 메뉴는 places.json에서 자동 생성됨 -->
-        <li onclick="scrollToSection('timeline')">타임라인</li>
     </ul>
 </div>
 
@@ -941,18 +862,7 @@
     </div>
 </section>
 
-<section class="section" id="about">
-    <div style="text-align: center; max-width: 800px; margin: 0 auto;">
-        <span class="section-eyebrow value-text">About | 소개</span>
-        <h2 class="value-text" style="font-size: clamp(1.7rem, 4.5vw, 2.8rem); margin-bottom: clamp(20px, 5vw, 36px); font-weight: 700; letter-spacing: -0.03em; word-break: keep-all; line-height: 1.25;">기록은 시간을 이기는<br>유일한 방법입니다</h2>
-        <p class="value-text" style="font-size: clamp(1.05rem, 2.4vw, 1.25rem); color: #424245; line-height: 1.75; word-break: keep-all;">
-            우리가 살아가는 청주의 풍경 속에는 수백 년의 시간이 겹겹이 쌓여 있습니다.
-            사라져가는 유산을 디지털로 기록하는 것은 미래 세대에게 우리의 정체성을 전달하는 교육적 실천입니다.
-        </p>
-    </div>
-</section>
-
-<section class="section" id="heritage" style="border-top: 1px solid var(--apple-divider); max-width: 1280px;">
+<section class="section" id="heritage" style="max-width: 1280px;">
     <div style="text-align: center; max-width: 720px; margin: 0 auto clamp(40px, 8vw, 70px);">
         <span class="section-eyebrow value-text">Heritage Stories</span>
         <h2 class="value-text" id="heritageHeading" style="font-size: clamp(1.5rem, 4vw, 2.4rem); font-weight: 700; letter-spacing: -0.03em; word-break: keep-all;">네 곳의 시간, 한 도시의 기억</h2>
@@ -965,15 +875,25 @@
     </div>
 </section>
 
-<!-- ===== TIMELINE ===== -->
-<section class="timeline-section" id="timeline">
-    <div class="timeline-header">
-        <span class="section-eyebrow value-text">A Thousand Years in One City</span>
-        <h2 class="value-text">하나의 도시가<br>걸어온 천 년의 시간</h2>
-        <p class="value-text">고려에서 시작된 시간이 조선과 근대를 지나, 지금 우리의 발 밑에 닿아 있습니다.</p>
+<!-- ===== 더 둘러보기: 독립 페이지로 가는 입구 ===== -->
+<section class="explore">
+    <div class="explore-head">
+        <span class="section-eyebrow value-text">Explore</span>
+        <h2 class="value-text">더 둘러보기</h2>
     </div>
-    <div class="timeline" id="timelineGrid">
-        <!-- 타임라인 항목은 places.json에서 자동 생성됨 -->
+    <div class="explore-grid">
+        <a class="explore-tile" href="/timeline">
+            <img src="cjst1.jpg" alt="" loading="lazy">
+            <div class="txt"><div class="eyebrow">Timeline</div><h3>연표</h3><p>고려에서 지금까지, 천 년의 흐름을 한눈에</p></div>
+        </a>
+        <a class="explore-tile" href="/about">
+            <img src="drone-poster.jpg" alt="" loading="lazy">
+            <div class="txt"><div class="eyebrow">About</div><h3>소개</h3><p>왜, 어떻게 기록하는지</p></div>
+        </a>
+        <a class="explore-tile" href="/sources">
+            <img src="cbdc1.jpg" alt="" loading="lazy">
+            <div class="txt"><div class="eyebrow">Sources</div><h3>출처</h3><p>자료와 사진이 어디서 왔는지</p></div>
+        </a>
     </div>
 </section>
 
@@ -1040,7 +960,6 @@
     /* ===== 콘텐츠 데이터 (places.json에서 동적 로드) ===== */
     let PLACES = {};
     let PLACES_LIST = [];
-    let TIMELINE = [];
 
 
     /* ===== 메뉴 ===== */
@@ -1068,13 +987,11 @@
     menuBtn.addEventListener('click', toggleMenu);
     menuOverlay.addEventListener('click', closeMenu);
 
-    // 섹션 이동도 주소를 바꾼다 ('hero'→/, 'heritage'→/heritage, 'timeline'→/timeline)
+    // 'heritage'→/heritage(전체 기록), 그 밖은 홈 맨 위
     function scrollToSection(id) {
         if (isMenuOpen) closeMenu();
-        if (id === 'timeline') return navigate('/timeline');
         if (id === 'heritage') return navigate('/heritage');
-        if (id === 'about') return navigate('/about');
-        return navigate('/');   // hero / home
+        return navigate('/');
     }
     function goHome() {
         if (isMenuOpen) closeMenu();
@@ -1098,12 +1015,6 @@
         return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     }
     function nl2br(s) { return esc(s).replace(/\n/g, '<br>'); }
-
-    function getNextPlace(currentId) {
-        const idx = PLACES_LIST.findIndex(p => p.id === currentId);
-        if (idx === -1 || PLACES_LIST.length === 0) return null;
-        return PLACES_LIST[(idx + 1) % PLACES_LIST.length];
-    }
 
     function buildDetailHTML(data) {
         const statsHTML = (data.stats || []).map(s => `
@@ -1131,8 +1042,10 @@
                </video>`
             : `<img src="${esc(data.img)}" alt="${esc(data.title)}" onerror="this.style.display='none'">`;
 
-        const next = getNextPlace(data.id);
         const total = PLACES_LIST.length;
+        const idx = Math.max(0, PLACES_LIST.findIndex(p => p.id === data.id));
+        const next = PLACES_LIST[(idx + 1) % total];
+        const prev = PLACES_LIST[(idx - 1 + total) % total];
 
         // Then & Now 비교 슬라이더 — 옛 사진(thenNow.then)이 있을 때만 표시
         const tn = data.thenNow || {};
@@ -1184,14 +1097,21 @@
                 <cite class="reveal">${esc(data.quote.cite)}</cite>
             </section>` : ''}
 
-            <nav class="next-nav">
-                <div>
-                    <div class="next-meta">No.${String(data.order).padStart(2,'0')} of ${String(total).padStart(2,'0')}</div>
-                    <div style="font-size: 1rem; color: var(--apple-gray);">${esc(data.title)}</div>
+            <nav class="next-nav" aria-label="다른 기록">
+                <div class="next-progress">
+                    <span class="count">${String(idx + 1).padStart(2,'0')} / ${String(total).padStart(2,'0')}</span>
+                    <span class="bar"><span style="width:${((idx + 1) / total * 100).toFixed(1)}%"></span></span>
+                    <a href="/heritage" data-archive>전체 기록</a>
                 </div>
-                ${next ? `<div>
-                    <div class="next-meta">Next</div>
-                    <div class="next-title" data-place="${esc(next.id)}">${esc(next.title)}</div>
+                ${total > 1 ? `<div class="next-pair">
+                    <div class="next-link prev" data-place="${esc(prev.id)}">
+                        <img src="${esc(prev.img)}" alt="" loading="lazy">
+                        <div style="min-width:0"><div class="meta">이전</div><div class="title">${esc(prev.title)}</div></div>
+                    </div>
+                    <div class="next-link next" data-place="${esc(next.id)}">
+                        <img src="${esc(next.img)}" alt="" loading="lazy">
+                        <div style="min-width:0"><div class="meta">다음</div><div class="title">${esc(next.title)}</div></div>
+                    </div>
                 </div>` : ''}
             </nav>
         `;
@@ -1227,8 +1147,13 @@
 
         currentDetailId = id;
         detailContent.innerHTML = buildDetailHTML(data);
-        const nextEl = detailContent.querySelector('.next-title[data-place]');
-        if (nextEl) nextEl.addEventListener('click', () => openPlace(nextEl.dataset.place));
+        detailContent.querySelectorAll('.next-link[data-place]').forEach(el =>
+            el.addEventListener('click', () => openPlace(el.dataset.place)));
+        detailContent.querySelectorAll('[data-archive]').forEach(el => el.addEventListener('click', (e) => {
+            e.preventDefault();
+            returnTo = null;
+            navigate('/heritage');
+        }));
         detailContent.querySelectorAll('[data-compare]').forEach(initCompare);
         detailEl.style.display = 'block';
         detailEl.scrollTop = 0;
@@ -1280,13 +1205,11 @@
        /                → 홈(상단)
        /heritage        → 전체 기록(검색, 필터 목록)
        /heritage/<id>   → 해당 장소 상세 (없는 id면 404)
-       /timeline        → 타임라인                                     */
+       /timeline, /about, /sources, /contact 는 각각 독립 페이지         */
     function getRoute() {
         const p = (location.pathname.replace(/\/+$/, '') || '/');
         if (p === '/') return { type: 'home' };
-        if (p === '/about') return { type: 'about' };
         if (p === '/heritage') return { type: 'heritage' };
-        if (p === '/timeline') return { type: 'timeline' };
         const m = p.match(/^\/heritage\/([^\/?#]+)/);
         if (m) return { type: 'place', id: decodeURIComponent(m[1]) };
         return { type: 'home' };
@@ -1310,9 +1233,7 @@
         }
         hideArchive();
         hideDetail(animate);
-        if (r.type === 'timeline') scrollToId('timeline', animate);
-        else if (r.type === 'about') scrollToId('about', animate);
-        else scrollToTop(animate);   // home
+        scrollToTop(animate);   // home
     }
     window.addEventListener('popstate', () => syncRoute(true));
 
@@ -1347,6 +1268,7 @@
         document.documentElement.classList.remove('boot-archive');
         if (document.body.classList.contains('archive-open')) return;
         document.body.classList.add('archive-open');
+        document.getElementById('navArchive').classList.add('active');
         document.body.style.overflow = 'hidden';
         archiveEl.scrollTop = 0;
         gsap.fromTo(archiveEl, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" });
@@ -1355,6 +1277,7 @@
         document.documentElement.classList.remove('boot-archive');
         if (!document.body.classList.contains('archive-open')) return;
         document.body.classList.remove('archive-open');
+        document.getElementById('navArchive').classList.remove('active');
         if (!currentDetailId) document.body.style.overflow = 'auto';
         ScrollTrigger.refresh();
     }
@@ -1422,6 +1345,11 @@
         archiveFilter.q = e.target.value;
         renderArchiveGrid();
     });
+    document.getElementById('navArchive').addEventListener('click', (e) => {
+        e.preventDefault();
+        returnTo = null;
+        navigate('/heritage');
+    });
     document.getElementById('moreBtn').addEventListener('click', (e) => {
         e.preventDefault();
         navigate('/heritage');
@@ -1463,9 +1391,11 @@
         // 기존 li 모두 제거 후 재구성
         const items = [
             { label: '홈', kind: 'section', target: 'hero' },
-            { label: '소개', kind: 'section', target: 'about' },
             { label: '전체 기록', kind: 'section', target: 'heritage' },
-            { label: '연표', kind: 'section', target: 'timeline' }
+            { label: '연표', kind: 'link', target: '/timeline' },
+            { label: '소개', kind: 'link', target: '/about' },
+            { label: '출처', kind: 'link', target: '/sources' },
+            { label: '문의', kind: 'link', target: '/contact' }
         ];
         // 인라인 onclick 대신 data-* + 리스너 (속성값 이스케이프로 인한 XSS 차단)
         ul.innerHTML = items.map(it =>
@@ -1515,35 +1445,12 @@
         });
     }
 
-    function renderTimeline() {
-        const grid = document.getElementById('timelineGrid');
-        if (!grid) return;
-        // 마커 수에 맞춰 컬럼 수 + 잇는 선 길이 자동 조정
-        const n = Math.max(TIMELINE.length, 1);
-        grid.style.setProperty('--tl-cols', n);
-        grid.innerHTML = TIMELINE.map(t => `
-            <div class="timeline-item">
-                <div class="year">${esc(t.year)}</div>
-                <div class="dot"></div>
-                <div class="place">${esc(t.place)}</div>
-                <div class="desc">${nl2br(t.desc)}</div>
-            </div>
-        `).join('');
-    }
-
     function applyDynamicAnimations() {
         // 카드 페이드인
         gsap.utils.toArray(".card").forEach((el) => {
             gsap.to(el, {
                 opacity: 1, y: 0, duration: 1.1, ease: "power3.out",
                 scrollTrigger: { trigger: el, start: "top 88%", toggleActions: "play none none reverse" }
-            });
-        });
-        // 타임라인 페이드인 (좌→우 stagger)
-        gsap.utils.toArray(".timeline-item").forEach((el, i) => {
-            gsap.to(el, {
-                opacity: 1, y: 0, duration: 0.9, ease: "power3.out", delay: i * 0.12,
-                scrollTrigger: { trigger: ".timeline", start: "top 80%", toggleActions: "play none none reverse" }
             });
         });
     }
@@ -1555,16 +1462,14 @@
             const data = await res.json();
             PLACES_LIST = (data.places || []).slice().sort((a, b) => (a.order || 0) - (b.order || 0));
             PLACES = Object.fromEntries(PLACES_LIST.map(p => [p.id, p]));
-            TIMELINE = data.timeline || [];
 
             renderSideMenu();
             renderCards();
             renderArchiveChips();
             renderArchiveGrid();
-            renderTimeline();
             applyDynamicAnimations();
             ScrollTrigger.refresh();
-            syncRoute(false);   // 직접 진입한 주소(/heritage·/heritage/id·/timeline)에 화면을 맞춘다
+            syncRoute(false);   // 직접 진입한 주소(/heritage, /heritage/id)에 화면을 맞춘다
         } catch (e) {
             console.error('places.json 로드 실패:', e);
             const grid = document.getElementById('placeGrid');

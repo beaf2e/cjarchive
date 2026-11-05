@@ -1502,11 +1502,18 @@ function renderTimeline(main) {
                         <textarea class="textarea" data-tk="desc" style="min-height:42px;">${escapeHTML(t.desc || '')}</textarea>
                     </div>
                 </div>
+                <div class="field" style="margin:10px 0 0;">
+                    <label class="field-label">연결할 장소 (연표 페이지에서 사진과 상세 링크로 보임)</label>
+                    <select class="input" data-tk="placeId">
+                        <option value="">연결 안 함</option>
+                        ${state.places.map(p => `<option value="${escapeHTML(p.id)}" ${t.placeId === p.id ? 'selected' : ''}>${escapeHTML(p.title)}</option>`).join('')}
+                    </select>
+                </div>
             </div>
         `).join('');
         $$('[data-tk]', c).forEach(el => {
             const i = +el.closest('[data-tli]').dataset.tli;
-            el.oninput = () => { state.timeline[i][el.dataset.tk] = el.value; markDirty(); };
+            el.oninput = el.onchange = () => { state.timeline[i][el.dataset.tk] = el.value; markDirty(); };
         });
         $$('[data-tl]', c).forEach(b => b.onclick = () => {
             const i = +b.closest('[data-tli]').dataset.tli;
@@ -1571,7 +1578,7 @@ function vsPage(path) {
     if (path === '/') return '홈';
     const m = path.match(/^\/heritage\/([^\/]+)/);
     if (m) { const pl = state.places.find(p => p.id === decodeURIComponent(m[1])); return pl ? pl.title : path; }
-    return { '/heritage': '전체 기록', '/timeline': '홈 (연표)', '/about': '홈 (소개)', '/contact': '문의', '/sources': '출처', '/report.html': '보고서', '/report': '보고서' }[path] || path;
+    return { '/heritage': '전체 기록', '/timeline': '연표', '/about': '소개', '/contact': '문의', '/sources': '출처', '/report.html': '보고서', '/report': '보고서' }[path] || path;
 }
 function vsRef(r) {
     if (!r) return '직접 입력, 북마크, 앱';

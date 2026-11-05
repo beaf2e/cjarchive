@@ -31,11 +31,7 @@ export async function onRequest(context) {
     return serveArchive(url, env);
   }
 
-  // SPA 라우트: /timeline, /about → 홈 HTML을 서빙(클라이언트 라우팅이 처리)
-  // 주의: "/index.html"은 Cloudflare Pages가 "/"로 308 정규화하므로 홈("/")을 직접 서빙해야 함
-  if (p === "/timeline" || p === "/about") {
-    return env.ASSETS.fetch(new Request(new URL("/", url), request));
-  }
+  // /timeline, /about 은 독립 페이지(timeline.html, about.html) — Pages 클린 URL이 그대로 서빙
 
   // 문의는 별도 페이지(contact.html). Pages 기본 클린URL이 /contact → contact.html 로
   // 서빙하므로 그대로 통과시킨다. (env.ASSETS로 /contact.html 을 가져오면 Pages가 /contact 로
