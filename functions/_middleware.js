@@ -147,7 +147,7 @@ async function serveArchive(url, env) {
     const list = places
       .map(
         (p) =>
-          `<a class="a-item" href="/heritage/${encodeURIComponent(p.id)}"><h3>${esc(p.title)}</h3><p>${esc(p.cardTagline || "")}</p></a>`
+          `<a class="card" href="/heritage/${encodeURIComponent(p.id)}"><img src="/${esc(p.img)}" alt="${esc(p.title)}" loading="lazy"><div class="card-overlay"><div class="card-eyebrow">${esc(p.cardEyebrow || "")}</div><h3>${esc(p.title)}</h3><p class="card-tagline">${esc(p.cardTagline || "")}</p></div></a>`
       )
       .join("");
 

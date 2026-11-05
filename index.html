@@ -33,17 +33,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
 
+    <link rel="stylesheet" href="/site.css">
     <style>
-        :root {
-            --apple-black: #211f20;
-            --apple-gray: #86868b;
-            --apple-light: #d2d2d7;
-            --apple-bg: #f5f5f7;
-            --apple-divider: #e5e5e7;
-            --apple-blue: #0066cc;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: auto; }
 
         body {
@@ -57,59 +48,9 @@
             letter-spacing: -0.01em;
         }
 
-        ::selection { background: var(--apple-black); color: #fff; }
-        img { max-width: 100%; display: block; }
-
         /* hide scrollbar (keep scroll functionality) */
         html { scrollbar-width: none; -ms-overflow-style: none; overscroll-behavior: none; }
         html::-webkit-scrollbar, body::-webkit-scrollbar { width: 0; height: 0; display: none; }
-
-        /* ===== NAV ===== */
-        .nav {
-            position: fixed; top: 0; width: 100%;
-            padding: clamp(12px, 3vw, 18px) clamp(20px, 5vw, 40px);
-            backdrop-filter: saturate(180%) blur(20px);
-            -webkit-backdrop-filter: saturate(180%) blur(20px);
-            background: rgba(255, 255, 255, 0.72);
-            border-bottom: 1px solid rgba(0,0,0,0.04);
-            z-index: 1100;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nav-title {
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            line-height: 1;
-        }
-        .nav-title img {
-            height: clamp(24px, 3.6vw, 34px);
-            width: auto;
-            display: block;
-            user-select: none;
-            -webkit-user-drag: none;
-        }
-        /* 데스크톱 가로 메뉴 (좁은 화면은 햄버거) */
-        .nav-links { display: none; gap: clamp(20px, 2.4vw, 32px); align-items: center; }
-        .nav-links a {
-            font-size: 0.9rem; color: #424245; text-decoration: none; letter-spacing: -0.01em;
-            padding: 6px 0; border-bottom: 1.5px solid transparent; transition: color 0.2s, border-color 0.2s;
-        }
-        .nav-links a:hover { color: var(--apple-black); }
-        .nav-links a.active { color: var(--apple-black); font-weight: 600; border-bottom-color: var(--apple-black); }
-        @media (min-width: 900px) {
-            .nav-links { display: flex; margin-left: auto; }
-            body .menu-btn { display: none; }   /* 뒤에 오는 .menu-btn 규칙보다 우선 */
-        }
-        /* 로고 파일이 없을 때 폴백 텍스트 */
-        .nav-title .fallback {
-            font-weight: 600;
-            font-size: clamp(0.95rem, 2vw, 1.05rem);
-            letter-spacing: -0.02em;
-        }
-
 
         .menu-btn {
             position: fixed;
@@ -237,15 +178,6 @@
 
         /* ===== SECTIONS ===== */
         .section { padding: clamp(44px, 8vw, 90px) clamp(20px, 5vw, 40px); max-width: 1200px; margin: auto; }
-        .section-eyebrow {
-            display: inline-block;
-            font-size: clamp(0.72rem, 1.6vw, 0.82rem);
-            font-weight: 600;
-            color: var(--apple-blue);
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            margin-bottom: clamp(14px, 3vw, 20px);
-        }
         .value-text { opacity: 0; transform: translateY(30px); word-break: keep-all; }
 
         /* ===== GRID ===== */
@@ -260,14 +192,13 @@
         }
 
         .card {
-            position: relative; overflow: hidden; border-radius: 24px;
-            background: var(--apple-bg); aspect-ratio: 16 / 11;
+            position: relative; display: block; overflow: hidden; border-radius: var(--radius-card);
+            background: var(--apple-bg); aspect-ratio: 16 / 11; color: inherit; text-decoration: none;
             cursor: pointer; opacity: 0; transform: translateY(50px);
             transition: box-shadow 0.4s ease;
         }
-        .card:hover { box-shadow: 0 20px 50px rgba(0,0,0,0.12); }
         .card img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s cubic-bezier(0.2, 0, 0.2, 1); }
-        .card:hover img { transform: scale(1.06); }
+        .card:hover img { transform: scale(1.04); }
         .card-overlay {
             position: absolute; inset: 0; padding: clamp(20px, 4vw, 40px);
             display: flex; flex-direction: column; justify-content: flex-end;
@@ -598,11 +529,11 @@
         /* ===== 홈: 더 둘러보기 (독립 페이지로 가는 입구) ===== */
         .explore { max-width: 1200px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 40px) clamp(64px, 10vw, 110px); }
         .explore-head { text-align: center; margin-bottom: clamp(28px, 5vw, 44px); }
-        .explore-head h2 { font-size: clamp(1.5rem, 4vw, 2.2rem); font-weight: 700; letter-spacing: -0.03em; word-break: keep-all; }
+        .explore-head h2 { font-size: clamp(1.5rem, 4vw, 2.4rem); font-weight: 700; letter-spacing: -0.03em; word-break: keep-all; }
         .explore-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 2vw, 24px); }
         @media (max-width: 860px) { .explore-grid { grid-template-columns: minmax(0, 1fr); } }
         .explore-tile {
-            position: relative; display: block; overflow: hidden; border-radius: 22px;
+            position: relative; display: block; overflow: hidden; border-radius: var(--radius-card);
             aspect-ratio: 4 / 5; color: #fff; text-decoration: none; background: #222;
             transition: box-shadow 0.4s ease, transform 0.4s ease;
         }
@@ -616,50 +547,6 @@
         .explore-tile p { margin-top: 6px; font-size: 0.92rem; opacity: 0.88; word-break: keep-all; }
         .explore-tile:hover img { transform: scale(1.04); }
         .explore-tile:hover h3::after { transform: translateX(3px); }
-
-        /* ===== FOOTER ===== */
-        .footer { padding: clamp(32px, 5vw, 54px) clamp(20px, 5vw, 40px) 34px; background: var(--apple-bg); color: var(--apple-gray); font-size: 0.9rem; }
-        .footer-grid {
-            max-width: 1200px; margin: 0 auto;
-            display: flex; flex-wrap: wrap; justify-content: space-between;
-            text-align: left; gap: 40px; padding-bottom: 30px;
-        }
-        .footer-grid h4,
-        .footer-grid .footer-brand {
-            min-height: clamp(24px, 2.6vw, 28px);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            color: var(--apple-black);
-        }
-        .footer-grid h4 {
-            font-weight: 600;
-            font-size: 0.95rem;
-            letter-spacing: -0.01em;
-        }
-        .footer-brand {
-            font-size: clamp(0.95rem, 2vw, 1.2rem);
-            line-height: 1.2;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            gap: 0.3em; /* flex gap → 단어 사이 간격 (display:flex 일 때 word-spacing 무시되므로 gap 사용). 0.3em = 일반 단어 간격, 404 페이지와 통일 */
-        }
-        .footer-brand .b-heavy { font-weight: 900; }
-        .footer-brand .b-reg   { font-weight: 400; }
-        .footer-brand .b-light { font-weight: 300; text-transform: none; }
-        .footer-grid p, .footer-grid li {
-            font-size: 0.85rem;
-            color: var(--apple-gray);
-            line-height: 1.6;
-            word-break: keep-all;
-        }
-        .footer-bottom {
-            border-top: 1px solid var(--apple-divider);
-            padding-top: 18px;
-            text-align: center;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
 
         .reveal { opacity: 0; transform: translateY(36px); }
 
@@ -690,11 +577,7 @@
         body.archive-open .archive-page,
         html.boot-archive .archive-page { display: block; }
         body.archive-open #home { visibility: hidden; }
-        .archive-inner { max-width: 1200px; margin: 0 auto; padding: clamp(96px, 12vw, 124px) clamp(16px, 4vw, 40px) clamp(56px, 8vw, 96px); }
-        .archive-head { margin-bottom: clamp(20px, 3vw, 28px); }
-        .archive-head h1 { font-size: clamp(1.8rem, 4.4vw, 2.8rem); font-weight: 700; letter-spacing: -0.035em; line-height: 1.2; word-break: keep-all; }
-        .archive-head p { margin-top: 8px; color: #424245; font-size: clamp(0.95rem, 1.8vw, 1.05rem); font-weight: 500; }
-
+        .archive-inner { max-width: 1200px; margin: 0 auto; padding: clamp(104px, 13vw, 136px) clamp(16px, 4vw, 40px) clamp(56px, 8vw, 96px); }   /* 위쪽은 독립 페이지와 같은 값 */
         /* 검색과 필터를 한 막대로, 스크롤해도 내비 바로 아래에 붙어 있음 */
         .archive-bar {
             position: sticky; top: 70px; z-index: 5;
@@ -756,35 +639,15 @@
         }
         @media (max-width: 960px) { .archive-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
         @media (max-width: 560px) { .archive-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; } }
-        .a-item { display: block; color: inherit; text-decoration: none; }
-        .a-thumb {
-            position: relative; aspect-ratio: 4 / 3; border-radius: 18px; overflow: hidden; background: var(--apple-bg);
-            transition: box-shadow 0.4s ease, transform 0.4s ease;
-        }
-        .a-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s cubic-bezier(0.2, 0, 0.2, 1), filter 0.4s ease; }
-        .a-badge {
-            position: absolute; top: 12px; left: 12px; z-index: 1;
-            padding: 4px 10px; border-radius: 980px;
-            background: rgba(255,255,255,0.88); color: var(--apple-black);
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            font-size: 0.75rem; font-weight: 600;
-        }
-        .a-item:hover .a-thumb img { transform: scale(1.04); }
-        .a-item:focus-visible { outline: none; }
-        .a-item:focus-visible .a-thumb { box-shadow: 0 0 0 3px var(--apple-blue); }
-        .a-meta { margin-top: 14px; font-size: 0.84rem; font-weight: 500; color: #6e6e73; font-variant-numeric: tabular-nums; }
-        .a-item h3 { margin-top: 3px; font-size: clamp(1.15rem, 2vw, 1.3rem); font-weight: 700; letter-spacing: -0.02em; transition: color 0.2s; }
-        .a-item:hover h3 { color: var(--apple-blue); }
-        .a-item p { margin-top: 4px; font-size: 0.93rem; color: #424245; line-height: 1.5; word-break: keep-all; }
-        @media (max-width: 560px) {
-            .a-thumb { aspect-ratio: 16 / 10; border-radius: 14px; }
-            .a-meta { margin-top: 10px; }
-        }
+        /* 카드는 홈과 같은 .card — 3열이라 비율과 글씨만 조금 작게 */
+        .archive-grid .card { opacity: 1; transform: none; aspect-ratio: 4 / 3; }
+        .archive-grid .card-overlay { padding: clamp(18px, 2.4vw, 26px); }
+        .archive-grid .card-overlay .card-eyebrow { margin-bottom: 10px; }
+        .archive-grid .card h3 { font-size: clamp(1.2rem, 2vw, 1.45rem); margin-bottom: 6px; }
+        .archive-grid .card-tagline { font-size: 0.92rem; }
         .archive-empty { color: var(--apple-gray); padding: 40px 0; text-align: center; }
 
         .bleed-credit { display: block; padding: 8px clamp(20px, 5vw, 40px) 0; font-size: 11px; color: #86868b; text-align: right; background: #fff; }
-        .footer-grid a { color: inherit; text-decoration: none; }
-        .footer-grid a:hover { color: var(--apple-black); }
 
         /* ?place=id 로 직접 진입 시 메인이 깜빡이지 않도록 덮는 가림막 */
         #boot-cover {
@@ -928,7 +791,7 @@
 <!-- ===== 전체 기록 (/heritage) ===== -->
 <section class="archive-page" id="archive" aria-label="전체 기록">
     <div class="archive-inner">
-        <header class="archive-head">
+        <header class="page-head">
             <span class="section-eyebrow">Archive</span>
             <h1>청주의 기록, 전체 보기</h1>
             <p id="archiveCount"></p>
@@ -1319,20 +1182,19 @@
                 .some(t => String(t || '').toLowerCase().includes(q));
         });
         document.getElementById('archiveGrid').innerHTML = list.map(p => `
-            <a class="a-item" href="/heritage/${encodeURIComponent(p.id)}" data-place="${esc(p.id)}">
-                <div class="a-thumb">
-                    <img src="${esc(p.img)}" alt="${esc(p.title)}" loading="lazy">
-                    ${p.category ? `<span class="a-badge">${esc(p.category)}</span>` : ''}
+            <a class="card" href="/heritage/${encodeURIComponent(p.id)}" data-place="${esc(p.id)}">
+                <img src="${esc(p.img)}" alt="${esc(p.title)}" loading="lazy">
+                <div class="card-overlay">
+                    <div class="card-eyebrow">${esc(p.cardEyebrow || '')}</div>
+                    <h3>${esc(p.title)}</h3>
+                    <p class="card-tagline">${esc(p.cardTagline || '')}</p>
                 </div>
-                <div class="a-meta">${[p.year && p.year + '년', eraOf(p.year)].filter(Boolean).map(esc).join(' | ')}</div>
-                <h3>${esc(p.title)}</h3>
-                <p>${esc(p.cardTagline || '')}</p>
             </a>`).join('');
         document.getElementById('archiveEmpty').hidden = list.length > 0;
-        gsap.fromTo('#archiveGrid .a-item', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, stagger: 0.04, ease: "power2.out" });
+        gsap.fromTo('#archiveGrid .card', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, stagger: 0.04, ease: "power2.out" });
         document.getElementById('archiveCount').textContent =
             list.length === PLACES_LIST.length ? `모두 ${PLACES_LIST.length}곳` : `${PLACES_LIST.length}곳 중 ${list.length}곳`;
-        document.querySelectorAll('#archiveGrid .a-item').forEach(a => a.addEventListener('click', (e) => {
+        document.querySelectorAll('#archiveGrid .card').forEach(a => a.addEventListener('click', (e) => {
             if (e.metaKey || e.ctrlKey || e.shiftKey) return;   // 새 탭으로 열기는 그대로 둠
             e.preventDefault();
             openPlace(a.dataset.place);

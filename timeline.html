@@ -16,16 +16,8 @@
 
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
 
+    <link rel="stylesheet" href="/site.css">
     <style>
-        :root {
-            --apple-black: #211f20;
-            --apple-gray: #86868b;
-            --apple-light: #d2d2d7;
-            --apple-bg: #f5f5f7;
-            --apple-divider: #e5e5e7;
-            --apple-blue: #0066cc;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
             background: #fff; color: var(--apple-black);
@@ -33,23 +25,7 @@
             letter-spacing: -0.01em; line-height: 1.6;
             min-height: 100vh; display: flex; flex-direction: column;
         }
-        ::selection { background: var(--apple-black); color: #fff; }
-        img { max-width: 100%; display: block; }
         a { color: inherit; }
-
-        /* ===== NAV ===== */
-        .nav {
-            position: fixed; top: 0; width: 100%;
-            padding: clamp(12px, 3vw, 18px) clamp(20px, 5vw, 40px);
-            backdrop-filter: saturate(180%) blur(20px);
-            -webkit-backdrop-filter: saturate(180%) blur(20px);
-            background: rgba(255, 255, 255, 0.72);
-            border-bottom: 1px solid rgba(0,0,0,0.04);
-            z-index: 1100; display: flex; align-items: center;
-        }
-        .nav-title { cursor: pointer; display: inline-flex; align-items: center; line-height: 1; text-decoration: none; }
-        .nav-title img { height: clamp(24px, 3.6vw, 34px); width: auto; display: block; }
-        .nav-title .fallback { font-weight: 600; font-size: clamp(0.95rem, 2vw, 1.05rem); letter-spacing: -0.02em; color: var(--apple-black); }
 
         /* ===== 햄버거 메뉴 (홈과 동일 톤, CSS 트랜지션) ===== */
         .menu-btn {
@@ -109,94 +85,13 @@
         }
         .menu-overlay.open { opacity: 1; visibility: visible; }
 
-        .footer-grid a { color: inherit; text-decoration: none; }
-        .footer-grid a:hover { color: var(--apple-black); }
-
-        /* 데스크톱 가로 메뉴 (좁은 화면은 햄버거) */
-        .nav-links { display: none; gap: clamp(20px, 2.4vw, 32px); align-items: center; }
-        .nav-links a {
-            font-size: 0.9rem; color: #424245; text-decoration: none; letter-spacing: -0.01em;
-            padding: 6px 0; border-bottom: 1.5px solid transparent; transition: color 0.2s, border-color 0.2s;
-        }
-        .nav-links a:hover { color: var(--apple-black); }
-        .nav-links a.active { color: var(--apple-black); font-weight: 600; border-bottom-color: var(--apple-black); }
-        @media (min-width: 900px) {
-            .nav-links { display: flex; margin-left: auto; }
-            body .menu-btn { display: none; }   /* 뒤에 오는 .menu-btn 규칙보다 우선 */
-        }
-
         /* ===== PAGE / CONTACT ===== */
         .page {
             flex: 1;
-            padding: clamp(110px, 18vw, 160px) clamp(20px, 5vw, 40px) clamp(60px, 10vw, 100px);
+            padding: clamp(104px, 13vw, 136px) clamp(20px, 5vw, 40px) clamp(60px, 10vw, 100px);   /* 위쪽은 site.css .page-pad와 같은 값 */
         }
         .contact-section { max-width: 720px; margin: 0 auto; }
-        .contact-head { text-align: center; margin-bottom: clamp(32px, 6vw, 48px); }
-        .section-eyebrow {
-            display: inline-block; font-size: clamp(0.72rem, 1.6vw, 0.82rem);
-            font-weight: 600; color: var(--apple-blue);
-            letter-spacing: 0.12em; text-transform: uppercase;
-            margin-bottom: clamp(14px, 3vw, 20px);
-        }
-        .contact-head h2 { font-size: clamp(1.6rem, 4.5vw, 2.6rem); font-weight: 700; letter-spacing: -0.03em; word-break: keep-all; }
-        .contact-head p { color: var(--apple-gray); margin-top: 14px; font-size: clamp(0.95rem, 2vw, 1.05rem); word-break: keep-all; }
 
-        .contact-form { display: flex; flex-direction: column; gap: 16px; position: relative; }
-        .contact-form .row { display: flex; gap: 16px; }
-        .contact-form .row > * { flex: 1; min-width: 0; }
-        .contact-form label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--apple-black); margin-bottom: 7px; letter-spacing: -0.01em; }
-        .contact-form input[type="text"],
-        .contact-form input[type="email"],
-        .contact-form textarea {
-            width: 100%; font-family: inherit; font-size: 0.98rem; color: var(--apple-black);
-            background: #fff; border: 1px solid var(--apple-light); border-radius: 10px;
-            padding: 13px 15px; transition: border-color 0.2s, box-shadow 0.2s; -webkit-appearance: none;
-        }
-        .contact-form input::placeholder, .contact-form textarea::placeholder { color: #b0b0b5; }
-        .contact-form input:focus, .contact-form textarea:focus { outline: none; border-color: var(--apple-blue); box-shadow: 0 0 0 3px rgba(0,102,204,0.12); }
-        .contact-form textarea { resize: vertical; min-height: 150px; line-height: 1.6; }
-        .contact-submit {
-            align-self: center; margin-top: 6px; border: none; cursor: pointer;
-            background: var(--apple-black); color: #fff; font-family: inherit;
-            font-size: 1rem; font-weight: 500; padding: 14px 42px; border-radius: 980px;
-            transition: transform 0.2s, background 0.3s, opacity 0.2s;
-        }
-        .contact-submit:hover { background: #000; transform: translateY(-1px); }
-        .contact-submit:disabled { opacity: 0.5; cursor: default; transform: none; }
-        .contact-hp { position: absolute; left: -9999px; top: 0; width: 1px; height: 1px; opacity: 0; overflow: hidden; }
-        .contact-status { text-align: center; margin-top: 8px; font-size: 0.95rem; min-height: 1.4em; word-break: keep-all; line-height: 1.5; }
-        .contact-status.ok  { color: #1a7f37; }
-        .contact-status.err { color: #c0362c; }
-        @media (max-width: 560px) { .contact-form .row { flex-direction: column; } }
-
-        /* ===== FOOTER ===== */
-        .footer { padding: clamp(50px, 8vw, 90px) clamp(20px, 5vw, 40px) 60px; background: var(--apple-bg); color: var(--apple-gray); font-size: 0.9rem; }
-        .footer-grid {
-            max-width: 1200px; margin: 0 auto;
-            display: flex; flex-wrap: wrap; justify-content: space-between;
-            text-align: left; gap: 40px; padding-bottom: 50px;
-        }
-        .footer-grid h4, .footer-grid .footer-brand {
-            min-height: clamp(26px, 3vw, 32px); margin-bottom: 18px;
-            display: flex; align-items: center; color: var(--apple-black);
-        }
-        .footer-grid h4 { font-weight: 600; font-size: 0.95rem; letter-spacing: -0.01em; }
-        .footer-brand {
-            font-size: clamp(0.95rem, 2vw, 1.2rem); line-height: 1.2;
-            letter-spacing: 0.04em; text-transform: uppercase; gap: 0.3em;
-        }
-        .footer-brand .b-heavy { font-weight: 900; }
-        .footer-brand .b-reg   { font-weight: 400; }
-        .footer-brand .b-light { font-weight: 300; text-transform: none; }
-        .footer-grid p, .footer-grid li { font-size: 0.85rem; color: var(--apple-gray); line-height: 1.8; word-break: keep-all; }
-        .footer-bottom {
-            border-top: 1px solid var(--apple-divider); padding-top: 26px;
-            max-width: 1200px; margin: 0 auto;
-            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
-        }
-        .footer-bottom p { font-size: 0.75rem; color: #a1a1a6; }
-        .footer-bottom a { font-size: 0.72rem; color: #a1a1a6; text-decoration: none; letter-spacing: 0.06em; transition: color 0.3s; }
-        .footer-bottom a:hover { color: var(--apple-black); }
 
         /* ===== TIMELINE PAGE ===== */
         .tl-page { max-width: 880px; margin: 0 auto; }
@@ -262,9 +157,9 @@
 
 <main class="page">
     <section class="tl-page">
-        <div class="contact-head">
+        <div class="page-head">
             <span class="section-eyebrow">A Thousand Years in One City</span>
-            <h2>하나의 도시가 걸어온 천 년의 시간</h2>
+            <h1>하나의 도시가 걸어온 천 년의 시간</h1>
             <p>고려에서 시작된 시간이 조선과 근대를 지나, 지금 우리의 발 밑에 닿아 있습니다.</p>
         </div>
         <div id="tlBox"></div>
@@ -283,7 +178,7 @@
         <div style="flex: 1; min-width: 200px;">
             <h4>Contributors</h4>
             <p style="font-weight: 500; color: var(--apple-black);">제작 | 청석고등학교</p>
-            <p>문의 | <a href="mailto:info.cjarchive@gmail.com" style="color: inherit; text-decoration: none;">info.cjarchive@gmail.com</a></p>
+            <p>문의 | <a href="/contact">문의하기</a>, <a href="mailto:info.cjarchive@gmail.com">info.cjarchive@gmail.com</a></p>
         </div>
         <div style="flex: 1; min-width: 180px;">
             <h4>Information</h4>

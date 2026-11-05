@@ -1,0 +1,89 @@
+/* Cheongju Archive 공통 스타일 — 홈(index.html)과 모든 독립 페이지가 함께 씀.
+   페이지마다 다르게 보이면 안 되는 것(색, 내비, 페이지 제목, 푸터)만 여기 둔다. */
+:root {
+    --apple-black: #211f20;
+    --apple-gray: #86868b;
+    --apple-light: #d2d2d7;
+    --apple-bg: #f5f5f7;
+    --apple-divider: #e5e5e7;
+    --apple-blue: #0066cc;
+    --radius-card: 20px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+::selection { background: var(--apple-black); color: #fff; }
+img { max-width: 100%; display: block; }
+
+/* ===== NAV ===== */
+.nav {
+    position: fixed; top: 0; width: 100%;
+    padding: clamp(12px, 3vw, 18px) clamp(20px, 5vw, 40px);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    background: rgba(255, 255, 255, 0.72);
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    z-index: 1100; display: flex; align-items: center;
+}
+.nav-title { cursor: pointer; display: inline-flex; align-items: center; line-height: 1; text-decoration: none; }
+.nav-title img { height: clamp(24px, 3.6vw, 34px); width: auto; display: block; user-select: none; -webkit-user-drag: none; }
+/* 로고 파일이 없을 때 폴백 텍스트 */
+.nav-title .fallback { font-weight: 600; font-size: clamp(0.95rem, 2vw, 1.05rem); letter-spacing: -0.02em; color: var(--apple-black); }
+/* 데스크톱 가로 메뉴 (좁은 화면은 햄버거) */
+.nav-links { display: none; gap: clamp(20px, 2.4vw, 32px); align-items: center; }
+.nav-links a {
+    font-size: 0.9rem; color: #424245; text-decoration: none; letter-spacing: -0.01em;
+    padding: 6px 0; border-bottom: 1.5px solid transparent; transition: color 0.2s, border-color 0.2s;
+}
+.nav-links a:hover { color: var(--apple-black); }
+.nav-links a.active { color: var(--apple-black); font-weight: 600; border-bottom-color: var(--apple-black); }
+@media (min-width: 900px) {
+    .nav-links { display: flex; margin-left: auto; }
+    body .menu-btn { display: none; }   /* 페이지별 .menu-btn 규칙보다 우선 */
+}
+
+/* ===== 페이지 제목 (전체 기록, 연표, 소개, 출처, 문의 공통) ===== */
+.section-eyebrow {
+    display: inline-block;
+    font-size: clamp(0.72rem, 1.6vw, 0.82rem);
+    font-weight: 600; color: var(--apple-blue);
+    letter-spacing: 0.12em; text-transform: uppercase;
+    margin-bottom: clamp(14px, 3vw, 20px);
+}
+.page-head { text-align: center; margin-bottom: clamp(32px, 6vw, 48px); }
+.page-head h1 { font-size: clamp(1.8rem, 4.4vw, 2.8rem); font-weight: 700; letter-spacing: -0.035em; line-height: 1.25; word-break: keep-all; }
+.page-head p { color: var(--apple-gray); margin: 14px auto 0; max-width: 640px; font-size: clamp(0.95rem, 2vw, 1.05rem); line-height: 1.7; word-break: keep-all; }
+.page-pad { padding-top: clamp(104px, 13vw, 136px); }
+
+/* ===== FOOTER ===== */
+.footer { padding: clamp(32px, 5vw, 54px) clamp(20px, 5vw, 40px) 34px; background: var(--apple-bg); color: var(--apple-gray); font-size: 0.9rem; }
+.footer-grid {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; flex-wrap: wrap; justify-content: space-between;
+    text-align: left; gap: 40px; padding-bottom: 30px;
+}
+.footer-grid h4,
+.footer-grid .footer-brand {
+    min-height: clamp(24px, 2.6vw, 28px);
+    margin-bottom: 12px;
+    display: flex; align-items: center;
+    color: var(--apple-black);
+}
+.footer-grid h4 { font-weight: 600; font-size: 0.95rem; letter-spacing: -0.01em; }
+.footer-brand {
+    font-size: clamp(0.95rem, 2vw, 1.2rem); line-height: 1.2;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    gap: 0.3em; /* flex gap → 단어 사이 간격 (display:flex 일 때 word-spacing 무시되므로 gap 사용) */
+}
+.footer-brand .b-heavy { font-weight: 900; }
+.footer-brand .b-reg   { font-weight: 400; }
+.footer-brand .b-light { font-weight: 300; text-transform: none; }
+.footer-grid p, .footer-grid li { font-size: 0.85rem; color: var(--apple-gray); line-height: 1.6; word-break: keep-all; }
+.footer-grid a { color: inherit; text-decoration: none; }
+.footer-grid a:hover { color: var(--apple-black); }
+.footer-bottom {
+    border-top: 1px solid var(--apple-divider); padding-top: 18px;
+    max-width: 1200px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+}
+.footer-bottom p { font-size: 0.75rem; color: #a1a1a6; }
+.footer-bottom a { font-size: 0.72rem; color: #a1a1a6; text-decoration: none; letter-spacing: 0.06em; transition: color 0.3s; }
+.footer-bottom a:hover { color: var(--apple-black); }
