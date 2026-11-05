@@ -138,7 +138,7 @@
         .hero { height: 100vh; height: 100svh; position: relative; background: #000; }
         .video-wrap {
             position: relative; width: 100%; height: 100%; overflow: hidden;
-            display: flex; justify-content: center;
+            display: flex; align-items: center; justify-content: center;
         }
         .hero video {
             position: absolute; inset: 0; width: 100%; height: 100%;
@@ -148,7 +148,7 @@
         .video-wrap::after { content: ''; position: absolute; inset: 0; background: var(--overlay); z-index: 1; }
         .hero-content {
             position: relative; z-index: 10; width: 100%;
-            padding: 30vh 20px 0;   /* 화면 위 1/3 쯤 */
+            padding: 0 20px;
             text-align: center; color: #fff;
             text-shadow: 0 2px 24px rgba(0,0,0,0.35);
         }
@@ -184,11 +184,9 @@
             border-radius: var(--radius-card); background: var(--c-bg-subtle);
             aspect-ratio: 16 / 10; color: #fff; text-decoration: none;
             cursor: pointer; opacity: 0; transform: translateY(50px);
-            /* 호버 확대는 scale 속성으로 — GSAP가 쓰는 transform과 겹치지 않게 */
-            transition: scale var(--ease), box-shadow var(--ease);
         }
-        .card:hover { scale: 1.02; box-shadow: 0 12px 32px rgba(0,0,0,0.10); }
-        .card img { width: 100%; height: 100%; object-fit: cover; }
+        .card img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s cubic-bezier(0.2, 0, 0.2, 1); }
+        .card:hover img { transform: scale(1.04); }
         .card-overlay {
             position: absolute; inset: 0; padding: var(--pad-card);
             display: flex; flex-direction: column; justify-content: flex-end;
