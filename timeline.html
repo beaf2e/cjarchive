@@ -178,15 +178,17 @@
         </div>
         <div style="flex: 1; min-width: 200px;">
             <h4>Contributors</h4>
-            <p style="font-weight: 500; color: var(--apple-black);">제작 | 청석고등학교</p>
-            <p>문의 | <a href="/contact">문의하기</a>, <a href="mailto:info.cjarchive@gmail.com">info.cjarchive@gmail.com</a></p>
+            <dl class="footer-dl">
+                <dt>제작</dt><dd>청석고등학교</dd>
+                <dt>문의</dt><dd><a href="/contact">info.cjarchive@gmail.com</a></dd>
+            </dl>
         </div>
         <div style="flex: 1; min-width: 180px;">
             <h4>Information</h4>
-            <ul style="list-style: none;">
-                <li id="lastUpdated">Last Updated | ...</li>
-                <li>출처 | <a href="/sources">자료와 사진 출처 모아 보기</a></li>
-            </ul>
+            <dl class="footer-dl">
+                <dt>업데이트</dt><dd id="lastUpdated">2026</dd>
+                <dt>출처</dt><dd><a href="/sources">자료와 사진 출처 모아 보기</a></dd>
+            </dl>
         </div>
     </div>
     <div class="footer-bottom">
@@ -265,9 +267,9 @@
             var d = new Date(commits[0].commit.author.date);
             var mm = String(d.getMonth() + 1).padStart(2, '0');
             var dd = String(d.getDate()).padStart(2, '0');
-            el.textContent = 'Last Updated | ' + d.getFullYear() + '. ' + mm + '. ' + dd;
+            el.textContent = d.getFullYear() + '. ' + mm + '. ' + dd;
         } catch (e) {
-            el.textContent = 'Last Updated | 2026';
+            el.textContent = '2026';
         }
     })();
 </script>
