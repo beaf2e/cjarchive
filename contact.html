@@ -131,7 +131,7 @@
             flex: 1;
             padding: clamp(110px, 18vw, 160px) clamp(20px, 5vw, 40px) clamp(60px, 10vw, 100px);
         }
-        .contact-section { max-width: 720px; margin: 0 auto; }
+        .contact-section { max-width: 600px; margin: 0 auto; }
         .contact-head { text-align: center; margin-bottom: clamp(32px, 6vw, 48px); }
         .section-eyebrow {
             display: inline-block; font-size: clamp(0.72rem, 1.6vw, 0.82rem);
@@ -162,12 +162,15 @@
             font-size: 1rem; font-weight: 500; padding: 14px 42px; border-radius: 980px;
             transition: transform 0.2s, background 0.3s, opacity 0.2s;
         }
-        .contact-submit:hover { background: #000; transform: translateY(-1px); }
+        .contact-submit:hover { background: #000; }
         .contact-submit:disabled { opacity: 0.5; cursor: default; transform: none; }
         .contact-hp { position: absolute; left: -9999px; top: 0; width: 1px; height: 1px; opacity: 0; overflow: hidden; }
         .contact-status { text-align: center; margin-top: 8px; font-size: 0.95rem; min-height: 1.4em; word-break: keep-all; line-height: 1.5; }
         .contact-status.ok  { color: #1a7f37; }
         .contact-status.err { color: #c0362c; }
+        .contact-alt { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--apple-divider); text-align: center; font-size: 0.9rem; color: var(--apple-gray); }
+        .contact-alt a { color: var(--apple-blue); text-decoration: none; margin-left: 6px; }
+        .contact-alt a:hover { text-decoration: underline; }
         @media (max-width: 560px) { .contact-form .row { flex-direction: column; } }
 
         /* ===== FOOTER ===== */
@@ -266,6 +269,7 @@
             <button type="submit" class="contact-submit" id="cfSubmit">보내기</button>
             <p class="contact-status" id="cfStatus" role="status" aria-live="polite"></p>
         </form>
+        <p class="contact-alt">또는 메일로 직접 보내기 <a href="mailto:info.cjarchive@gmail.com">info.cjarchive@gmail.com</a></p>
     </section>
 </main>
 

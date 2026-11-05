@@ -725,13 +725,16 @@
         .chip-row .chip-label { font-size: 0.78rem; font-weight: 600; color: var(--apple-gray); margin-right: 4px; white-space: nowrap; }
         .chip {
             flex-shrink: 0; white-space: nowrap;
-            border: 1px solid var(--apple-divider); background: #fff; color: #424245;
+            border: 1px solid transparent; background: var(--apple-bg); color: #424245;
             padding: 7px 14px; border-radius: 980px; font: inherit; font-size: 0.85rem;
             cursor: pointer; transition: background 0.2s, border-color 0.2s, color 0.2s;
         }
-        .chip:hover { border-color: #b0b0b5; color: var(--apple-black); }
+        .chip:hover { background: #e8e8ed; color: var(--apple-black); }
         .chip:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(0,102,204,0.25); }
         .chip.on { background: var(--apple-black); border-color: var(--apple-black); color: #fff; }
+        @media (min-width: 769px) {
+            #catChips { padding-left: 20px; border-left: 1px solid var(--apple-divider); }   /* 시대와 분류 묶음 구분 */
+        }
         @media (max-width: 768px) {
             .chip { padding: 9px 16px; }
             .archive-bar { position: static; gap: 10px; background: #fff; }   /* 좁은 화면에선 고정하면 너무 많이 가려서 풂 */
