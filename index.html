@@ -214,6 +214,7 @@
             font-size: clamp(2rem, 8vw, 5.4rem);
             font-weight: 700;
             letter-spacing: -0.04em;
+            word-break: keep-all;   /* 좁은 폰에서 단어 중간에서 끊기지 않게 */
             margin-bottom: 18px; opacity: 0;
             line-height: 1.12;
         }
@@ -583,7 +584,7 @@
             cursor: pointer; transition: background 0.3s, transform 0.3s;
             min-width: 0;
         }
-        .next-link:hover { background: #ebebef; transform: translateY(-2px); }
+        .next-link:hover { background: #ebebef; }
         .next-link.next { flex-direction: row-reverse; text-align: right; }
         .next-link img { width: clamp(64px, 9vw, 96px); aspect-ratio: 1; object-fit: cover; border-radius: 12px; flex-shrink: 0; }
         .next-link .meta { font-size: 0.78rem; font-weight: 600; color: var(--apple-gray); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
@@ -611,11 +612,10 @@
         .explore-tile .txt { position: absolute; left: 0; right: 0; bottom: 0; padding: clamp(20px, 3vw, 28px); z-index: 1; }
         .explore-tile .eyebrow { font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.85; }
         .explore-tile h3 { margin-top: 8px; font-size: clamp(1.3rem, 2.6vw, 1.7rem); font-weight: 700; letter-spacing: -0.02em; }
-        .explore-tile h3::after { content: " →"; display: inline-block; transition: transform 0.3s; }
+        .explore-tile h3::after { content: "\00a0›"; display: inline-block; font-weight: 400; transition: transform 0.3s; }
         .explore-tile p { margin-top: 6px; font-size: 0.92rem; opacity: 0.88; word-break: keep-all; }
-        .explore-tile:hover { box-shadow: 0 20px 50px rgba(0,0,0,0.16); transform: translateY(-3px); }
-        .explore-tile:hover img { transform: scale(1.06); }
-        .explore-tile:hover h3::after { transform: translateX(4px); }
+        .explore-tile:hover img { transform: scale(1.04); }
+        .explore-tile:hover h3::after { transform: translateX(3px); }
 
         /* ===== FOOTER ===== */
         .footer { padding: clamp(32px, 5vw, 54px) clamp(20px, 5vw, 40px) 34px; background: var(--apple-bg); color: var(--apple-gray); font-size: 0.9rem; }
@@ -672,7 +672,7 @@
             font-size: 0.95rem; font-weight: 600; letter-spacing: -0.01em;
             transition: transform 0.3s ease, background 0.3s ease;
         }
-        .more-btn:hover { background: #000; transform: translateY(-2px); }
+        .more-btn:hover { background: #000; }
         .more-btn .count { font-weight: 400; opacity: 0.6; }
 
         /* ===== 전체 기록 (/heritage) — 홈 위에 겹치는 목록 화면, 상세보다는 아래 ===== */
@@ -733,6 +733,7 @@
         .chip:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(0,102,204,0.25); }
         .chip.on { background: var(--apple-black); border-color: var(--apple-black); color: #fff; }
         @media (max-width: 768px) {
+            .chip { padding: 9px 16px; }
             .archive-bar { position: static; gap: 10px; background: #fff; }   /* 좁은 화면에선 고정하면 너무 많이 가려서 풂 */
             .search-box { flex-basis: 100%; max-width: none; }
             /* 필터는 줄바꿈 대신 옆으로 밀어서 봄 */
@@ -757,11 +758,6 @@
             position: relative; aspect-ratio: 4 / 3; border-radius: 18px; overflow: hidden; background: var(--apple-bg);
             transition: box-shadow 0.4s ease, transform 0.4s ease;
         }
-        .a-thumb::after {
-            content: ''; position: absolute; inset: 0;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.22), transparent 38%);
-            pointer-events: none;
-        }
         .a-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s cubic-bezier(0.2, 0, 0.2, 1), filter 0.4s ease; }
         .a-badge {
             position: absolute; top: 12px; left: 12px; z-index: 1;
@@ -770,8 +766,7 @@
             backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
             font-size: 0.75rem; font-weight: 600;
         }
-        .a-item:hover .a-thumb { box-shadow: 0 18px 40px rgba(0,0,0,0.14); transform: translateY(-3px); }
-        .a-item:hover .a-thumb img { transform: scale(1.05); filter: brightness(1.04); }
+        .a-item:hover .a-thumb img { transform: scale(1.04); }
         .a-item:focus-visible { outline: none; }
         .a-item:focus-visible .a-thumb { box-shadow: 0 0 0 3px var(--apple-blue); }
         .a-meta { margin-top: 14px; font-size: 0.84rem; font-weight: 500; color: #6e6e73; font-variant-numeric: tabular-nums; }
@@ -921,7 +916,7 @@
     </div>
     <div class="footer-bottom" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
         <p style="font-size: 0.75rem; color: #a1a1a6;">&copy; 2026 CHEONGJU ARCHIVE Project. All rights reserved.</p>
-        <a href="/admin/" style="font-size: 0.72rem; color: #a1a1a6; text-decoration: none; letter-spacing: 0.06em; transition: color 0.3s;" onmouseover="this.style.color='var(--apple-black)'" onmouseout="this.style.color='#a1a1a6'">관리 →</a>
+        <a href="/admin/" style="font-size: 0.72rem; color: #a1a1a6; text-decoration: none; letter-spacing: 0.06em; transition: color 0.3s;" onmouseover="this.style.color='var(--apple-black)'" onmouseout="this.style.color='#a1a1a6'">관리 ›</a>
     </div>
 </footer>
 
