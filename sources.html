@@ -273,7 +273,7 @@
 
         <div class="src-block">
             <h3>사진과 영상</h3>
-            <p>출처가 따로 적히지 않은 사진과 영상은 Cheongju Archive가 직접 촬영했거나, 출처를 확인해 차례로 표기하고 있습니다.</p>
+            <p>드론 영상은 모두 Cheongju Archive가 직접 촬영했습니다. 출처가 따로 적히지 않은 사진은 직접 촬영했거나, 출처를 확인해 차례로 표기하고 있습니다.</p>
             <div id="mediaList"></div>
         </div>
     </section>
@@ -330,11 +330,13 @@
     // 장소별 사진, 영상과 출처 — places.json에서 자동으로 모음
     (async function renderSources() {
         var box = document.getElementById('mediaList');
+        var OWN = 'Cheongju Archive 직접 촬영';
         var esc = function (v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); };
         try {
             var data = await (await fetch('/places.json', { cache: 'no-cache' })).json();
             var places = (data.places || []).slice().sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
-            box.innerHTML = places.map(function (p) {
+            var common = '<div class="place-src"><h4>메인 화면, 소개</h4><div class="media-grid"><figure><div class="thumb"><img src="drone-poster.jpg" alt="" loading="lazy"></div><figcaption>드론 영상<br><b>출처: ' + OWN + '</b></figcaption></figure></div></div>';
+            box.innerHTML = common + places.map(function (p) {
                 var items = [], seen = {};
                 function add(src, kind, credit) {
                     if (!src) return;
@@ -343,14 +345,14 @@
                     items.push(seen[src]);
                 }
                 add(p.img, '대표 사진', p.imgCredit);
-                if (p.heroVideo) add(p.heroVideo, '영상', p.heroVideoCredit);
+                if (p.heroVideo) add(p.heroVideo, '드론 영상', p.heroVideoCredit || OWN);   // 드론 영상은 모두 직접 촬영
                 (p.features || []).forEach(function (f) { add(f.img, '사진', f.credit); });
                 var tn = p.thenNow || {};
                 add(tn.then, '옛 사진', tn.thenCredit);
                 add(tn.now, '현재 사진', tn.nowCredit);
                 return '<div class="place-src"><h4><a href="/heritage/' + encodeURIComponent(p.id) + '">' + esc(p.title) + '</a></h4><div class="media-grid">' +
                     items.map(function (m) {
-                        var thumb = m.kind === '영상' ? m.src.replace(/\.mp4$/i, '') + '-poster.jpg' : m.src;
+                        var thumb = /영상$/.test(m.kind) ? m.src.replace(/\.mp4$/i, '') + '-poster.jpg' : m.src;
                         return '<figure><div class="thumb"><img src="' + esc(thumb) + '" alt="" loading="lazy"></div><figcaption>' + esc(m.kind) +
                             (m.credit ? '<br><b>출처: ' + esc(m.credit) + '</b>' : '') + '</figcaption></figure>';
                     }).join('') + '</div></div>';
