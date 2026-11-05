@@ -30,7 +30,7 @@
     --radius-input: 12px;
     --h-btn: 44px;
     --h-chip: 36px;
-    --h-nav: 52px;
+    --h-nav: 70px;   /* 데스크톱 내비 실제 높이 (위아래 18px + 로고 34px) */
     --ease: 0.2s ease;
 
     /* 예전 이름 (기존 CSS 호환) */
@@ -48,8 +48,7 @@ img { max-width: 100%; display: block; }
 /* ===== NAV ===== */
 .nav {
     position: fixed; top: 0; width: 100%;
-    height: var(--h-nav);
-    padding: 0 clamp(20px, 5vw, 40px);
+    padding: clamp(12px, 3vw, 18px) clamp(20px, 5vw, 40px);
     backdrop-filter: saturate(180%) blur(20px);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
     background: rgba(255, 255, 255, 0.72);
@@ -57,14 +56,14 @@ img { max-width: 100%; display: block; }
     z-index: 1100; display: flex; align-items: center;
 }
 .nav-title { cursor: pointer; display: inline-flex; align-items: center; line-height: 1; text-decoration: none; }
-.nav-title img { height: 26px; width: auto; display: block; user-select: none; -webkit-user-drag: none; }
+.nav-title img { height: clamp(24px, 3.6vw, 34px); width: auto; display: block; user-select: none; -webkit-user-drag: none; }
 /* 로고 파일이 없을 때 폴백 텍스트 */
 .nav-title .fallback { font-weight: 600; font-size: clamp(0.95rem, 2vw, 1.05rem); letter-spacing: -0.02em; color: var(--apple-black); }
 /* 데스크톱 가로 메뉴 (좁은 화면은 햄버거) */
-.nav-links { display: none; gap: clamp(28px, 3vw, 44px); align-items: center; height: 100%; }
+.nav-links { display: none; gap: clamp(20px, 2.4vw, 32px); align-items: center; }
 .nav-links a {
-    font-size: 0.8125rem; color: var(--c-text-2); text-decoration: none; letter-spacing: -0.01em;
-    padding: 4px 0; border-bottom: 1px solid transparent; transition: color var(--ease), border-color var(--ease);
+    font-size: 0.9rem; color: var(--c-text-2); text-decoration: none; letter-spacing: -0.01em;
+    padding: 6px 0; border-bottom: 1.5px solid transparent; transition: color var(--ease), border-color var(--ease);
 }
 .nav-links a:hover { color: var(--apple-black); }
 .nav-links a.active { color: var(--c-text); font-weight: 600; border-bottom-color: var(--c-text); }

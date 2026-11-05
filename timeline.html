@@ -30,7 +30,7 @@
         /* ===== 햄버거 메뉴 (홈과 동일 톤, CSS 트랜지션) ===== */
         .menu-btn {
             position: fixed;
-            top: calc((var(--h-nav) - 36px) / 2);
+            top: calc(clamp(12px, 3vw, 18px) + clamp(24px, 3.6vw, 34px) / 2 - 18px);
             right: clamp(20px, 5vw, 40px);
             cursor: pointer; border: none; outline: none;
             -webkit-tap-highlight-color: transparent;
@@ -88,7 +88,7 @@
         /* ===== PAGE / CONTACT ===== */
         .page {
             flex: 1;
-            padding: clamp(96px, 12vw, 120px) clamp(20px, 5vw, 40px) var(--space-section);   /* 위쪽은 홈의 전체 기록 화면과 같은 값 */
+            padding: clamp(104px, 13vw, 136px) clamp(20px, 5vw, 40px) var(--space-section);   /* 위쪽은 홈의 전체 기록 화면과 같은 값 */
         }
         .contact-section { max-width: 720px; margin: 0 auto; }
 
