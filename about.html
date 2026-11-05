@@ -30,7 +30,7 @@
         /* ===== 햄버거 메뉴 (홈과 동일 톤, CSS 트랜지션) ===== */
         .menu-btn {
             position: fixed;
-            top: calc(clamp(12px, 3vw, 18px) + clamp(24px, 3.6vw, 34px) / 2 - 18px);
+            top: calc((var(--h-nav) - 36px) / 2);
             right: clamp(20px, 5vw, 40px);
             cursor: pointer; border: none; outline: none;
             -webkit-tap-highlight-color: transparent;
@@ -88,7 +88,7 @@
         /* ===== PAGE / CONTACT ===== */
         .page {
             flex: 1;
-            padding: clamp(104px, 13vw, 136px) clamp(20px, 5vw, 40px) clamp(60px, 10vw, 100px);   /* 위쪽은 site.css .page-pad와 같은 값 */
+            padding: clamp(96px, 12vw, 120px) clamp(20px, 5vw, 40px) var(--space-section);   /* 위쪽은 홈의 전체 기록 화면과 같은 값 */
         }
         .contact-section { max-width: 720px; margin: 0 auto; }
 
@@ -108,13 +108,8 @@
         .about-steps div { background: var(--apple-bg); border-radius: var(--radius-card); padding: clamp(20px, 3vw, 28px); }
         .about-steps .n { font-size: 0.78rem; font-weight: 700; color: var(--apple-blue); letter-spacing: 0.12em; }
         .about-steps h4 { margin-top: 10px; font-size: 1.1rem; font-weight: 700; letter-spacing: -0.02em; }
-        .about-steps p { margin-top: 6px; font-size: 0.93rem; color: #424245; line-height: 1.6; word-break: keep-all; }
+        .about-steps p { margin-top: 6px; font-size: 0.9375rem; color: var(--c-text-2); line-height: 1.5; word-break: keep-all; }
         .about-cta { margin-top: clamp(48px, 8vw, 80px); text-align: center; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-        .about-cta a { padding: 13px 24px; border-radius: 980px; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: 0.3s; }
-        .about-cta .primary { background: var(--apple-black); color: #fff; }
-        .about-cta .primary:hover { background: #000; }
-        .about-cta .ghost { color: var(--apple-black); border: 1px solid var(--apple-light); }
-        .about-cta .ghost:hover { border-color: var(--apple-black); }
         @media (max-width: 700px) {
             .about-steps { grid-template-columns: minmax(0, 1fr); }
             .about-figure { aspect-ratio: 16 / 10; }
@@ -189,12 +184,12 @@
 
         <div class="about-block">
             <h3>만드는 사람들</h3>
-            <p style="color:#424245; line-height:1.75; word-break:keep-all;">청석고등학교 학생이 주도해 만드는 디지털 아카이빙 프로젝트입니다. 청주의 유구한 역사적 가치를 기록하고 보존해 미래 세대에게 전합니다.</p>
+            <p style="color: var(--c-text-2); font-size: var(--fs-body); line-height: 1.47; word-break: keep-all;">청석고등학교 학생이 주도해 만드는 디지털 아카이빙 프로젝트입니다. 청주의 유구한 역사적 가치를 기록하고 보존해 미래 세대에게 전합니다.</p>
         </div>
 
         <div class="about-cta">
-            <a class="primary" href="/heritage">전체 기록 보기</a>
-            <a class="ghost" href="/contact">문의하기</a>
+            <a class="btn-primary" href="/heritage">전체 기록 보기</a>
+            <a class="btn-secondary" href="/contact">문의하기</a>
         </div>
     </section>
 </main>

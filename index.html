@@ -54,7 +54,7 @@
 
         .menu-btn {
             position: fixed;
-            top: calc(clamp(12px, 3vw, 18px) + clamp(24px, 3.6vw, 34px) / 2 - 18px);
+            top: calc((var(--h-nav) - 36px) / 2);
             right: clamp(20px, 5vw, 40px);
             cursor: pointer;
             border: none;
@@ -135,86 +135,77 @@
         }
 
         /* ===== HERO ===== */
-        .hero { height: 170vh; position: relative; background: #000; }
+        .hero { height: 100vh; height: 100svh; position: relative; background: #000; }
         .video-wrap {
-            position: sticky; top: 0;
-            width: 100%; height: 100vh;
-            overflow: hidden;
-            display: flex; align-items: center; justify-content: center;
+            position: relative; width: 100%; height: 100%; overflow: hidden;
+            display: flex; justify-content: center;
         }
         .hero video {
-            position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%;
-            object-fit: cover; filter: brightness(0.55);
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            object-fit: cover; filter: brightness(0.72);
         }
+        /* 사진이 밝아도 글씨가 읽히도록 위아래를 어둡게 */
+        .video-wrap::after { content: ''; position: absolute; inset: 0; background: var(--overlay); z-index: 1; }
         .hero-content {
-            position: relative; text-align: center; color: white;
-            z-index: 10; width: 100%; padding: 0 20px;
+            position: relative; z-index: 10; width: 100%;
+            padding: 30vh 20px 0;   /* 화면 위 1/3 쯤 */
+            text-align: center; color: #fff;
+            text-shadow: 0 2px 24px rgba(0,0,0,0.35);
         }
         .hero-content h1 {
-            font-size: clamp(2rem, 8vw, 5.4rem);
-            font-weight: 700;
-            letter-spacing: -0.04em;
+            font-size: var(--fs-hero); font-weight: 700;
+            letter-spacing: -0.025em; line-height: 1.15;
             word-break: keep-all;   /* 좁은 폰에서 단어 중간에서 끊기지 않게 */
-            margin-bottom: 18px; opacity: 0;
-            line-height: 1.12;
+            margin-bottom: 16px; opacity: 0;
         }
         .hero-content p {
-            font-size: clamp(0.95rem, 2.4vw, 1.4rem);
-            font-weight: 300;
-            letter-spacing: 0.06em;
-            opacity: 0;
+            font-size: clamp(0.95rem, 1.4vw, 1.125rem); font-weight: 400;
+            color: rgba(255,255,255,0.88); letter-spacing: -0.01em; opacity: 0;
         }
-
         .scroll-guide {
-            position: absolute; bottom: clamp(24px, 5vw, 44px); left: 50%;
-            transform: translateX(-50%); color: white;
-            text-align: center; z-index: 15; opacity: 0;
+            position: absolute; bottom: clamp(20px, 4vw, 36px); left: 50%;
+            transform: translateX(-50%); z-index: 15; opacity: 0;
         }
-        .scroll-guide p { font-size: 0.7rem; letter-spacing: 0.18em; margin-bottom: 10px; text-transform: uppercase; }
-        .mouse { width: 22px; height: 34px; border: 1.5px solid rgba(255,255,255,0.85); border-radius: 12px; margin: 0 auto; position: relative; }
-        .wheel { width: 3px; height: 6px; background: white; border-radius: 2px; position: absolute; top: 5px; left: 50%; transform: translateX(-50%); animation: scroll-ani 1.6s infinite; }
-        @keyframes scroll-ani { 0% { top: 5px; opacity: 1; } 100% { top: 18px; opacity: 0; } }
+        .scroll-guide svg { width: 22px; height: 22px; stroke: rgba(255,255,255,0.8); fill: none; stroke-width: 1.6; animation: scroll-nudge 2s ease-in-out infinite; display: block; }
+        @keyframes scroll-nudge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
 
         /* ===== SECTIONS ===== */
-        .section { padding: clamp(44px, 8vw, 90px) clamp(20px, 5vw, 40px); max-width: 1200px; margin: auto; }
+        .section { padding: var(--space-section) clamp(20px, 5vw, 40px); max-width: 1200px; margin: auto; }
+        .section-head { text-align: center; max-width: 760px; margin: 0 auto clamp(32px, 5vw, 56px); }
         .value-text { opacity: 0; transform: translateY(30px); word-break: keep-all; }
 
         /* ===== GRID ===== */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: clamp(36px, 6vw, 72px) clamp(28px, 5vw, 56px);
-        }
-        @media (max-width: 768px) {
-            .grid { grid-template-columns: 1fr; gap: clamp(28px, 6vw, 48px); }
-            .hero { height: 150vh; }
-        }
+        .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap-card); }
+        @media (max-width: 768px) { .grid { grid-template-columns: minmax(0, 1fr); } }
 
+        /* ===== 카드 (홈 대표 장소, 더 둘러보기, 전체 기록이 모두 같은 카드) ===== */
         .card {
-            position: relative; display: block; overflow: hidden; border-radius: var(--radius-card);
-            background: var(--apple-bg); aspect-ratio: 16 / 11; color: inherit; text-decoration: none;
+            position: relative; display: block; overflow: hidden;
+            border-radius: var(--radius-card); background: var(--c-bg-subtle);
+            aspect-ratio: 16 / 10; color: #fff; text-decoration: none;
             cursor: pointer; opacity: 0; transform: translateY(50px);
-            transition: box-shadow 0.4s ease;
+            /* 호버 확대는 scale 속성으로 — GSAP가 쓰는 transform과 겹치지 않게 */
+            transition: scale var(--ease), box-shadow var(--ease);
         }
-        .card img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s cubic-bezier(0.2, 0, 0.2, 1); }
-        .card:hover img { transform: scale(1.04); }
+        .card:hover { scale: 1.02; box-shadow: 0 12px 32px rgba(0,0,0,0.10); }
+        .card img { width: 100%; height: 100%; object-fit: cover; }
         .card-overlay {
-            position: absolute; inset: 0; padding: clamp(20px, 4vw, 40px);
+            position: absolute; inset: 0; padding: var(--pad-card);
             display: flex; flex-direction: column; justify-content: flex-end;
-            background: linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.1) 55%, transparent 80%);
-            color: white;
+            /* 공통 오버레이 + 글씨가 놓이는 아래쪽만 한 겹 더 (밝은 사진에서도 읽히게) */
+            background: linear-gradient(to top, rgba(0,0,0,0.5), transparent 55%), var(--overlay);
+            text-shadow: 0 1px 12px rgba(0,0,0,0.25);
         }
         .card-overlay .card-eyebrow {
-            font-size: 0.72rem; letter-spacing: 0.16em;
-            text-transform: uppercase; opacity: 0.85; margin-bottom: 14px;
+            font-size: var(--fs-meta); font-weight: 500; letter-spacing: 0.08em;
+            text-transform: uppercase; color: rgba(255,255,255,0.85); margin-bottom: 6px;
         }
-        .card h3 {
-            font-size: clamp(1.3rem, 3vw, 1.95rem);
-            margin-bottom: 10px; font-weight: 700;
-            letter-spacing: -0.02em;
-        }
-        .card-tagline { font-size: clamp(0.85rem, 2vw, 1.05rem); opacity: 0.85; font-weight: 300; }
+        .card h3 { font-size: var(--fs-card-title); font-weight: 600; letter-spacing: -0.01em; margin-bottom: 4px; }
+        .card-tagline { font-size: 0.875rem; color: rgba(255,255,255,0.85); line-height: 1.4; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap-card); }
+        .grid-3 .card { aspect-ratio: 4 / 3; }
+        @media (max-width: 960px) { .grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 600px) { .grid-3 { grid-template-columns: minmax(0, 1fr); } .grid-3 .card { aspect-ratio: 16 / 10; } }
 
         /* ===== DETAIL PAGE ===== */
         .detail-page {
@@ -527,40 +518,13 @@
         }
 
         /* ===== 홈: 더 둘러보기 (독립 페이지로 가는 입구) ===== */
-        .explore { max-width: 1200px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 40px) clamp(64px, 10vw, 110px); }
-        .explore-head { text-align: center; margin-bottom: clamp(28px, 5vw, 44px); }
-        .explore-head h2 { font-size: clamp(1.5rem, 4vw, 2.4rem); font-weight: 700; letter-spacing: -0.03em; word-break: keep-all; }
-        .explore-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 2vw, 24px); }
-        @media (max-width: 860px) { .explore-grid { grid-template-columns: minmax(0, 1fr); } }
-        .explore-tile {
-            position: relative; display: block; overflow: hidden; border-radius: var(--radius-card);
-            aspect-ratio: 4 / 5; color: #fff; text-decoration: none; background: #222;
-            transition: box-shadow 0.4s ease, transform 0.4s ease;
-        }
-        @media (max-width: 860px) { .explore-tile { aspect-ratio: 16 / 9; } }
-        .explore-tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1s cubic-bezier(0.2, 0, 0.2, 1); }
-        .explore-tile::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0.05) 60%); }
-        .explore-tile .txt { position: absolute; left: 0; right: 0; bottom: 0; padding: clamp(20px, 3vw, 28px); z-index: 1; }
-        .explore-tile .eyebrow { font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.85; }
-        .explore-tile h3 { margin-top: 8px; font-size: clamp(1.3rem, 2.6vw, 1.7rem); font-weight: 700; letter-spacing: -0.02em; }
-        .explore-tile h3::after { content: "\00a0›"; display: inline-block; font-weight: 400; transition: transform 0.3s; }
-        .explore-tile p { margin-top: 6px; font-size: 0.92rem; opacity: 0.88; word-break: keep-all; }
-        .explore-tile:hover img { transform: scale(1.04); }
-        .explore-tile:hover h3::after { transform: translateX(3px); }
+        .explore { max-width: 1200px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 40px) var(--space-section); }
 
         .reveal { opacity: 0; transform: translateY(36px); }
 
         /* ===== 홈: 전체 기록 보기 버튼 ===== */
-        .more-wrap { text-align: center; margin-top: clamp(40px, 7vw, 64px); }
-        .more-btn {
-            display: inline-flex; align-items: center; gap: 10px;
-            padding: 14px 26px; border-radius: 980px;
-            background: var(--apple-black); color: #fff; text-decoration: none;
-            font-size: 0.95rem; font-weight: 600; letter-spacing: -0.01em;
-            transition: transform 0.3s ease, background 0.3s ease;
-        }
-        .more-btn:hover { background: #000; }
-        .more-btn .count { font-weight: 400; opacity: 0.6; }
+        .more-wrap { text-align: center; margin-top: clamp(32px, 4vw, 44px); }
+        .more-wrap .count { font-weight: 400; opacity: 0.6; }
 
         /* ===== 전체 기록 (/heritage) — 홈 위에 겹치는 목록 화면, 상세보다는 아래 ===== */
         .archive-page {
@@ -577,10 +541,10 @@
         body.archive-open .archive-page,
         html.boot-archive .archive-page { display: block; }
         body.archive-open #home { visibility: hidden; }
-        .archive-inner { max-width: 1200px; margin: 0 auto; padding: clamp(104px, 13vw, 136px) clamp(16px, 4vw, 40px) clamp(56px, 8vw, 96px); }   /* 위쪽은 독립 페이지와 같은 값 */
+        .archive-inner { max-width: 1200px; margin: 0 auto; padding: clamp(96px, 12vw, 120px) clamp(16px, 4vw, 40px) var(--space-section); }   /* 위쪽은 독립 페이지와 같은 값 */   /* 위쪽은 독립 페이지와 같은 값 */
         /* 검색과 필터를 한 막대로, 스크롤해도 내비 바로 아래에 붙어 있음 */
         .archive-bar {
-            position: sticky; top: 70px; z-index: 5;
+            position: sticky; top: var(--h-nav); z-index: 5;
             display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px;
             padding: 12px 0;
             margin-bottom: clamp(24px, 4vw, 36px);
@@ -592,7 +556,7 @@
         .search-box {
             flex: 1 1 260px; max-width: 360px;
             display: flex; align-items: center; gap: 8px;
-            padding: 0 14px; height: 42px; border-radius: 12px;
+            padding: 0 14px; height: var(--h-btn); border-radius: var(--radius-input);
             background: var(--apple-bg); border: 1px solid transparent;
             transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
         }
@@ -609,8 +573,9 @@
         .chip {
             flex-shrink: 0; white-space: nowrap;
             border: 1px solid transparent; background: var(--apple-bg); color: #424245;
-            padding: 7px 14px; border-radius: 980px; font: inherit; font-size: 0.85rem;
-            cursor: pointer; transition: background 0.2s, border-color 0.2s, color 0.2s;
+            display: inline-flex; align-items: center; height: var(--h-chip);
+            padding: 0 14px; border-radius: 980px; font: inherit; font-size: 0.875rem;
+            cursor: pointer; transition: background var(--ease), color var(--ease);
         }
         .chip:hover { background: #e8e8ed; color: var(--apple-black); }
         .chip:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(0,102,204,0.25); }
@@ -619,7 +584,7 @@
             #catChips { padding-left: 20px; border-left: 1px solid var(--apple-divider); }   /* 시대와 분류 묶음 구분 */
         }
         @media (max-width: 768px) {
-            .chip { padding: 9px 16px; }
+            .chip { height: 40px; padding: 0 16px; }
             .archive-bar { position: static; gap: 10px; background: #fff; }   /* 좁은 화면에선 고정하면 너무 많이 가려서 풂 */
             .search-box { flex-basis: 100%; max-width: none; }
             /* 필터는 줄바꿈 대신 옆으로 밀어서 봄 */
@@ -632,19 +597,7 @@
             .chip-row::-webkit-scrollbar { display: none; }
         }
 
-        .archive-grid {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: clamp(28px, 3.5vw, 40px) clamp(18px, 2.5vw, 28px);
-        }
-        @media (max-width: 960px) { .archive-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-        @media (max-width: 560px) { .archive-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; } }
-        /* 카드는 홈과 같은 .card — 3열이라 비율과 글씨만 조금 작게 */
-        .archive-grid .card { opacity: 1; transform: none; aspect-ratio: 4 / 3; }
-        .archive-grid .card-overlay { padding: clamp(18px, 2.4vw, 26px); }
-        .archive-grid .card-overlay .card-eyebrow { margin-bottom: 10px; }
-        .archive-grid .card h3 { font-size: clamp(1.2rem, 2vw, 1.45rem); margin-bottom: 6px; }
-        .archive-grid .card-tagline { font-size: 0.92rem; }
+        .archive-grid .card { opacity: 1; transform: none; }   /* 홈처럼 스크롤 등장 효과 없이 바로 보임 */
         .archive-empty { color: var(--apple-gray); padding: 40px 0; text-align: center; }
 
         .bleed-credit { display: block; padding: 8px clamp(20px, 5vw, 40px) 0; font-size: 11px; color: #86868b; text-align: right; background: #fff; }
@@ -716,44 +669,43 @@
             <h1 id="mainTitle">유산, 디지털로 다시 태어나다.</h1>
             <p id="subTitle">청주의 가치를 기록하는 아카이브 프로젝트</p>
         </div>
-        <div class="scroll-guide" id="scrollGuide">
-            <p>Scroll Down</p>
-            <div class="mouse"><div class="wheel"></div></div>
+        <div class="scroll-guide" id="scrollGuide" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
     </div>
 </section>
 
-<section class="section" id="heritage" style="max-width: 1280px;">
-    <div style="text-align: center; max-width: 720px; margin: 0 auto clamp(40px, 8vw, 70px);">
+<section class="section" id="heritage">
+    <div class="section-head">
         <span class="section-eyebrow value-text">Heritage Stories</span>
-        <h2 class="value-text" id="heritageHeading" style="font-size: clamp(1.5rem, 4vw, 2.4rem); font-weight: 700; letter-spacing: -0.03em; word-break: keep-all;">네 곳의 시간, 한 도시의 기억</h2>
+        <h2 class="section-title value-text" id="heritageHeading">네 곳의 시간, 한 도시의 기억</h2>
     </div>
     <div class="grid" id="placeGrid">
         <!-- 카드는 places.json에서 자동 생성됨 (순서 1~4번만 홈에, 전체는 /heritage) -->
     </div>
     <div class="more-wrap value-text">
-        <a class="more-btn" href="/heritage" id="moreBtn">전체 기록 보기 <span class="count" id="moreCount"></span></a>
+        <a class="btn-primary" href="/heritage" id="moreBtn">전체 기록 보기 <span class="count" id="moreCount"></span></a>
     </div>
 </section>
 
 <!-- ===== 더 둘러보기: 독립 페이지로 가는 입구 ===== -->
 <section class="explore">
-    <div class="explore-head">
+    <div class="section-head">
         <span class="section-eyebrow value-text">Explore</span>
-        <h2 class="value-text">더 둘러보기</h2>
+        <h2 class="section-title value-text">더 둘러보기</h2>
     </div>
-    <div class="explore-grid">
-        <a class="explore-tile" href="/timeline">
+    <div class="grid-3">
+        <a class="card" href="/timeline">
             <img src="cjst1.jpg" alt="" loading="lazy">
-            <div class="txt"><div class="eyebrow">Timeline</div><h3>연표</h3><p>고려에서 지금까지, 천 년의 흐름을 한눈에</p></div>
+            <div class="card-overlay"><div class="card-eyebrow">Timeline</div><h3>연표</h3><p class="card-tagline">고려에서 지금까지, 천 년의 흐름을 한눈에</p></div>
         </a>
-        <a class="explore-tile" href="/about">
+        <a class="card" href="/about">
             <img src="drone-poster.jpg" alt="" loading="lazy">
-            <div class="txt"><div class="eyebrow">About</div><h3>소개</h3><p>왜, 어떻게 기록하는지</p></div>
+            <div class="card-overlay"><div class="card-eyebrow">About</div><h3>소개</h3><p class="card-tagline">왜, 어떻게 기록하는지</p></div>
         </a>
-        <a class="explore-tile" href="/sources">
+        <a class="card" href="/sources">
             <img src="cbdc1.jpg" alt="" loading="lazy">
-            <div class="txt"><div class="eyebrow">Sources</div><h3>출처</h3><p>자료와 사진이 어디서 왔는지</p></div>
+            <div class="card-overlay"><div class="card-eyebrow">Sources</div><h3>출처</h3><p class="card-tagline">자료와 사진이 어디서 왔는지</p></div>
         </a>
     </div>
 </section>
@@ -804,7 +756,7 @@
             <div class="chip-row" id="eraChips"></div>
             <div class="chip-row" id="catChips"></div>
         </div>
-        <div class="archive-grid" id="archiveGrid"></div>
+        <div class="archive-grid grid-3" id="archiveGrid"></div>
         <p class="archive-empty" id="archiveEmpty" hidden>조건에 맞는 기록이 없어요.</p>
     </div>
 </section>
