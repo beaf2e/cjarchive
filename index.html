@@ -538,33 +538,29 @@
         }
 
         /* ===== 홈: 더 둘러보기 (독립 페이지로 가는 입구) ===== */
-        .explore { background: var(--c-bg-subtle); padding: var(--space-section) clamp(20px, 5vw, 40px); }
-        .explore-inner { max-width: 1200px; margin: 0 auto; }
-        .explore + .footer { border-top: 1px solid var(--c-line); }
-        .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap-card); }
+        /* 위 장소 카드와 같은 폭, 모서리, 글자 체계. 사진 대신 연한 회색 면 */
         .tile {
-            position: relative; display: flex; flex-direction: column;
-            min-height: clamp(260px, 22vw, 300px); padding: clamp(28px, 3.2vw, 40px);
-            background: #fff; border-radius: 28px; color: var(--c-text); text-decoration: none;
+            position: relative; display: flex; flex-direction: column; justify-content: space-between;
+            aspect-ratio: 4 / 3; padding: var(--pad-card);
+            border-radius: var(--radius-card); background: var(--c-bg-subtle);
+            color: var(--c-text); text-decoration: none;
             transition: box-shadow .4s ease, translate .4s cubic-bezier(0.2, 0, 0.2, 1);
         }
         /* 등장 애니메이션(GSAP)이 transform을 쓰므로, 떠오르기는 따로 노는 translate로 */
-        .tile:hover { translate: 0 -6px; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1); }
-        .tile-icon { width: 46px; height: 46px; fill: none; stroke: var(--c-accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-        .tile-label { margin-top: auto; padding-top: 28px; font-size: 0.9rem; font-weight: 600; color: var(--c-text-3); }
-        .tile-text { margin-top: 8px; padding-right: 44px; font-size: clamp(1.35rem, 2.1vw, 1.75rem); font-weight: 700; line-height: 1.35; letter-spacing: -0.02em; word-break: keep-all; }
-        .tile-text em { font-style: normal; color: var(--c-accent); }
+        .tile:hover { translate: 0 -6px; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08); }
+        .tile-icon { width: 36px; height: 36px; fill: none; stroke: var(--c-accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .tile-body { padding-right: 48px; }
+        .tile-eyebrow { font-size: var(--fs-meta); font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--c-text-3); margin-bottom: 6px; }
+        .tile h3 { font-size: var(--fs-card-title); font-weight: 600; letter-spacing: -0.01em; margin-bottom: 4px; }
+        .tile-tagline { font-size: 0.875rem; color: var(--c-text-2); line-height: 1.4; word-break: keep-all; }
         .tile-go {
-            position: absolute; right: 22px; bottom: 22px; width: 38px; height: 38px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; background: #e8e8ed; transition: background .3s ease;
+            position: absolute; right: var(--pad-card); bottom: var(--pad-card); width: 34px; height: 34px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; background: #fff; transition: background .3s ease;
         }
-        .tile-go svg { width: 18px; height: 18px; fill: none; stroke: #1d1d1f; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-        .tile:hover .tile-go { background: #d2d2d7; }
-        @media (max-width: 860px) {
-            .tiles { grid-template-columns: minmax(0, 1fr); }
-            .tile { min-height: 0; }
-            .tile-label { padding-top: 22px; }
-        }
+        .tile-go svg { width: 16px; height: 16px; fill: none; stroke: var(--c-text); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+        .tile:hover .tile-go { background: var(--c-accent); }
+        .tile:hover .tile-go svg { stroke: #fff; }
+        @media (max-width: 600px) { .tile { aspect-ratio: 16 / 10; } }
 
         .reveal { opacity: 0; transform: translateY(36px); }
 
@@ -735,33 +731,28 @@
     </div>
 </section>
 
-<!-- ===== 더 둘러보기: 독립 페이지로 가는 입구 (사진 없는 정보 타일) ===== -->
-<section class="explore">
-    <div class="explore-inner">
-        <div class="section-head">
-            <span class="section-eyebrow value-text">Explore</span>
-            <h2 class="section-title value-text">더 둘러보기</h2>
-        </div>
-        <div class="tiles">
-            <a class="tile value-text" href="/timeline">
-                <svg class="tile-icon" viewBox="0 0 48 48"><circle cx="24" cy="24" r="17"/><path d="M24 14v10l7 5"/></svg>
-                <span class="tile-label">연표</span>
-                <p class="tile-text"><em><span id="exploreYear">962</span>년부터 오늘까지</em><br>천 년의 흐름을 한눈에.</p>
-                <span class="tile-go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
-            </a>
-            <a class="tile value-text" href="/about">
-                <svg class="tile-icon" viewBox="0 0 48 48"><path d="M7 17h7l3-5h14l3 5h7v20H7z"/><circle cx="24" cy="26" r="7"/></svg>
-                <span class="tile-label">소개</span>
-                <p class="tile-text">학생들이 직접 걷고 찍은<br><em>문화유산 <span id="explorePlaces">5</span>곳</em>의 기록.</p>
-                <span class="tile-go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
-            </a>
-            <a class="tile value-text" href="/sources">
-                <svg class="tile-icon" viewBox="0 0 48 48"><path d="M24 13c-4-3-10-4-16-3v26c6-1 12 0 16 3 4-3 10-4 16-3V10c-6-1-12 0-16 3z"/><path d="M24 13v26"/></svg>
-                <span class="tile-label">출처</span>
-                <p class="tile-text">글과 사진, 영상의<br><em>출처를 한곳에</em> 모아.</p>
-                <span class="tile-go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
-            </a>
-        </div>
+<!-- ===== 더 둘러보기: 독립 페이지로 가는 입구 (사진 없는 타일) ===== -->
+<section class="section explore">
+    <div class="section-head">
+        <span class="section-eyebrow value-text">Explore</span>
+        <h2 class="section-title value-text">더 둘러보기</h2>
+    </div>
+    <div class="grid-3">
+        <a class="tile value-text" href="/timeline">
+            <svg class="tile-icon" viewBox="0 0 48 48"><circle cx="24" cy="24" r="17"/><path d="M24 14v10l7 5"/></svg>
+            <div class="tile-body"><div class="tile-eyebrow">Timeline</div><h3>연표</h3><p class="tile-tagline"><span id="exploreYear">962</span>년부터 오늘까지, 천 년의 흐름을 한눈에</p></div>
+            <span class="tile-go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+        </a>
+        <a class="tile value-text" href="/about">
+            <svg class="tile-icon" viewBox="0 0 48 48"><path d="M7 17h7l3-5h14l3 5h7v20H7z"/><circle cx="24" cy="26" r="7"/></svg>
+            <div class="tile-body"><div class="tile-eyebrow">About</div><h3>소개</h3><p class="tile-tagline">학생들이 직접 걷고 찍은 문화유산 <span id="explorePlaces">5</span>곳의 기록</p></div>
+            <span class="tile-go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+        </a>
+        <a class="tile value-text" href="/sources">
+            <svg class="tile-icon" viewBox="0 0 48 48"><path d="M24 13c-4-3-10-4-16-3v26c6-1 12 0 16 3 4-3 10-4 16-3V10c-6-1-12 0-16 3z"/><path d="M24 13v26"/></svg>
+            <div class="tile-body"><div class="tile-eyebrow">Sources</div><h3>출처</h3><p class="tile-tagline">글과 사진, 영상이 어디서 왔는지</p></div>
+            <span class="tile-go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+        </a>
     </div>
 </section>
 
