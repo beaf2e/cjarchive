@@ -14,6 +14,11 @@
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
 
     <style>
+        /* 스크롤바 숨김, 글자 선택과 이미지 끌기 막기 (site.css와 같은 규칙) */
+        * { scrollbar-width: none; -ms-overflow-style: none; }
+        *::-webkit-scrollbar { display: none; width: 0; height: 0; }
+        body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+        img, video, a { -webkit-user-drag: none; }
         :root {
             --apple-black: #211f20;
             --apple-gray: #86868b;
@@ -139,6 +144,7 @@
         .footer .brand .b-light { font-weight: 300; text-transform: none; }
         .footer p { font-size: 0.75rem; color: #6e6e73; }
     </style>
+    <script src="/site.js" defer></script>
 </head>
 
 <body>

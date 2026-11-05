@@ -42,6 +42,15 @@
     --apple-blue: var(--c-accent);
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* 스크롤바는 모든 곳에서 숨김 (스크롤 기능은 그대로) */
+* { scrollbar-width: none; -ms-overflow-style: none; }
+*::-webkit-scrollbar { display: none; width: 0; height: 0; }
+
+/* 글자 선택, 이미지 끌기 막기 (입력칸은 그대로 입력 가능) */
+body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
+img, video, a { -webkit-user-drag: none; }
 ::selection { background: var(--apple-black); color: #fff; }
 img { max-width: 100%; display: block; }
 
