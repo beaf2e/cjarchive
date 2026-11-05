@@ -187,6 +187,9 @@
         }
         .card img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s cubic-bezier(0.2, 0, 0.2, 1); }
         .card:hover img { transform: scale(1.04); }
+        /* 커지기: 등장 애니메이션(GSAP)이 transform을 쓰고 scale 속성을 인라인 none으로 박아 두므로 !important로 */
+        .card { transition: scale .4s cubic-bezier(0.2, 0, 0.2, 1); }
+        .card:hover { scale: 1.02 !important; }
         .card-overlay {
             position: absolute; inset: 0; padding: var(--pad-card);
             display: flex; flex-direction: column; justify-content: flex-end;
@@ -523,10 +526,10 @@
         .next-link {
             display: flex; align-items: center; gap: 16px;
             padding: 14px; border-radius: 18px; background: var(--apple-bg);
-            cursor: pointer; transition: background 0.3s, transform 0.3s;
+            cursor: pointer; transition: background 0.3s, transform 0.3s, scale .4s cubic-bezier(0.2, 0, 0.2, 1);
             min-width: 0;
         }
-        .next-link:hover { background: #ebebef; }
+        .next-link:hover { background: #ebebef; scale: 1.02 !important; }
         .next-link.next { flex-direction: row-reverse; text-align: right; }
         .next-link img { width: clamp(64px, 9vw, 96px); aspect-ratio: 1; object-fit: cover; border-radius: 12px; flex-shrink: 0; }
         .next-link .meta { font-size: 0.78rem; font-weight: 600; color: var(--apple-gray); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
@@ -544,10 +547,10 @@
             aspect-ratio: 4 / 3; padding: var(--pad-card);
             border-radius: var(--radius-card); background: var(--c-bg-subtle);
             color: var(--c-text); text-decoration: none;
-            transition: box-shadow .4s ease, translate .4s cubic-bezier(0.2, 0, 0.2, 1);
+            transition: scale .4s cubic-bezier(0.2, 0, 0.2, 1);
         }
-        /* 등장 애니메이션(GSAP)이 transform을 쓰므로, 떠오르기는 따로 노는 translate로 */
-        .tile:hover { translate: 0 -6px; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08); }
+        /* 등장 애니메이션(GSAP)이 transform을 쓰므로, 커지기는 scale 속성으로 (GSAP 인라인 none을 이기려고 !important) */
+        .tile:hover { scale: 1.02 !important; }
         .tile-icon { width: 36px; height: 36px; fill: none; stroke: var(--c-accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
         .tile-body { padding-right: 48px; }
         .tile-eyebrow { font-size: var(--fs-meta); font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--c-text-3); margin-bottom: 6px; }
