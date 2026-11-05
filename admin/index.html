@@ -1111,6 +1111,33 @@ function renderEdit(main) {
             </div>
         </div>
 
+        <div class="section-header">해설 (이 유산이 무엇인지)</div>
+        <div class="card">
+            <p class="field-hint" style="margin-bottom:16px;">상세 페이지 도입 바로 아래에 해설 글, 기본 정보 표, 용어 풀이가 나옵니다. 모두 비우면 이 블록은 나타나지 않아요. 사실만, 확인된 출처로 적어 주세요.</p>
+            <div class="field">
+                <label class="field-label">해설 글 (빈 줄로 문단 나누기)</label>
+                <textarea class="textarea" id="explain-input" style="min-height:160px;">${escapeHTML((p.explain || []).join('\n\n'))}</textarea>
+            </div>
+            <div class="field">
+                <label class="field-label">기본 정보 (한 줄에 하나, "항목 | 값")</label>
+                <textarea class="textarea" id="info-input" style="min-height:120px;" placeholder="소재지 | 충청북도 청주시 ...&#10;지정 | 국보">${escapeHTML((p.info || []).map(r => r.label + ' | ' + r.value).join('\n'))}</textarea>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label class="field-label">용어</label>
+                    <input class="input" data-bind="term.word" value="${escapeHTML(p.term?.word || '')}" placeholder="예: 당간이란?">
+                </div>
+                <div class="field">
+                    <label class="field-label">용어 풀이</label>
+                    <input class="input" data-bind="term.desc" value="${escapeHTML(p.term?.desc || '')}">
+                </div>
+            </div>
+            <div class="field">
+                <label class="field-label">참고 출처 (해설 아래 작게 표시)</label>
+                <input class="input" data-bind="refs" value="${escapeHTML(p.refs || '')}" placeholder="예: 국가유산청 국가유산포털">
+            </div>
+        </div>
+
         <div class="section-header">그때와 지금 (Then & Now)</div>
         <div class="card">
             <p class="field-hint" style="margin-bottom:16px;">옛 사진을 올리면 상세 페이지에 과거↔현재 드래그 비교 슬라이더가 표시됩니다. 옛 사진을 비우면 슬라이더는 나타나지 않아요.</p>
@@ -1169,6 +1196,18 @@ function renderEdit(main) {
     renderImagePicker('#now-picker', p.thenNow.now, (np) => { p.thenNow.now = np; markDirty(); }, 'image');
     renderStats(p);
     renderFeatures(p);
+    // 해설 문단, 기본 정보는 여러 줄 입력을 배열로 바꿔 저장
+    $('#explain-input').oninput = (e) => {
+        p.explain = e.target.value.split(/\n\s*\n/).map(t => t.trim()).filter(Boolean);
+        markDirty();
+    };
+    $('#info-input').oninput = (e) => {
+        p.info = e.target.value.split('\n').map(line => {
+            const i = line.indexOf('|');
+            return i < 0 ? null : { label: line.slice(0, i).trim(), value: line.slice(i + 1).trim() };
+        }).filter(r => r && r.label && r.value);
+        markDirty();
+    };
     renderInlineTimeline(p);
 
     // 장소 제목 바뀌면 매칭되는 타임라인 마커의 place 도 동기화

@@ -388,6 +388,27 @@
             letter-spacing: -0.01em;
         }
 
+        /* ===== 해설: 이 유산이 무엇인지 (해설 글 + 기본 정보 + 용어 풀이) ===== */
+        .explain {
+            max-width: 1080px; margin: 0 auto;
+            padding: clamp(24px, 4vw, 40px) clamp(20px, 5vw, 40px) clamp(56px, 9vw, 100px);
+            display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 64px);
+            align-items: start;
+        }
+        .explain-label { display: block; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-accent); margin-bottom: 14px; }
+        .explain-text p { font-size: var(--fs-body); line-height: 1.75; color: var(--c-text); word-break: keep-all; }
+        .explain-text p + p { margin-top: 1em; }
+        .explain-side { display: flex; flex-direction: column; gap: 16px; }
+        .info-box { background: var(--c-bg-subtle); border-radius: var(--radius-card); padding: clamp(20px, 2.4vw, 28px); }
+        .info-box dl { display: grid; grid-template-columns: auto 1fr; gap: 10px 18px; font-size: 0.9rem; }
+        .info-box dt { color: var(--c-text-3); white-space: nowrap; }
+        .info-box dd { color: var(--c-text); word-break: keep-all; }
+        .term-box { border-radius: var(--radius-card); padding: clamp(20px, 2.4vw, 28px); box-shadow: inset 0 0 0 1px var(--c-line); }
+        .term-box b { display: block; font-size: 1rem; margin-bottom: 6px; }
+        .term-box p { font-size: 0.9rem; color: var(--c-text-2); line-height: 1.6; word-break: keep-all; }
+        .explain-src { margin-top: 18px; font-size: 0.78rem; color: var(--c-text-3); }
+        @media (max-width: 800px) { .explain { grid-template-columns: minmax(0, 1fr); } }
+
         /* ===== FEATURE ROW ===== */
         .feature-row {
             max-width: 1200px;
@@ -893,6 +914,8 @@
                 <p class="reveal">${esc(data.intro?.p || '')}</p>
             </section>
 
+            ${buildExplainHTML(data)}
+
             ${compareHTML}
 
             ${featuresHTML}
@@ -926,6 +949,26 @@
                 </div>` : ''}
             </nav>
         `;
+    }
+
+    // 해설 블록 — places.json의 explain(문단 배열), info(기본 정보), term(용어 풀이), refs(출처). 비어 있으면 안 그림
+    function buildExplainHTML(data) {
+        const paras = (data.explain || []).filter(Boolean);
+        const info = (data.info || []).filter(r => r && r.label && r.value);
+        const term = data.term && data.term.word ? data.term : null;
+        if (!paras.length && !info.length && !term) return '';
+        return `
+            <section class="explain">
+                <div class="explain-text reveal">
+                    <span class="explain-label">해설</span>
+                    ${paras.map(t => `<p>${esc(t)}</p>`).join('')}
+                    ${data.refs ? `<p class="explain-src">참고: ${esc(data.refs)}</p>` : ''}
+                </div>
+                <aside class="explain-side reveal">
+                    ${info.length ? `<div class="info-box"><span class="explain-label">기본 정보</span><dl>${info.map(r => `<dt>${esc(r.label)}</dt><dd>${esc(r.value)}</dd>`).join('')}</dl></div>` : ''}
+                    ${term ? `<div class="term-box"><span class="explain-label">용어 풀이</span><b>${esc(term.word)}</b><p>${esc(term.desc)}</p></div>` : ''}
+                </aside>
+            </section>`;
     }
 
     let currentDetailId = null;
@@ -962,13 +1005,11 @@
             el.addEventListener('click', () => openPlace(el.dataset.place)));
         detailContent.querySelectorAll('[data-archive]').forEach(el => el.addEventListener('click', (e) => {
             e.preventDefault();
-            returnTo = null;
             navigate('/heritage');
         }));
         detailContent.querySelectorAll('[data-compare]').forEach(initCompare);
         detailEl.style.display = 'block';
         detailEl.scrollTop = 0;
-        returnTo = returnTo || '/heritage';   // 주소로 바로 들어온 경우 닫으면 전체 기록으로
         document.body.style.overflow = 'hidden';
         document.body.classList.add('detail-open');   // 홈을 렌더에서 숨겨 뒤비침 방지
 
@@ -1028,6 +1069,8 @@
 
     function syncRoute(animate) {
         const r = getRoute();
+        const fromDetail = !!currentDetailId;
+        if (r.type !== 'place') detailDepth = 0;
         if (r.type === 'place') {
             if (PLACES[r.id]) {
                 if (r.id !== currentDetailId) renderDetail(r.id, animate);
@@ -1044,9 +1087,13 @@
         }
         hideArchive();
         hideDetail(animate);
-        scrollToTop(animate);   // home
+        if (!fromDetail) scrollToTop(animate);   // 상세에서 돌아온 거면 보던 위치 그대로
     }
-    window.addEventListener('popstate', () => syncRoute(true));
+    window.addEventListener('popstate', () => {
+        // 브라우저 뒤로 가기로 이전 장소에 돌아가면, 상세 안에서 쌓인 걸음 수도 하나 줄임
+        if (getRoute().type === 'place' && currentDetailId && detailDepth > 0) detailDepth--;
+        syncRoute(true);
+    });
 
     // 주소를 바꾸고 화면을 그 주소에 맞춘다
     function navigate(path) {
@@ -1054,22 +1101,34 @@
         syncRoute(true);
     }
 
-    // 카드, 목록 클릭 → /heritage/<id> 로 이동. 닫으면 연 곳(홈 카드 또는 전체 기록)으로 돌아감
-    let returnTo = null;
+    // 카드, 목록 클릭 → /heritage/<id> 로 이동.
+    // 상세 안에서 이전, 다음으로 옮겨 다닌 걸음 수를 세 두었다가, 닫으면 그만큼 한 번에 되돌아감
+    let detailDepth = 0;
     function openPlace(id) {
         if (!PLACES[id]) return;
-        if (!currentDetailId) returnTo = document.body.classList.contains('archive-open') ? '/heritage' : '/';
-        navigate('/heritage/' + encodeURIComponent(id));
+        const path = '/heritage/' + encodeURIComponent(id);
+        if (!currentDetailId) detailDepth = 0;
+        if (location.pathname !== path) detailDepth++;
+        navigate(path);
     }
 
+    // 닫기(← 버튼, Esc) → 상세를 열기 직전 화면으로
     function closeDetail() {
-        const to = returnTo || '/heritage';
-        returnTo = null;
-        history.replaceState({ path: to }, '', to);
-        if (to === '/') {
-            hideDetail(true);   // 홈은 스크롤 위치가 보존돼 있으니 그대로 드러냄
+        if (detailDepth > 0) {
+            const n = detailDepth;
+            detailDepth = 0;
+            history.go(-n);   // 홈, 전체 기록 등 이 페이지 안의 화면 → popstate가 화면을 맞춤
             return;
         }
+        // 다른 페이지(연표, 출처 등)에서 링크로 들어온 경우 → 그 페이지로
+        let fromSite = false;
+        try { fromSite = new URL(document.referrer).origin === location.origin; } catch (e) {}
+        if (fromSite && history.length > 1) {
+            history.back();
+            return;
+        }
+        // 주소를 직접 열었거나 바깥에서 들어온 경우 → 전체 기록
+        history.replaceState({ path: '/heritage' }, '', '/heritage');
         syncRoute(true);
     }
 
@@ -1157,7 +1216,6 @@
     });
     document.getElementById('navArchive').addEventListener('click', (e) => {
         e.preventDefault();
-        returnTo = null;
         navigate('/heritage');
     });
     document.getElementById('moreBtn').addEventListener('click', (e) => {

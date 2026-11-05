@@ -186,6 +186,9 @@ function placeArticle(place, esc) {
     (place.tagline ? `<p>${esc(place.tagline)}</p>` : "") +
     (stats ? `<ul>${stats}</ul>` : "") +
     (place.intro ? `<section><h2>${text(place.intro.h)}</h2><p>${esc(place.intro.p)}</p></section>` : "") +
+    ((place.explain || []).length ? `<section><h2>해설</h2>${place.explain.map((t) => `<p>${esc(t)}</p>`).join("")}</section>` : "") +
+    ((place.info || []).length ? `<dl>${place.info.map((r) => `<dt>${esc(r.label)}</dt><dd>${esc(r.value)}</dd>`).join("")}</dl>` : "") +
+    (place.term?.word ? `<section><h3>${esc(place.term.word)}</h3><p>${esc(place.term.desc)}</p></section>` : "") +
     features +
     (place.quote?.text ? `<blockquote>${esc(place.quote.text)}</blockquote>` : "") +
     `</article>`
