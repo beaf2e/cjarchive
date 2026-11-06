@@ -175,6 +175,8 @@
             <p>사진마다 직접 촬영했는지, 어느 기관의 자료인지 차례로 적고 있습니다. 드론 영상은 모두 Cheongju Archive가 직접 촬영했습니다.</p>
             <ul class="ref-list">
                 <li>충청북도 사진 자료 <span><a href="https://photo.chungbuk.go.kr" target="_blank" rel="noopener">photo.chungbuk.go.kr</a></span></li>
+                <li>국가유산청 국가유산포털 사진 (공공누리 제1유형) <span><a href="https://www.heritage.go.kr" target="_blank" rel="noopener">heritage.go.kr</a></span></li>
+                <li>국립중앙박물관 유리건판 사진 (공공누리 제1유형) <span><a href="https://www.museum.go.kr/dryplate/main.do" target="_blank" rel="noopener">museum.go.kr</a></span></li>
             </ul>
             <div id="mediaList"></div>
         </div>
@@ -260,7 +262,15 @@
                         return '<figure><div class="thumb"><img src="' + esc(thumb) + '" alt="" loading="lazy"></div><figcaption>' + esc(m.kind) +
                             (m.credit ? '<br><b>' + esc(m.credit) + '</b>' : '') + '</figcaption></figure>';
                     }).join('') + '</div></div>';
-            }).join('');
+            }).join('') + (function () {
+                // 연표에만 쓰인 옛 사진
+                var tl = (data.timeline || []).filter(function (t) { return t.img; });
+                if (!tl.length) return '';
+                return '<div class="place-src"><h4><a href="/timeline">연표</a></h4><div class="media-grid">' + tl.map(function (t) {
+                    return '<figure><div class="thumb"><img src="' + esc(t.img) + '" alt="" loading="lazy"></div><figcaption>' + esc(t.year + ' ' + t.place) +
+                        (t.imgCredit ? '<br><b>' + esc(t.imgCredit) + '</b>' : '') + '</figcaption></figure>';
+                }).join('') + '</div></div>';
+            })();
         } catch (e) {
             box.textContent = '목록을 불러오지 못했습니다.';
         }

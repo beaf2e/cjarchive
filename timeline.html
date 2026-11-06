@@ -243,7 +243,9 @@
                     era = e; open = true;
                 }
                 var p = t.placeId && places[t.placeId];
-                var inner = (p ? '<img src="' + esc(p.img) + '" alt="" loading="lazy">' : '') +
+                // 연표 항목에 따로 넣은 사진(옛 사진)이 있으면 그것을, 없으면 장소 대표 사진
+                var img = t.img || (p && p.img);
+                var inner = (img ? '<img src="' + esc(img) + '" alt="" loading="lazy">' : '') +
                     '<div style="min-width:0"><div class="place">' + esc(t.place) + '</div><div class="desc">' + esc(t.desc).replace(/\n/g, ' ') + '</div>' +
                     (p ? '<div class="go">' + esc(p.title) + ' 기록 보기 ›</div>' : '') + '</div>';
                 html += '<li class="tl-item"><div class="year">' + esc(t.year) + '</div><span class="dot"></span>' +

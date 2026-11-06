@@ -39,15 +39,17 @@
           "eyebrow": "Architecture",
           "h": "배움과 제례가\n한 축에 서다.",
           "p": "향교는 학문을 가르치는 명륜당과 성현을 모시는 대성전이 함께 서는 공간입니다. 청주향교의 두 건물은 배움(講學)과 예(祭享)가 분리될 수 없다는 조선 교육의 철학을 단정한 건축으로 보여 줍니다.",
-          "img": "cjhg1.jpg",
-          "reverse": false
+          "img": "cjhg2.jpg",
+          "reverse": false,
+          "credit": "국가유산청"
         },
         {
           "eyebrow": "Continuity",
           "h": "기념물에서\n유형문화재로.",
           "p": "청주향교는 1977년 충청북도 유형문화재로 지정되어, 지금은 시도유형문화유산으로 보존되고 있습니다. 그러나 진짜 보존은 번호가 아니라, 그 안에서 여전히 예를 갖추는 사람의 행위에서 이어집니다.",
-          "img": "cjhg1.jpg",
-          "reverse": true
+          "img": "cjhg3.jpg",
+          "reverse": true,
+          "credit": "국가유산청"
         }
       ],
       "quote": {
@@ -225,15 +227,17 @@
           "eyebrow": "Inscription",
           "h": "'준풍(峻豊)',\n고려가 새긴 자기 이름.",
           "p": "당간 아래쪽 철통에는 해서체로 새겨진 명문이 있습니다. 그 안에는 고려가 독자적으로 사용한 연호 '준풍(峻豊)'이 적혀 있습니다. 중국의 연호가 아닌 자신의 시간을 새긴 그 두 글자는, 한 왕조가 자신을 어떻게 부르고 싶어 했는지를 보여주는 결정적 증거입니다.",
-          "img": "cdg1.jpg",
-          "reverse": false
+          "img": "cdg2.jpg",
+          "reverse": false,
+          "credit": "국가유산청"
         },
         {
           "eyebrow": "Structure",
           "h": "두 개의 화강암,\n스무 개의 철통.",
           "p": "두 개의 돌기둥(당간지주)이 20개의 철통을 단단히 붙들고 있습니다. 명문에 따르면 본래는 30개의 철통이 쌓여 있었지만, 시간은 그중 열을 가져갔습니다. 남은 스물은, 사라진 열이 있었음을 증언합니다.",
-          "img": "cdg1.jpg",
-          "reverse": true
+          "img": "cdg3.jpg",
+          "reverse": true,
+          "credit": "국가유산청"
         }
       ],
       "quote": {
@@ -513,7 +517,9 @@
       "year": "962",
       "place": "용두사지 철당간",
       "desc": "고려 광종 13년,\n천 년의 시작.",
-      "placeId": "cdg"
+      "placeId": "cdg",
+      "img": "cdg-old.jpg",
+      "imgCredit": "국립중앙박물관"
     },
     {
       "year": "1444",
@@ -525,7 +531,8 @@
       "year": "1921",
       "place": "옛 청주역",
       "desc": "충북선과 함께\n도시의 관문이 열리다.",
-      "placeId": "cjst"
+      "placeId": "cjst",
+      "img": "cjst.jpg"
     },
     {
       "year": "1935",
@@ -537,7 +544,9 @@
       "year": "1937",
       "place": "충청북도청 본관",
       "desc": "근대 관청 건축,\n도(道)의 중심이 서다.",
-      "placeId": "cbdc"
+      "placeId": "cbdc",
+      "img": "cbdc2.jpg",
+      "imgCredit": "충청북도"
     },
     {
       "year": "2018",

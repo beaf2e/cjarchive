@@ -1541,6 +1541,16 @@ function renderTimeline(main) {
                         <textarea class="textarea" data-tk="desc" style="min-height:42px;">${escapeHTML(t.desc || '')}</textarea>
                     </div>
                 </div>
+                <div class="field-row-3" style="margin-top:10px;">
+                    <div class="field" style="margin:0;">
+                        <label class="field-label">연표 사진 파일 (비우면 장소 대표 사진)</label>
+                        <input class="input" data-tk="img" value="${escapeHTML(t.img || '')}" placeholder="예: cdg-old.jpg">
+                    </div>
+                    <div class="field" style="margin:0;">
+                        <label class="field-label">사진 출처 (출처 페이지에만 표시)</label>
+                        <input class="input" data-tk="imgCredit" value="${escapeHTML(t.imgCredit || '')}" placeholder="예: 국립중앙박물관">
+                    </div>
+                </div>
                 <div class="field" style="margin:10px 0 0;">
                     <label class="field-label">연결할 장소 (연표 페이지에서 사진과 상세 링크로 보임)</label>
                     <select class="input" data-tk="placeId">
