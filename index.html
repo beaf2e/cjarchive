@@ -441,7 +441,6 @@
             transition: transform 0.8s ease;
         }
         .feature-media-frame:hover img { transform: scale(1.04); }
-        .feature-credit { display: block; margin-top: 8px; font-size: 11px; line-height: 1.4; color: #86868b; letter-spacing: 0.01em; }
         .feature-text h3 {
             font-size: clamp(1.5rem, 3.5vw, 2.4rem);
             font-weight: 700;
@@ -652,7 +651,6 @@
         .archive-grid .card { opacity: 1; transform: none; }   /* 홈처럼 스크롤 등장 효과 없이 바로 보임 */
         .archive-empty { color: var(--apple-gray); padding: 40px 0; text-align: center; }
 
-        .bleed-credit { display: block; padding: 8px clamp(20px, 5vw, 40px) 0; font-size: 11px; color: #86868b; text-align: right; background: #fff; }
 
         /* ?place=id 로 직접 진입 시 메인이 깜빡이지 않도록 덮는 가림막 */
         #boot-cover {
@@ -901,7 +899,7 @@
                     <h3>${nl2br(f.h)}</h3>
                     <p>${esc(f.p)}</p>
                 </div>
-                <div class="feature-media reveal"><div class="feature-media-frame"><img src="${esc(f.img)}" alt="${esc(data.title)}" loading="lazy" onerror="this.style.display='none'"></div>${f.credit ? `<span class="feature-credit">출처: ${esc(f.credit)}</span>` : ''}</div>
+                <div class="feature-media reveal"><div class="feature-media-frame"><img src="${esc(f.img)}" alt="${esc(data.title)}" loading="lazy" onerror="this.style.display='none'"></div></div>
             </section>`).join('');
 
         // 영상 X.mp4(HEVC) 옆에 X-h264.mp4(예비), X-poster.jpg(대체 이미지)를 둔다
@@ -961,7 +959,6 @@
 
             <section class="full-bleed reveal">
                 <img src="${esc(data.img)}" alt="${esc(data.title)}" loading="lazy" onerror="this.parentElement.style.display='none'">
-                ${data.imgCredit ? `<span class="bleed-credit">출처: ${esc(data.imgCredit)}</span>` : ''}
             </section>
 
             ${data.quote ? `

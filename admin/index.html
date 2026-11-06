@@ -1051,7 +1051,7 @@ function renderEdit(main) {
                 <div id="img-picker"></div>
             </div>
             <div class="field">
-                <label class="field-label">메인 이미지 출처 (직접 찍은 사진이면 비워 두기)</label>
+                <label class="field-label">메인 이미지 출처 (출처 페이지에만 표시, 직접 찍은 사진이면 비워 두기)</label>
                 <input class="input" data-bind="imgCredit" value="${escapeHTML(p.imgCredit || '')}" placeholder="예: 국가유산청">
             </div>
             <div class="field-row">
@@ -1328,7 +1328,7 @@ function renderFeatures(p) {
                 <div id="feat-img-${i}"></div>
             </div>
             <div class="field">
-                <label class="field-label">이미지 출처 (직접 찍은 사진이면 비워 두기)</label>
+                <label class="field-label">이미지 출처 (출처 페이지에만 표시, 직접 찍은 사진이면 비워 두기)</label>
                 <input class="input" data-feat="credit" data-key="credit" value="${escapeHTML(f.credit || '')}" placeholder="예: 충청북도">
             </div>
             <label class="toggle">
