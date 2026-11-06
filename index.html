@@ -543,8 +543,8 @@
         /* ===== 홈: 더 둘러보기 (독립 페이지로 가는 입구) ===== */
         /* 위 장소 카드와 같은 폭, 모서리, 글자 체계. 사진 대신 연한 회색 면 */
         .tile {
-            position: relative; display: flex; flex-direction: column; justify-content: space-between;
-            aspect-ratio: 4 / 3; padding: var(--pad-card);
+            position: relative; display: flex; flex-direction: column;
+            gap: 28px; padding: var(--pad-card);
             border-radius: var(--radius-card); background: var(--c-bg-subtle);
             color: var(--c-text); text-decoration: none;
             transition: scale .4s cubic-bezier(0.2, 0, 0.2, 1);
@@ -563,7 +563,14 @@
         .tile-go svg { width: 16px; height: 16px; fill: none; stroke: var(--c-text); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
         .tile:hover .tile-go { background: var(--c-accent); }
         .tile:hover .tile-go svg { stroke: #fff; }
-        @media (max-width: 600px) { .tile { aspect-ratio: 16 / 10; } }
+        /* 사진 카드와 같은 크기면 "사진 빠진 카드"처럼 보여서, 낮은 입구 타일로 */
+        @media (max-width: 960px) { .explore .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+        @media (max-width: 760px) {
+            .explore .grid-3 { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+            .tile { flex-direction: row; align-items: center; gap: 16px; }
+            .tile-icon { width: 30px; height: 30px; flex-shrink: 0; }
+            .tile-go { top: 50%; bottom: auto; translate: 0 -50%; }
+        }
 
         .reveal { opacity: 0; transform: translateY(36px); }
 
