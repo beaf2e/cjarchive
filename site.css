@@ -71,11 +71,19 @@ img { max-width: 100%; display: block; }
 /* 데스크톱 가로 메뉴 (좁은 화면은 햄버거) */
 .nav-links { display: none; gap: clamp(20px, 2.4vw, 32px); align-items: center; }
 .nav-links a {
+    position: relative;
     font-size: 0.9rem; color: var(--c-text-2); text-decoration: none; letter-spacing: -0.01em;
-    padding: 6px 0; border-bottom: 1.5px solid transparent; transition: color var(--ease), border-color var(--ease);
+    padding: 6px 0; transition: color var(--ease);
+}
+/* 밑줄: 마우스를 올리면 가운데에서 양옆으로 퍼짐 */
+.nav-links a::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1.5px;
+    background: currentColor; transform: scaleX(0); transform-origin: center;
+    transition: transform .35s cubic-bezier(0.2, 0, 0.2, 1);
 }
 .nav-links a:hover { color: var(--apple-black); }
-.nav-links a.active { color: var(--c-text); font-weight: 600; border-bottom-color: var(--c-text); }
+.nav-links a:hover::after, .nav-links a.active::after { transform: scaleX(1); }
+.nav-links a.active { color: var(--c-text); font-weight: 600; }
 @media (min-width: 900px) {
     .nav-links { display: flex; margin-left: auto; }
     body .menu-btn { display: none; }   /* 페이지별 .menu-btn 규칙보다 우선 */
