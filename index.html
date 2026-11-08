@@ -260,6 +260,7 @@
         /* 핫스폿 핀 */
         .hs { display:flex; align-items:center; gap:8px; padding:0; border:0; background:none; cursor:pointer; font:inherit; transform:translate(-11px,-11px); transition:opacity .3s; }
         .hs:not([data-visible]) { opacity:0; pointer-events:none; }   /* 모델 뒤로 가려지면 숨김 */
+        .story:not(.far) .hs { opacity:0; pointer-events:none; }   /* 멀리서 전체를 볼 때만 핀 표시 */
         .hs i { position:relative; width:22px; height:22px; border-radius:50%; background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.25); flex:none; }
         .hs i::after { content:''; position:absolute; inset:7px; border-radius:50%; background:var(--apple-blue); }
         .hs i::before { content:''; position:absolute; inset:-6px; border-radius:50%; border:2px solid rgba(255,255,255,.9); opacity:0; }
@@ -1205,6 +1206,8 @@
                 mv.fieldOfView = `${cam[6].toFixed(2)}deg`;
                 if (mv.jumpCameraToGoal) mv.jumpCameraToGoal();
             }
+            const o = mv.getCameraOrbit && mv.getCameraOrbit();
+            root.classList.toggle('far', !!o && o.radius > 15);
             if (visible) raf = requestAnimationFrame(frame);
         };
         // 핫스폿: 직접 돌리기 장면에서는 카메라가 그 부위로 다가가며 해설 팝업, 스크롤 중에는 그 장면 카드로 이동
