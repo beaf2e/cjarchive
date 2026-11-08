@@ -33,13 +33,6 @@ export async function onRequest(context) {
 
   // /timeline, /about 은 독립 페이지(timeline.html, about.html) — Pages 클린 URL이 그대로 서빙
 
-  // 문의는 별도 페이지(contact.html). Pages 기본 클린URL이 /contact → contact.html 로
-  // 서빙하므로 그대로 통과시킨다. (env.ASSETS로 /contact.html 을 가져오면 Pages가 /contact 로
-  // 308 정규화 → 무한 리다이렉트가 되므로 절대 가로채지 말 것)
-  if (p === "/contact" || p === "/contact/") {
-    return next();
-  }
-
   // 루트 직접 진입 단축주소: /<장소ID> 또는 /<순번> → 해당 장소 상세로 (canonical /heritage/<id>)
   // 예) /cbdc, /1 → /heritage/cbdc  (실제 파일/폴더는 확장자·슬래시가 있어 여기 안 걸림)
   const rootSeg = p.match(/^\/([^\/.]+)\/?$/);
