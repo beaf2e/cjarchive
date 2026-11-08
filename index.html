@@ -232,6 +232,12 @@
         .compare-eyebrow { display:block; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--apple-blue); font-weight:600; margin-bottom:8px; }
         .compare-head h2 { font-size:clamp(1.6rem,4vw,2.6rem); font-weight:700; letter-spacing:-0.03em; }
         .compare-head p { margin-top:12px; color:var(--apple-gray); font-size:clamp(.95rem,2vw,1.1rem); line-height:1.6; }
+        /* 3D 모델 (model3d가 있는 장소만) */
+        .model-section { max-width: 1000px; margin: clamp(64px,10vw,130px) auto; padding: 0 clamp(20px,5vw,40px); }
+        .model-stage { position:relative; width:100%; max-width:640px; aspect-ratio:3/4; max-height:80vh; margin:0 auto; border-radius:clamp(14px,2vw,22px); overflow:hidden; background:var(--apple-bg); }
+        .model-stage model-viewer { width:100%; height:100%; --poster-color: transparent; --progress-bar-color: var(--apple-black); }
+        .model-ar { position:absolute; right:16px; bottom:16px; padding:10px 18px; border:0; border-radius:999px; background:var(--apple-black); color:#fff; font:inherit; font-size:14px; font-weight:600; cursor:pointer; }
+        .model-credit { margin-top:12px; text-align:center; font-size:12px; color:var(--apple-gray); }
         .compare {
             position:relative; width:100%; aspect-ratio:16/10;
             border-radius:clamp(14px,2vw,22px); overflow:hidden;
@@ -934,6 +940,26 @@
                 </div>
             </section>` : '';
 
+        // 3D 모델 — 끌어서 돌려 보기, 휴대폰은 AR(실제 크기)
+        const m3 = data.model3d || {};
+        const modelHTML = m3.src ? `
+            <section class="model-section reveal">
+                <div class="compare-head">
+                    <span class="compare-eyebrow">3D</span>
+                    <h2>돌려 보는 ${esc(data.title)}</h2>
+                    ${m3.caption ? `<p>${esc(m3.caption)}</p>` : ''}
+                </div>
+                <div class="model-stage">
+                    <model-viewer src="${esc(m3.src)}" ${m3.poster ? `poster="${esc(m3.poster)}"` : ''} alt="${esc(data.title)} 3D 모델"
+                        camera-controls touch-action="pan-y" auto-rotate auto-rotate-delay="0" rotation-per-second="12deg"
+                        camera-orbit="30deg 82deg auto" interaction-prompt="none" shadow-intensity="0.6" exposure="1.05"
+                        ar ar-modes="webxr scene-viewer quick-look" ar-scale="fixed" loading="lazy">
+                        <button slot="ar-button" class="model-ar">AR로 보기</button>
+                    </model-viewer>
+                </div>
+                ${m3.credit ? `<p class="model-credit">${esc(m3.credit)}</p>` : ''}
+            </section>` : '';
+
         return `
             <section class="detail-hero">
                 ${heroMedia}
@@ -954,6 +980,8 @@
             ${buildExplainHTML(data)}
 
             ${compareHTML}
+
+            ${modelHTML}
 
             ${featuresHTML}
 
@@ -1044,6 +1072,12 @@
             navigate('/heritage');
         }));
         detailContent.querySelectorAll('[data-compare]').forEach(initCompare);
+        if (data.model3d && !window.customElements.get('model-viewer') && !document.getElementById('mv-lib')) {
+            const sc = document.createElement('script');   // 3D가 있는 장소를 열 때만 뷰어를 불러옴
+            sc.type = 'module'; sc.id = 'mv-lib';
+            sc.src = 'https://cdn.jsdelivr.net/npm/@google/model-viewer@4.0.0/dist/model-viewer.min.js';
+            document.head.appendChild(sc);
+        }
         detailEl.style.display = 'block';
         detailEl.scrollTop = 0;
         document.body.style.overflow = 'hidden';
