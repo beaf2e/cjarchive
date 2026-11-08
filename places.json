@@ -308,13 +308,23 @@
             "orbit": "50deg 72deg 7.5m",
             "target": "0.05m 3.4m 0m",
             "fov": "30deg",
-            "feature": 1
+            "feature": 1,
+            "hotspot": {
+              "position": "0.43m 4.2m 0m",
+              "normal": "1 0 0",
+              "label": "고정 장치"
+            }
           },
           {
             "orbit": "90deg 88deg 2.6m",
             "target": "0.05m 1.75m -0.04m",
             "fov": "30deg",
-            "feature": 0
+            "feature": 0,
+            "hotspot": {
+              "position": "0.33m 1.75m 0m",
+              "normal": "1 0 0",
+              "label": "명문 (세 번째 철통)"
+            }
           },
           {
             "orbit": "150deg 70deg 9m",
