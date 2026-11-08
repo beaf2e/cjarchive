@@ -317,7 +317,7 @@
             "feature": 0
           },
           {
-            "orbit": "-30deg 70deg 9m",
+            "orbit": "150deg 70deg 9m",
             "target": "0.05m 10.5m 0m",
             "fov": "30deg",
             "eyebrow": "20 / 30",
@@ -333,7 +333,7 @@
             "p": "홍수가 잦던 청주에 돛대 삼아 이 당간을 세운 뒤 재난이 그쳤고, 그때부터 청주를 배의 고을, 주성(舟城)이라 불렀다는 이야기가 전한다."
           },
           {
-            "orbit": "30deg 82deg 31m",
+            "orbit": "390deg 82deg 31m",
             "target": "0.05m 6.6m 0m",
             "fov": "30deg",
             "eyebrow": "3D",

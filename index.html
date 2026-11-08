@@ -244,10 +244,11 @@
         .story-head { text-align:center; padding: clamp(56px,8vw,96px) clamp(20px,5vw,40px) 0; }
         .story-body { display:grid; grid-template-columns: minmax(0,1.15fr) minmax(0,1fr); max-width:1200px; margin:0 auto; padding:0 clamp(20px,4vw,48px); }
         .story-stage { position:sticky; top:0; height:100vh; height:100svh; }
+        .story-stage::after { content:''; position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse 75% 70% at 50% 50%, transparent 55%, rgba(0,0,0,.07) 100%); }
         .story-steps { padding: 30vh 0 40vh; }
         .story-step { min-height:80vh; display:flex; align-items:center; }
-        .story-card { max-width:440px; opacity:.28; transition:opacity .5s ease; }
-        .story-step.on .story-card { opacity:1; }
+        .story-card { max-width:440px; opacity:.22; transform:translateY(18px); transition:opacity .8s ease, transform .9s cubic-bezier(.2,.7,.2,1); }
+        .story-step.on .story-card { opacity:1; transform:none; }
         .story-card .compare-eyebrow { margin-bottom:12px; }
         .story-card h3 { font-size:clamp(1.5rem,3vw,2.2rem); font-weight:700; letter-spacing:-0.03em; line-height:1.25; margin-bottom:16px; }
         .story-card p { font-size:clamp(.98rem,1.4vw,1.06rem); line-height:1.75; color:#424245; word-break:keep-all; }
@@ -1002,7 +1003,7 @@
                 </div>
                 <div class="story-body">
                     <div class="story-stage">
-                        <model-viewer ${mvAttrs} disable-zoom disable-tap touch-action="pan-y" interpolation-decay="160"
+                        <model-viewer ${mvAttrs} disable-zoom disable-tap touch-action="pan-y" tone-mapping="aces" shadow-softness="1"
                             camera-orbit="${esc(s0.orbit || 'auto auto auto')}" camera-target="${esc(s0.target || 'auto auto auto')}" field-of-view="${esc(s0.fov || 'auto')}"
                             min-field-of-view="5deg" max-field-of-view="70deg" min-camera-orbit="auto auto 0.5m" max-camera-orbit="auto 175deg auto" loading="eager">${arBtn}</model-viewer>
                     </div>
@@ -1102,41 +1103,78 @@
 
     let currentDetailId = null;
 
-    // 3D 스크롤 장면 — 화면의 기준선(데스크톱은 가운데, 휴대폰은 아래쪽)에 가장 가까운 카드를 켜고 카메라를 그 장면으로
-    let storyScroll = null;
+    // 3D 스크롤 장면 — 카메라를 스크롤 위치에 묶어 장면 사이를 연속으로 이동.
+    // 카드가 기준선(데스크톱은 가운데, 휴대폰은 아래쪽)에 오면 그 장면에 머물고, 카드 사이에서는 가속 후 감속.
+    // 카메라는 목표를 살짝 늦게 따라가고(관성), 멈춰 있을 때도 아주 조금 숨 쉬듯 움직임.
+    let storyStop = null;
     function initStory(root, m3) {
-        if (storyScroll) { detailEl.removeEventListener('scroll', storyScroll); storyScroll = null; }
+        if (storyStop) { storyStop(); storyStop = null; }
         if (!root) return;
         const mv = root.querySelector('model-viewer');
+        const cards = [...root.querySelectorAll('.story-card')];
         const steps = [...root.querySelectorAll('.story-step')];
-        let cur = -1, raf = 0;
-        const apply = (i) => {
-            if (i === cur) return;
-            cur = i;
-            const st = m3.steps[i] || {};
-            steps.forEach((el, k) => el.classList.toggle('on', k === i));
-            mv.cameraOrbit = st.orbit || 'auto auto auto';
-            mv.cameraTarget = st.target || 'auto auto auto';
-            mv.fieldOfView = st.fov || 'auto';
-            const free = !!st.free;   // 마지막 장면: 직접 돌려 보기
-            root.classList.toggle('free', free);
-            mv.toggleAttribute('camera-controls', free);
-            mv.toggleAttribute('auto-rotate', free);
-        };
-        const pick = () => {
-            raf = 0;
+        const num = (str, i, dflt) => { const m = String(str || '').match(/-?[\d.]+/g); return m && m[i] != null ? parseFloat(m[i]) : dflt; };
+        // 자세: [theta, phi, log(radius), tx, ty, tz, fov] — 거리는 로그로 섞어야 확대가 고르게 보임
+        const poses = m3.steps.map(st => [num(st.orbit, 0, 0), num(st.orbit, 1, 80), Math.log(num(st.orbit, 2, 20)),
+            num(st.target, 0, 0), num(st.target, 1, 6), num(st.target, 2, 0), num(st.fov, 0, 30)]);
+        const ease = t => t * t * t * (t * (t * 6 - 15) + 10);   // smootherstep
+        const mix = (a, b, t) => a.map((v, k) => v + (b[k] - v) * t);
+        let cam = poses[0].slice(), on = -1, free = false, raf = 0, last = 0, alive = true;
+
+        const desired = () => {
             const line = window.innerHeight * (window.innerWidth <= 860 ? 0.72 : 0.5);
-            let best = 0, bd = Infinity;
-            steps.forEach((el, k) => {
-                const r = el.querySelector('.story-card').getBoundingClientRect();
-                const d = Math.abs((r.top + r.bottom) / 2 - line);
-                if (d < bd) { bd = d; best = k; }
-            });
-            apply(best);
+            const c = cards.map(el => { const r = el.getBoundingClientRect(); return (r.top + r.bottom) / 2 - line; });
+            if (c[0] >= 0) return { pose: poses[0], near: 0 };
+            for (let i = 0; i < c.length - 1; i++) {
+                if (c[i + 1] > 0) {
+                    const t = -c[i] / (c[i + 1] - c[i]);
+                    const u = Math.min(1, Math.max(0, (t - 0.18) / 0.64));   // 앞뒤 18%는 머무름
+                    return { pose: mix(poses[i], poses[i + 1], ease(u)), near: t < 0.5 ? i : i + 1 };
+                }
+            }
+            return { pose: poses[poses.length - 1], near: poses.length - 1 };
         };
-        storyScroll = () => { if (!raf) raf = requestAnimationFrame(pick); };
-        detailEl.addEventListener('scroll', storyScroll, { passive: true });
-        pick();
+        const setFree = (f) => {
+            if (f === free) return;
+            free = f;
+            root.classList.toggle('free', f);
+            mv.toggleAttribute('camera-controls', f);
+            mv.toggleAttribute('auto-rotate', f);
+            if (!f) {   // 직접 돌린 자리에서 이어서 따라가게
+                const o = mv.getCameraOrbit && mv.getCameraOrbit();
+                if (o) { cam[0] = o.theta * 180 / Math.PI; cam[1] = o.phi * 180 / Math.PI; cam[2] = Math.log(o.radius); }
+                while (cam[0] - poses[poses.length - 1][0] > 180) cam[0] -= 360;
+                while (cam[0] - poses[poses.length - 1][0] < -180) cam[0] += 360;
+            }
+        };
+        const frame = (now) => {
+            raf = 0;
+            if (!alive) return;
+            const dt = Math.min(0.1, last ? (now - last) / 1000 : 0.016); last = now;
+            const d = desired();
+            if (d.near !== on) { on = d.near; steps.forEach((el, k) => el.classList.toggle('on', k === on)); }
+            setFree(!!m3.steps[on].free && Math.abs(d.pose[0] - poses[on][0]) < 0.5);
+            if (!free) {
+                const k = 1 - Math.exp(-dt * 5);
+                cam = cam.map((v, i) => v + (d.pose[i] - v) * k);
+                const tm = now / 1000;
+                const th = cam[0] + Math.sin(tm * 0.21) * 1.6, ph = cam[1] + Math.sin(tm * 0.17 + 1) * 0.8;
+                const r = Math.exp(cam[2]) * (1 + Math.sin(tm * 0.13) * 0.012);
+                mv.cameraOrbit = `${th.toFixed(3)}deg ${ph.toFixed(3)}deg ${r.toFixed(3)}m`;
+                mv.cameraTarget = `${cam[3].toFixed(3)}m ${cam[4].toFixed(3)}m ${cam[5].toFixed(3)}m`;
+                mv.fieldOfView = `${cam[6].toFixed(2)}deg`;
+                if (mv.jumpCameraToGoal) mv.jumpCameraToGoal();
+            }
+            if (visible) raf = requestAnimationFrame(frame);
+        };
+        // 화면에 보일 때만 돌림
+        let visible = false;
+        const io = new IntersectionObserver(es => {
+            visible = es[0].isIntersecting;
+            if (visible && !raf) { last = 0; raf = requestAnimationFrame(frame); }
+        }, { root: detailEl });
+        io.observe(root);
+        storyStop = () => { alive = false; io.disconnect(); if (raf) cancelAnimationFrame(raf); };
     }
 
     // Then & Now 비교 슬라이더 — 드래그(마우스/터치)로 과거↔현재 경계 이동
