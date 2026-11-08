@@ -277,20 +277,6 @@
         .mv-tools { position:absolute; left:16px; bottom:16px; display:flex; align-items:center; gap:10px; z-index:2; }
         .mv-tools button { width:38px; height:38px; border-radius:50%; border:1px solid var(--apple-light); background:rgba(255,255,255,.9); font:inherit; font-size:20px; line-height:1; color:var(--apple-black); cursor:pointer; }
         .mv-guide { font-size:12px; color:var(--apple-gray); white-space:nowrap; }
-        @media (max-width: 860px) {
-            .story-body { display:block; padding:0; }
-            .story-stage { height:62vh; height:62svh; z-index:1; }
-            .story-stage model-viewer { -webkit-mask-image:none; mask-image:none; }
-            .hs-pop { bottom:auto; top:64px; }
-            .mv-tools { left:auto; right:16px; bottom:auto; top:64px; flex-direction:column; }
-            .mv-guide { display:none; }
-            .story-steps { position:relative; z-index:2; margin-top:-10vh; padding:0 16px 30vh; }
-            .story-step { min-height:85vh; align-items:flex-end; }
-            .story-card { max-width:none; background:rgba(255,255,255,.94); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); border-radius:20px; padding:22px 22px 24px; box-shadow:0 8px 30px rgba(0,0,0,.08); opacity:1; }
-            .story-step:not(.on) .story-card { opacity:.6; }
-            .story .model-ar { bottom:auto; top:16px; }
-            .story-card img { aspect-ratio:16/7; margin-top:16px; }
-        }
         .compare {
             position:relative; width:100%; aspect-ratio:16/10;
             border-radius:clamp(14px,2vw,22px); overflow:hidden;
@@ -944,6 +930,9 @@
     }
     function nl2br(s) { return esc(s).replace(/\n/g, '<br>'); }
 
+    // 3D 모델은 데스크톱에서만. 휴대폰 폭에서는 쓰지 않고 원래 화면(특징 카드와 사진)으로
+    const use3D = (data) => !!(data.model3d && data.model3d.src) && !window.matchMedia('(max-width: 860px)').matches;
+
     function buildDetailHTML(data) {
         const statsHTML = (data.stats || []).map(s => `
             <div class="stat-cell">
@@ -951,7 +940,7 @@
                 <div class="value">${esc(s.value)}</div>
             </div>`).join('');
 
-        const storyFeatures = new Set(((data.model3d || {}).steps || []).map(st => st && st.feature).filter(Number.isInteger));
+        const storyFeatures = new Set((use3D(data) ? data.model3d.steps || [] : []).map(st => st && st.feature).filter(Number.isInteger));
         const featuresHTML = (data.features || []).filter((f, i) => !storyFeatures.has(i)).map(f => `
             <section class="feature-row ${f.reverse ? 'reverse' : ''}">
                 <div class="feature-text reveal">
@@ -996,7 +985,7 @@
 
         // 3D 모델 — 끌어서 돌려 보기, 휴대폰은 AR(실제 크기).
         // steps가 있으면 스크롤 장면으로: 각 장면은 카메라(orbit, target, fov)와 글. feature: n이면 아래 특징 카드 n번의 글과 사진을 가져와 쓰고, 그 카드는 아래에서 뺀다.
-        const m3 = data.model3d || {};
+        const m3 = use3D(data) ? data.model3d : {};
         const arBtn = '<button slot="ar-button" class="model-ar">AR로 보기</button>';
         const mvAttrs = `src="${esc(m3.src)}" ${m3.poster ? `poster="${esc(m3.poster)}"` : ''} alt="${esc(data.title)} 3D 모델"
                         ar ar-modes="webxr scene-viewer quick-look" ar-scale="fixed" interaction-prompt="none" shadow-intensity="0.6" exposure="1.05"`;
@@ -1291,7 +1280,7 @@
         }));
         detailContent.querySelectorAll('[data-compare]').forEach(initCompare);
         initStory(detailContent.querySelector('[data-story]'), data.model3d);
-        if (data.model3d && !window.customElements.get('model-viewer') && !document.getElementById('mv-lib')) {
+        if (use3D(data) && !window.customElements.get('model-viewer') && !document.getElementById('mv-lib')) {
             const sc = document.createElement('script');   // 3D가 있는 장소를 열 때만 뷰어를 불러옴
             sc.type = 'module'; sc.id = 'mv-lib';
             sc.src = 'https://cdn.jsdelivr.net/npm/@google/model-viewer@4.0.0/dist/model-viewer.min.js';
