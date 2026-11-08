@@ -232,12 +232,39 @@
         .compare-eyebrow { display:block; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--apple-blue); font-weight:600; margin-bottom:8px; }
         .compare-head h2 { font-size:clamp(1.6rem,4vw,2.6rem); font-weight:700; letter-spacing:-0.03em; }
         .compare-head p { margin-top:12px; color:var(--apple-gray); font-size:clamp(.95rem,2vw,1.1rem); line-height:1.6; }
-        /* 3D 모델 (model3d가 있는 장소만) */
+        /* 3D 모델 (model3d가 있는 장소만)
+           steps가 있으면 스크롤 장면: 모델은 붙어 있고, 카드가 지나가면 카메라가 그 부위로 이동 */
         .model-section { max-width: 1000px; margin: clamp(64px,10vw,130px) auto; padding: 0 clamp(20px,5vw,40px); }
         .model-stage { position:relative; width:100%; max-width:640px; aspect-ratio:3/4; max-height:80vh; margin:0 auto; border-radius:clamp(14px,2vw,22px); overflow:hidden; background:var(--apple-bg); }
-        .model-stage model-viewer { width:100%; height:100%; --poster-color: transparent; --progress-bar-color: var(--apple-black); }
+        .model-stage model-viewer, .story-stage model-viewer { width:100%; height:100%; --poster-color: transparent; --progress-bar-color: var(--apple-black); }
         .model-ar { position:absolute; right:16px; bottom:16px; padding:10px 18px; border:0; border-radius:999px; background:var(--apple-black); color:#fff; font:inherit; font-size:14px; font-weight:600; cursor:pointer; }
         .model-credit { margin-top:12px; text-align:center; font-size:12px; color:var(--apple-gray); }
+
+        .story { position:relative; margin: clamp(64px,10vw,130px) 0; background:var(--apple-bg); }
+        .story-head { text-align:center; padding: clamp(56px,8vw,96px) clamp(20px,5vw,40px) 0; }
+        .story-body { display:grid; grid-template-columns: minmax(0,1.15fr) minmax(0,1fr); max-width:1200px; margin:0 auto; padding:0 clamp(20px,4vw,48px); }
+        .story-stage { position:sticky; top:0; height:100vh; height:100svh; }
+        .story-steps { padding: 30vh 0 40vh; }
+        .story-step { min-height:80vh; display:flex; align-items:center; }
+        .story-card { max-width:440px; opacity:.28; transition:opacity .5s ease; }
+        .story-step.on .story-card { opacity:1; }
+        .story-card .compare-eyebrow { margin-bottom:12px; }
+        .story-card h3 { font-size:clamp(1.5rem,3vw,2.2rem); font-weight:700; letter-spacing:-0.03em; line-height:1.25; margin-bottom:16px; }
+        .story-card p { font-size:clamp(.98rem,1.4vw,1.06rem); line-height:1.75; color:#424245; word-break:keep-all; }
+        .story-card img { width:100%; aspect-ratio:16/10; object-fit:cover; border-radius:14px; margin-top:20px; }
+        .story-card .model-credit { text-align:left; }
+        .story .model-ar { opacity:0; pointer-events:none; transition:opacity .4s; }
+        .story.free .model-ar { opacity:1; pointer-events:auto; }
+        @media (max-width: 860px) {
+            .story-body { display:block; padding:0; }
+            .story-stage { height:58vh; height:58svh; z-index:1; }
+            .story-steps { position:relative; z-index:2; margin-top:-10vh; padding:0 16px 30vh; }
+            .story-step { min-height:85vh; align-items:flex-end; }
+            .story-card { max-width:none; background:rgba(255,255,255,.94); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); border-radius:20px; padding:22px 22px 24px; box-shadow:0 8px 30px rgba(0,0,0,.08); opacity:1; }
+            .story-step:not(.on) .story-card { opacity:.6; }
+            .story .model-ar { bottom:auto; top:16px; }
+            .story-card img { aspect-ratio:16/7; margin-top:16px; }
+        }
         .compare {
             position:relative; width:100%; aspect-ratio:16/10;
             border-radius:clamp(14px,2vw,22px); overflow:hidden;
@@ -898,7 +925,8 @@
                 <div class="value">${esc(s.value)}</div>
             </div>`).join('');
 
-        const featuresHTML = (data.features || []).map(f => `
+        const storyFeatures = new Set(((data.model3d || {}).steps || []).map(st => st && st.feature).filter(Number.isInteger));
+        const featuresHTML = (data.features || []).filter((f, i) => !storyFeatures.has(i)).map(f => `
             <section class="feature-row ${f.reverse ? 'reverse' : ''}">
                 <div class="feature-text reveal">
                     <span class="feature-eyebrow">${esc(f.eyebrow)}</span>
@@ -940,9 +968,49 @@
                 </div>
             </section>` : '';
 
-        // 3D 모델 — 끌어서 돌려 보기, 휴대폰은 AR(실제 크기)
+        // 3D 모델 — 끌어서 돌려 보기, 휴대폰은 AR(실제 크기).
+        // steps가 있으면 스크롤 장면으로: 각 장면은 카메라(orbit, target, fov)와 글. feature: n이면 아래 특징 카드 n번의 글과 사진을 가져와 쓰고, 그 카드는 아래에서 뺀다.
         const m3 = data.model3d || {};
-        const modelHTML = m3.src ? `
+        const arBtn = '<button slot="ar-button" class="model-ar">AR로 보기</button>';
+        const mvAttrs = `src="${esc(m3.src)}" ${m3.poster ? `poster="${esc(m3.poster)}"` : ''} alt="${esc(data.title)} 3D 모델"
+                        ar ar-modes="webxr scene-viewer quick-look" ar-scale="fixed" interaction-prompt="none" shadow-intensity="0.6" exposure="1.05"`;
+        let modelHTML = '';
+        if (m3.src && Array.isArray(m3.steps) && m3.steps.length) {
+            const stepsHTML = m3.steps.map((st, i) => {
+                const f = Number.isInteger(st.feature) ? (data.features || [])[st.feature] : null;
+                const eb = st.eyebrow || (f && f.eyebrow) || '';
+                const h = st.h || (f && f.h) || '';
+                const p = st.p || (f && f.p) || '';
+                const img = st.img || (f && f.img) || '';
+                return `<div class="story-step" data-i="${i}">
+                    <div class="story-card">
+                        ${eb ? `<span class="compare-eyebrow">${esc(eb)}</span>` : ''}
+                        <h3>${nl2br(h)}</h3>
+                        <p>${esc(p)}</p>
+                        ${img ? `<img src="${esc(img)}" alt="" loading="lazy" onerror="this.remove()">` : ''}
+                        ${st.free && m3.credit ? `<p class="model-credit">${esc(m3.credit)}</p>` : ''}
+                    </div>
+                </div>`;
+            }).join('');
+            const s0 = m3.steps[0];
+            modelHTML = `
+            <section class="story" data-story>
+                <div class="story-head compare-head">
+                    <span class="compare-eyebrow">3D</span>
+                    <h2>돌려 보는 ${esc(data.title)}</h2>
+                    ${m3.caption ? `<p>${esc(m3.caption)}</p>` : ''}
+                </div>
+                <div class="story-body">
+                    <div class="story-stage">
+                        <model-viewer ${mvAttrs} disable-zoom disable-tap touch-action="pan-y" interpolation-decay="160"
+                            camera-orbit="${esc(s0.orbit || 'auto auto auto')}" camera-target="${esc(s0.target || 'auto auto auto')}" field-of-view="${esc(s0.fov || 'auto')}"
+                            min-field-of-view="5deg" max-field-of-view="70deg" min-camera-orbit="auto auto 0.5m" max-camera-orbit="auto 175deg auto" loading="eager">${arBtn}</model-viewer>
+                    </div>
+                    <div class="story-steps">${stepsHTML}</div>
+                </div>
+            </section>`;
+        } else if (m3.src) {
+            modelHTML = `
             <section class="model-section reveal">
                 <div class="compare-head">
                     <span class="compare-eyebrow">3D</span>
@@ -950,15 +1018,12 @@
                     ${m3.caption ? `<p>${esc(m3.caption)}</p>` : ''}
                 </div>
                 <div class="model-stage">
-                    <model-viewer src="${esc(m3.src)}" ${m3.poster ? `poster="${esc(m3.poster)}"` : ''} alt="${esc(data.title)} 3D 모델"
-                        camera-controls touch-action="pan-y" auto-rotate auto-rotate-delay="0" rotation-per-second="12deg"
-                        camera-orbit="30deg 82deg auto" interaction-prompt="none" shadow-intensity="0.6" exposure="1.05"
-                        ar ar-modes="webxr scene-viewer quick-look" ar-scale="fixed" loading="lazy">
-                        <button slot="ar-button" class="model-ar">AR로 보기</button>
-                    </model-viewer>
+                    <model-viewer ${mvAttrs} camera-controls touch-action="pan-y" auto-rotate auto-rotate-delay="0" rotation-per-second="12deg"
+                        camera-orbit="30deg 82deg auto" loading="lazy">${arBtn}</model-viewer>
                 </div>
                 ${m3.credit ? `<p class="model-credit">${esc(m3.credit)}</p>` : ''}
-            </section>` : '';
+            </section>`;
+        }
 
         return `
             <section class="detail-hero">
@@ -1037,6 +1102,43 @@
 
     let currentDetailId = null;
 
+    // 3D 스크롤 장면 — 화면의 기준선(데스크톱은 가운데, 휴대폰은 아래쪽)에 가장 가까운 카드를 켜고 카메라를 그 장면으로
+    let storyScroll = null;
+    function initStory(root, m3) {
+        if (storyScroll) { detailEl.removeEventListener('scroll', storyScroll); storyScroll = null; }
+        if (!root) return;
+        const mv = root.querySelector('model-viewer');
+        const steps = [...root.querySelectorAll('.story-step')];
+        let cur = -1, raf = 0;
+        const apply = (i) => {
+            if (i === cur) return;
+            cur = i;
+            const st = m3.steps[i] || {};
+            steps.forEach((el, k) => el.classList.toggle('on', k === i));
+            mv.cameraOrbit = st.orbit || 'auto auto auto';
+            mv.cameraTarget = st.target || 'auto auto auto';
+            mv.fieldOfView = st.fov || 'auto';
+            const free = !!st.free;   // 마지막 장면: 직접 돌려 보기
+            root.classList.toggle('free', free);
+            mv.toggleAttribute('camera-controls', free);
+            mv.toggleAttribute('auto-rotate', free);
+        };
+        const pick = () => {
+            raf = 0;
+            const line = window.innerHeight * (window.innerWidth <= 860 ? 0.72 : 0.5);
+            let best = 0, bd = Infinity;
+            steps.forEach((el, k) => {
+                const r = el.querySelector('.story-card').getBoundingClientRect();
+                const d = Math.abs((r.top + r.bottom) / 2 - line);
+                if (d < bd) { bd = d; best = k; }
+            });
+            apply(best);
+        };
+        storyScroll = () => { if (!raf) raf = requestAnimationFrame(pick); };
+        detailEl.addEventListener('scroll', storyScroll, { passive: true });
+        pick();
+    }
+
     // Then & Now 비교 슬라이더 — 드래그(마우스/터치)로 과거↔현재 경계 이동
     function initCompare(root) {
         const setP = (clientX) => {
@@ -1072,6 +1174,7 @@
             navigate('/heritage');
         }));
         detailContent.querySelectorAll('[data-compare]').forEach(initCompare);
+        initStory(detailContent.querySelector('[data-story]'), data.model3d);
         if (data.model3d && !window.customElements.get('model-viewer') && !document.getElementById('mv-lib')) {
             const sc = document.createElement('script');   // 3D가 있는 장소를 열 때만 뷰어를 불러옴
             sc.type = 'module'; sc.id = 'mv-lib';
